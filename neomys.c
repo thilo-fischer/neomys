@@ -14,7 +14,7 @@
 // Data structures for addressing rows
 
 enum row_e {
-    //ROW_FUNC,
+    ROW_FUNC,
     ROW_NUM,
     ROW_TOP,
     ROW_HOME,
@@ -30,18 +30,18 @@ const int ROW_PORT_BIT [ROW_COUNT] = {     0,     1,     4,     5,     6,     7 
 
 // Functions for addressing rows
 
-inline void init_row(uint_8 row) {
+inline void init_row(uint8_t row) {
     // set up "open collector"
     ROW_PORT_DDR [row] &= ~(1 << ROW_PORT_BIT[row]);
     ROW_PORT_PORT[row] &= ~(1 << ROW_PORT_BIT[row]);
 }
 
-inline void activate_row(uint_8 row) {
+inline void activate_row(uint8_t row) {
     // output low
     ROW_PORT_DDR [row] |=  (1 << ROW_PORT_BIT[row]);
 }
 
-inline void deactivate_row(uint_8 row) {
+inline void deactivate_row(uint8_t row) {
     // input (open collector)
     ROW_PORT_DDR [row] &= ~(1 << ROW_PORT_BIT[row]);
 }
@@ -57,13 +57,13 @@ const int COL_PORT_BIT [COL_COUNT] = {     0,     1,     2,     3,     4,     5,
 
 // Functions for addressing cols
 
-inline void init_col(uint_8 col) {
+inline void init_col(uint8_t col) {
     // set up input with pull up
     COL_PORT_DDR [col] &= ~(1 << COL_PORT_BIT[col]);
     COL_PORT_PORT[col] &=  (1 << COL_PORT_BIT[col]);
 }
 
-inline char test_col(uint_8 col) {
+inline char test_col(uint8_t col) {
     return (COL_PORT_PIN[col] &  (1 << COL_PORT_BIT[col])) ? 1 : 0 ;
 }
 
@@ -107,20 +107,20 @@ union keymapping_u {
     } phantom;
     struct {
         kmap_t type;
-        uint_8 key;
+        uint8_t key;
     } single;
     struct {
         kmap_t type;
-        uint_8 key;
+        uint8_t key;
     } shift;
     struct {
         kmap_t type;
-        uint_8 key;
+        uint8_t key;
     } altgr;
     struct {
         kmap_t type;
-        uint_8 dead_key;
-        uint_8 main_key;
+        uint8_t dead_key;
+        uint8_t main_key;
     } compose;
 };
 
@@ -133,22 +133,22 @@ const union keymapping_u keymapping[KB_COUNT][LEVEL_COUNT][ROW_COUNT][2][COL_COU
             {
                 // left
                 {
-                    /* 0 */ {KMT_SINGLE, KEY_F1},
-                    /* 1 */ {KMT_SINGLE, KEY_F2},
-                    /* 2 */ {KMT_SINGLE, KEY_F3},
-                    /* 3 */ {KMT_SINGLE, KEY_F4},
-                    /* 4 */ {KMT_SINGLE, KEY_F5},
-                    /* 5 */ {KMT_SINGLE, KEY_F6},
+                    /* 0 */ { .single = {KMT_SINGLE, KEY_F1}},
+                    /* 1 */ { .single = {KMT_SINGLE, KEY_F2}},
+                    /* 2 */ { .single = {KMT_SINGLE, KEY_F3}},
+                    /* 3 */ { .single = {KMT_SINGLE, KEY_F4}},
+                    /* 4 */ { .single = {KMT_SINGLE, KEY_F5}},
+                    /* 5 */ { .single = {KMT_SINGLE, KEY_F6}},
                     // remaining will be initialzed with zeros (=> KMT_PHANTOM)
                 },
                 // right
                 {
-                    /* 0 */ {KMT_SINGLE, KEY_F7},
-                    /* 1 */ {KMT_SINGLE, KEY_F8},
-                    /* 2 */ {KMT_SINGLE, KEY_F9},
-                    /* 3 */ {KMT_SINGLE, KEY_F10},
-                    /* 4 */ {KMT_SINGLE, KEY_F11},
-                    /* 5 */ {KMT_SINGLE, KEY_F12},
+                    /* 0 */ { .single = {KMT_SINGLE, KEY_F7}},
+                    /* 1 */ { .single = {KMT_SINGLE, KEY_F8}},
+                    /* 2 */ { .single = {KMT_SINGLE, KEY_F9}},
+                    /* 3 */ { .single = {KMT_SINGLE, KEY_F10}},
+                    /* 4 */ { .single = {KMT_SINGLE, KEY_F11}},
+                    /* 5 */ { .single = {KMT_SINGLE, KEY_F12}},
                     // remaining will be initialzed with zeros (=> KMT_PHANTOM)
                 },
             },
@@ -188,7 +188,7 @@ const union keymapping_u keymapping[KB_COUNT][LEVEL_COUNT][ROW_COUNT][2][COL_COU
 // global functions
 
 inline void init() {
-    uint_8 row, col;
+    uint8_t row, col;
     for (row = 0; row < ROW_COUNT; ++row) {
         init_row(row);
     }
@@ -219,11 +219,11 @@ char prev_row_state[2][ROW_COUNT];
 #endif
 
 int main(void) {
-    uint_8 row;
+    uint8_t row;
     for (row = 0; row < ROW_COUNT; ++row) {
         activate_row(row);
         row_state[CONTROLLER][row] = 0;
-        uint_8 col;
+        uint8_t col;
         for (col = 0; col < COL_COUNT; ++col) {
             row_state[CONTROLLER][row] |= (test_col(col) << row);
         }
