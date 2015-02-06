@@ -64,7 +64,8 @@ inline void init_col(uint8_t col) {
 }
 
 inline char test_col(uint8_t col) {
-    return (*COL_PORT_PIN[col] &  (1 << COL_PORT_BIT[col])) ? 1 : 0 ;
+    // return 0 when the pin is high (pull up resistor), 1 when the pin is low (shut to ground by key switch)
+    return (*COL_PORT_PIN[col] &  (1 << COL_PORT_BIT[col])) ? 0 : 1 ;
 }
 
 // UART
@@ -116,14 +117,24 @@ void process_states() {
     if (memcmp(prev_row_state, row_state, 2*ROW_SPACE*sizeof(row_state[0][0]))) {
 
         for (row = 0; row < ROW_COUNT; ++row) {
-            uint8_t col;
-            for (col = 0; col < COL_COUNT; ++col) {
-                
-            }
-        }
+            uint8_t xor = prev_row_state ^ row_state;
+            if (xor > 0) {
+                uint8_t col;
+                for (col = 0; col < COL_COUNT; ++col) {
+                    if (xor & (1 << col) > 0) {
+                        // key state at [row,col] has changed
+                        if (row_state & (1 << col) > 0) {
+                            // key press
+                        } else {
+                            // key release
+                        }
+                    }
+                } // col loop
+            } // xor > 0
+        } // row loop
         
         memcpy(prev_row_state, row_state, 2*ROW_SPACE*sizeof(row_state[0][0]));
-    }
+    } // memcmp
 }
 
 int main(void) {
