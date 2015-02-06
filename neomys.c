@@ -74,7 +74,7 @@ const uint32_t UART_BAUD_RATE = 9600;
 
 // global symbols
 
-enum kb_out_e kb_out = KB_DE;
+enum keymapping_mode_e kb_out = KMM_DE;
 
 
 // global functions
@@ -92,47 +92,34 @@ inline void init() {
     }
 }
 
-#define SIDE_LEFT  0
-#define SIDE_RIGHT 1
-
-enum controller_t {
-    CTLR_MASTER,
-    CTLR_SLAVE
-};
-
 char row_state[2][ROW_COUNT];
 char prev_row_state[2][ROW_COUNT];
 
-// shall be defined by compiler switch (-DSIDE=SIDE_xyz)
-//#define SIDE SIDE_LEFT
-//#define SIDE SIDE_RIGHT
-
-#if (SIDE == SIDE_LEFT)
-#  define CONTROLLER CTLR_MASTER
-#else
-#  define CONTROLLER CTLR_SLAVE
-#endif
 
 void process_states() {
     if (memcmp(prev_row_state, row_state, 2*ROW_SPACE*sizeof(row_state[0][0]))) {
 
-        for (row = 0; row < ROW_COUNT; ++row) {
-            uint8_t xor = prev_row_state ^ row_state;
-            if (xor > 0) {
-                uint8_t col;
-                for (col = 0; col < COL_COUNT; ++col) {
-                    if (xor & (1 << col) > 0) {
-                        // key state at [row,col] has changed
-                        if (row_state & (1 << col) > 0) {
-                            // key press
-                        } else {
-                            // key release
+        uint8_t side;
+        for (side = 0; side < 2; ++side) {
+            uint8_t row;
+            for (row = 0; row < ROW_COUNT; ++row) {
+                uint8_t xor = prev_row_state[side][row] ^ row_state[side][row];
+                if (xor > 0) {
+                    uint8_t col;
+                    for (col = 0; col < COL_COUNT; ++col) {
+                        if (xor & (1 << col) > 0) {
+                            // key state at [row,col] has changed
+                            if (row_state[side][row] & (1 << col) > 0) {
+                                // key press
+                            } else {
+                                // key release
+                            }
                         }
-                    }
-                } // col loop
-            } // xor > 0
-        } // row loop
-        
+                    } // col loop
+                } // xor > 0
+            } // row loop
+        } // side loop
+
         memcpy(prev_row_state, row_state, 2*ROW_SPACE*sizeof(row_state[0][0]));
     } // memcmp
 }

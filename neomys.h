@@ -33,5 +33,22 @@ enum neo_levels_e {
 };
 
 
+#define SIDE_LEFT  0
+#define SIDE_RIGHT 1
+
+enum controller_t {
+    CTLR_MASTER,
+    CTLR_SLAVE
+};
+
+// shall be defined by compiler switch (-DSIDE=SIDE_xyz)
+//#define SIDE SIDE_LEFT
+//#define SIDE SIDE_RIGHT
+
+#if (SIDE == SIDE_LEFT)
+#  define CONTROLLER CTLR_MASTER
+#else
+#  define CONTROLLER CTLR_SLAVE
+#endif
 
 #endif // _NEOMYS_H_
