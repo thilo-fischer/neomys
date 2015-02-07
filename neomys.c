@@ -15,13 +15,19 @@
 #include "neomys.h"
 #include "keymappings.h"
 
-// FIXME why are these symbols not known from iom32u4 ?!?
-#define DDRB _SFR_IO8(0x04)
+// FIXME why are these symbols not known from iom32u4.h ?!?
+#define DDRB  _SFR_IO8(0x04)
 #define PORTB _SFR_IO8(0x05)
-#define PINB _SFR_IO8(0x03)
-#define DDRF _SFR_IO8(0x10)
+#define PINB  _SFR_IO8(0x03)
+#define DDRC  _SFR_IO8(0x07)
+#define PORTC _SFR_IO8(0x08)
+#define PINC  _SFR_IO8(0x06)
+#define DDRD  _SFR_IO8(0x0A)
+#define PORTD _SFR_IO8(0x0B)
+#define PIND  _SFR_IO8(0x09)
+#define DDRF  _SFR_IO8(0x10)
 #define PORTF _SFR_IO8(0x11)
-#define PINF _SFR_IO8(0x0F)
+#define PINF  _SFR_IO8(0x0F)
 
 // Data structures for addressing rows
 
@@ -82,8 +88,6 @@ enum keymapping_mode_e keymapping_mode_current = KMM_DE;
 inline void init() {
     uint8_t row, col;
 
-    uart_init(UART_BAUD_RATE);
-
     for (row = 0; row < ROW_COUNT; ++row) {
         init_row_io(row);
     }
@@ -92,41 +96,93 @@ inline void init() {
     }
 
     clear_active_keys();
+
+    init_warn_led();
+
+    uart_init(UART_BAUD_RATE);
+
+    // Initialize the USB, and then wait for the host to set configuration.
+    // If the Teensy is powered without a PC connected to the USB port,
+    // this will wait forever.
+    usb_init();
+    while (!usb_configured()) {
+        _delay_ms(5);
+    };
+    // Wait an extra second for the PC's operating system to load drivers
+    // and do whatever it does to actually be ready for input
+    _delay_ms(1000);
+
 }
 
-struct key_id_s {
-    uint8_t row :4;
+enum key_change_e {
+    KC_PRESS   = 0,
+    KC_RELEASE = 1,
+};
+
+struct key_change_s {
+    enum key_change_e change :1;
+    uint8_t row :3;
     uint8_t col :4;
 };
 
-// Master and slave will write their active keys' ids to active_keys[0..ACTIVE_KEYS_CNT_MAX-1].
-// Master will write the active keys' ids received from slave in the following part of active_keys[].
-const size_t ACTIVE_KEYS_CNT_MAX = 8;
-struct key_id_s active_keys[2 * ACTIVE_KEYS_CNT_MAX] = { 0xFF };
-uint8_t io_keys_cnt = 0;
-uint8_t rx_keys_cnt = 0;
+const int WARN_CNTDN_START = 10;
+INT warn_cntdn = 0;
 
-void add_key(uint8_t row, uint8_t col) {
-    if (io_keys_cnt < ACTIVE_KEYS_CNT_MAX) {
-        active_keys[io_keys_cnt].row = row;
-        active_keys[io_keys_cnt].col = col;
-        ++io_keys_cnt;
+void init_warn_led() {
+    DDRD |= (1<<6);
+}
+
+void switch_warn_led(boolean on) {
+    if (on == true) {
+        PORTD |= (1<<6);
+    } else {
+        PORTD &= ~(1<<6);
+    }
+}
+
+void warning() {
+    switch_warn_led(true);
+    warn_cntdn = WARN_CNTDN_START;
+}
+
+void update_warn_led() {
+    if (warn_cntdn > 0) {
+        --warn_cntdn;
+        if (warn_cntdn == 0) {
+            switch_warn_led(false);
+        }
+    }
+}
+
+// Master and slave will write their changed keys' records to changed_keys[0..CHANGED_KEYS_CNT_MAX-1].
+// Master will write the changed keys' records received from slave to the following part of changed_keys[].
+const size_t CHANGED_KEYS_CNT_MAX = 8;
+struct key_id_s changed_keys[2 * CHANGED_KEYS_CNT_MAX] = { 0xFF };
+uint8_t io_keychange_cnt = 0;
+uint8_t rx_keychange_cnt = 0;
+
+void add_keychange(enum key_change_e change, uint8_t row, uint8_t col) {
+    if (io_keychange_cnt < CHANGED_KEYS_CNT_MAX) {
+        changed_keys[io_keychange_cnt].row = row;
+        changed_keys[io_keychange_cnt].col = col;
+        ++io_keychange_cnt;
     } else {
         warning();
     }
 }
 
-void clear_active_keys() {
-    memset(active_keys, 0xFF, sizeof(active_keys));
-    io_keys_cnt = 0;
-    rx_keys_cnt = 0;
+void clear_changed_keys() {
+    memset(changed_keys, 0xFF, sizeof(changed_keys));
+    io_keychange_cnt = 0;
+    rx_keychange_cnt = 0;
 }
 
-void tx_keys() {
+void tx_changed_keys() {
+    uart_putchar(io_keychange_cnt);
     int i;
-    for (i = 0; i < ACTIVE_KEYS_CNT_MAX; ++i) {
+    for (i = 0; i < io_keychange_cnt; ++i) {
         uart_putchar(i);
-        uart_putchar(active_keys[i]);
+        uart_putchar(changed_keys[i]);
     }
 }
 
@@ -135,20 +191,21 @@ void rx_keys() {
     while (uart_available() == 0) {
         _delay_ms(5);
     }
+    rx_keychange_cnt =
     int i = 0;
-    while (i < ACTIVE_KEYS_CNT_MAX - 1 || rx_cnt < ACTIVE_KEYS_CNT_MAX) {
+    while (i < CHANGED_KEYS_CNT_MAX - 1 || rx_cnt < CHANGED_KEYS_CNT_MAX) {
         i = uart_getchar();
-        if (i >= ACTIVE_KEYS_CNT_MAX) {
+        if (i >= CHANGED_KEYS_CNT_MAX) {
             // probabld received key id instead of i => next char should be a valid i
             i = uart_getchar();
             warning();
         }
-        active_keys[io_keys_cnt + i] = uart_getchar();
-        if (active_keys[io_keys_cnt + i] != 0xFF) {
-            rx_keys_cnt = i + 1;
+        changed_keys[io_keychange_cnt + i] = uart_getchar();
+        if (changed_keys[io_keychange_cnt + i] != 0xFF) {
+            rx_keychange_cnt = i + 1;
         }
     }
-    if (rx_cnt > ACTIVE_KEYS_CNT_MAX) {
+    if (rx_cnt > CHANGED_KEYS_CNT_MAX) {
         warning();
     }
 }
@@ -170,9 +227,9 @@ void process_keys() {
 
     // find level
     enum neo_levels_e level = LEVEL1;
-    for (i = 0; i < io_keys_cnt + rx_keys_cnt; ++i) {
-        if (active_keys[i] != 0xFF) { // XXX this check should not be necessary ...
-            union keyout_u kout = get_mapped_key(keymapping_mode_current, LEVEL0, active_keys[i].row, i < io_keys_cnt ? SIDE_MASTER : SIDE_SLAVE, active_keys[i].col);
+    for (i = 0; i < io_keychange_cnt + rx_keychange_cnt; ++i) {
+        if (changed_keys[i] != 0xFF) { // XXX this check should not be necessary ...
+            union keyout_u kout = get_mapped_key(keymapping_mode_current, LEVEL0, changed_keys[i].row, i < io_keychange_cnt ? SIDE_MASTER : SIDE_SLAVE, changed_keys[i].col);
             if (kout.type.type == KO_LEVEL_MOD) {
                 if (level == LEVEL1) {
                     level = kout.level_mod.level;
@@ -185,9 +242,9 @@ void process_keys() {
     }
 
     // fill keyboard_keys
-    for (i = 0; i < io_keys_cnt + rx_keys_cnt; ++i) {
-        if (active_keys[i] != 0xFF) { // XXX this check should not be necessary ...
-            union keyout_u kout = get_mapped_key(keymapping_mode_current, LEVEL0, active_keys[i].row, i < io_keys_cnt ? SIDE_MASTER : SIDE_SLAVE, active_keys[i].col);
+    for (i = 0; i < io_keychange_cnt + rx_keychange_cnt; ++i) {
+        if (changed_keys[i] != 0xFF) { // XXX this check should not be necessary ...
+            union keyout_u kout = get_mapped_key(keymapping_mode_current, LEVEL0, changed_keys[i].row, i < io_keychange_cnt ? SIDE_MASTER : SIDE_SLAVE, changed_keys[i].col);
             if (kout.type.type == KO_LEVEL_MOD) {
                 if (level == LEVEL1) {
                     level = kout.level_mod.level;
@@ -228,21 +285,25 @@ void process_keys() {
 }
 
 int main(void) {
-    uint8_t row;
-    for (row = 0; row < ROW_COUNT; ++row) {
-        activate_row(row);
-        row_state[CONTROLLER][row] = 0;
-        uint8_t col;
-        for (col = 0; col < COL_COUNT; ++col) {
-            row_state[CONTROLLER][row] |= (test_col(col) << row);
+    init();
+    while (true) {
+        update_warn_led();
+        uint8_t row;
+        for (row = 0; row < ROW_COUNT; ++row) {
+            activate_row(row);
+            row_state[CONTROLLER][row] = 0;
+            uint8_t col;
+            for (col = 0; col < COL_COUNT; ++col) {
+                row_state[CONTROLLER][row] |= (test_col(col) << row);
+            }
+            deactivate_row(row);
         }
-        deactivate_row(row);
-    }
 #if (CONTROLLER == CTLR_MASTER)
-    //    rx_slave(row_state[CTLR_SLAVE]);
-    process_states();
+        //    rx_slave(row_state[CTLR_SLAVE]);
+        process_states();
 #else
-    tx_states(row_state[CONTROLLER]);
+        tx_states(row_state[CONTROLLER]);
 #endif
+    }
     return 0;
 }
