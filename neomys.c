@@ -32,7 +32,7 @@ const    uint8_t         ROW_PORT_BIT [ROW_COUNT] = {      0,      1,      4,   
 
 // Functions for addressing rows
 
-inline void init_row(uint8_t row) {
+inline void init_row_io(uint8_t row) {
     // set up "open collector"
     *ROW_PORT_DDR [row] &= ~(1 << ROW_PORT_BIT[row]);
     *ROW_PORT_PORT[row] &= ~(1 << ROW_PORT_BIT[row]);
@@ -57,7 +57,7 @@ const    uint8_t         COL_PORT_BIT [COL_COUNT] = {      0,      1,      2,   
 
 // Functions for addressing cols
 
-inline void init_col(uint8_t col) {
+inline void init_col_io(uint8_t col) {
     // set up input with pull up
     *COL_PORT_DDR [col] &= ~(1 << COL_PORT_BIT[col]);
     *COL_PORT_PORT[col] &=  (1 << COL_PORT_BIT[col]);
@@ -74,7 +74,7 @@ const uint32_t UART_BAUD_RATE = 9600;
 
 // global symbols
 
-enum keymapping_mode_e kb_out = KMM_DE;
+enum keymapping_mode_e keymapping_mode_current = KMM_DE;
 
 
 // global functions
@@ -85,18 +85,121 @@ inline void init() {
     uart_init(UART_BAUD_RATE);
 
     for (row = 0; row < ROW_COUNT; ++row) {
-        init_row(row);
+        init_row_io(row);
     }
     for (col = 0; col < COL_COUNT; ++col) {
-        init_col(col);
+        init_col_io(col);
+    }
+
+    clear_active_keys();
+}
+
+struct key_id_s {
+    uint8_t row :4;
+    uint8_t col :4;
+};
+
+// Master and slave will write their active keys' ids to active_keys[0..ACTIVE_KEYS_CNT_MAX-1].
+// Master will write the active keys' ids received from slave in the following part of active_keys[].
+const size_t ACTIVE_KEYS_CNT_MAX = 8;
+struct key_id_s active_keys[2 * ACTIVE_KEYS_CNT_MAX] = { 0xFF };
+uint8_t io_keys_cnt = 0;
+uint8_t rx_keys_cnt = 0;
+
+void add_key(uint8_t row, uint8_t col) {
+    if (io_keys_cnt < ACTIVE_KEYS_CNT_MAX) {
+        active_keys[io_keys_cnt].row = row;
+        active_keys[io_keys_cnt].col = col;
+        ++io_keys_cnt;
+    } else {
+        warning();
     }
 }
 
-char row_state[2][ROW_COUNT];
-char prev_row_state[2][ROW_COUNT];
+void clear_active_keys() {
+    memset(active_keys, 0xFF, sizeof(active_keys));
+    io_keys_cnt = 0;
+    rx_keys_cnt = 0;
+}
 
+void tx_keys() {
+    int i;
+    for (i = 0; i < ACTIVE_KEYS_CNT_MAX; ++i) {
+        uart_putchar(i);
+        uart_putchar(active_keys[i]);
+    }
+}
 
-void process_states() {
+void rx_keys() {
+    int rx_cnt = 0;
+    while (uart_available() == 0) {
+        _delay_ms(5);
+    }
+    int i = 0;
+    while (i < ACTIVE_KEYS_CNT_MAX - 1 || rx_cnt < ACTIVE_KEYS_CNT_MAX) {
+        i = uart_getchar();
+        if (i >= ACTIVE_KEYS_CNT_MAX) {
+            // probabld received key id instead of i => next char should be a valid i
+            i = uart_getchar();
+            warning();
+        }
+        active_keys[io_keys_cnt + i] = uart_getchar();
+        if (active_keys[io_keys_cnt + i] != 0xFF) {
+            rx_keys_cnt = i + 1;
+        }
+    }
+    if (rx_cnt > ACTIVE_KEYS_CNT_MAX) {
+        warning();
+    }
+}
+
+const size_t KEYBOARD_KEYS_CNT = sizeof(keyboard_keys) / sizeof(keyboard_keys[0]);
+
+struct keyset_out_s {
+    uint8_t keyboard_modifier_keys;
+    uint8_t keyboard_keys[6];
+};
+
+const size_t KEYSET_QUEUE_CNT_MAX = 8;
+struct keyset_out_s keyset_queue[KEYSET_QUEUE_CNT_MAX];
+size_t keyset_queue_first = 0;
+size_t keyset_queue_last = 0;
+
+void process_keys() {
+    int i;
+
+    // find level
+    enum neo_levels_e level = LEVEL1;
+    for (i = 0; i < io_keys_cnt + rx_keys_cnt; ++i) {
+        if (active_keys[i] != 0xFF) { // XXX this check should not be necessary ...
+            union keyout_u kout = get_mapped_key(keymapping_mode_current, LEVEL0, active_keys[i].row, i < io_keys_cnt ? SIDE_MASTER : SIDE_SLAVE, active_keys[i].col);
+            if (kout.type.type == KO_LEVEL_MOD) {
+                if (level == LEVEL1) {
+                    level = kout.level_mod.level;
+                } else if (level == kout.level_mod.level) {
+                    levellock(level);
+                    // TODO
+                }
+            }
+        }
+    }
+
+    // fill keyboard_keys
+    for (i = 0; i < io_keys_cnt + rx_keys_cnt; ++i) {
+        if (active_keys[i] != 0xFF) { // XXX this check should not be necessary ...
+            union keyout_u kout = get_mapped_key(keymapping_mode_current, LEVEL0, active_keys[i].row, i < io_keys_cnt ? SIDE_MASTER : SIDE_SLAVE, active_keys[i].col);
+            if (kout.type.type == KO_LEVEL_MOD) {
+                if (level == LEVEL1) {
+                    level = kout.level_mod.level;
+                } else if (level == kout.level_mod.level) {
+                    levellock(level);
+                    // TODO
+                }
+            }
+        }
+    }
+    
+
     if (memcmp(prev_row_state, row_state, 2*ROW_SPACE*sizeof(row_state[0][0]))) {
 
         uint8_t side;

@@ -26,18 +26,18 @@ typedef enum keyout_type_e {
     KO_SHIFT,
     KO_ALTGR,
     //KO_COMPOSE,
-    KO_MOD_SHIFT_L,
-    KO_MOD_SHIFT_R,
-    KO_MOD3_L,
-    KO_MOD3_R,
-    KO_MOD4_L,
-    KO_MOD4_MOUSE,
+    KO_LEVEL_MOD,
 } kout_t;
 
 union keyout_u {
     struct {
         kout_t type;
     } type;
+    struct {
+        kout_t type;
+        enum neo_levels_e level;
+        uint8_t key;
+    } level_mod;
     struct {
         kout_t type;
         uint8_t key;
