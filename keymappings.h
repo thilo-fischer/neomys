@@ -50,10 +50,10 @@ union keyout_u {
     } compose;
 };
 
-const union keyout_u keymap[KMM_COUNT][LEVEL_COUNT][ROW_COUNT][2][COL_COUNT];
+const union keyout_u keymap[KMM_COUNT][ROW_COUNT][2][COL_COUNT][LEVEL_COUNT];
 
 inline union keyout_u get_mapped_key(enum keymapping_mode_e mode, enum controller_e controller, enum row_e row, uint8_t col, enum neo_levels_e level) {
-    return keymap[mode][level][row][side][col];
+    return keymap[mode][row][side][col][level];
 }
 
 #endif // _KEYMAPPINGS_H_
