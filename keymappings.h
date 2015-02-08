@@ -52,7 +52,7 @@ union keyout_u {
 
 const union keyout_u keymap[KMM_COUNT][LEVEL_COUNT][ROW_COUNT][2][COL_COUNT];
 
-inline union keyout_u get_mapped_key(enum keymapping_mode_e mode, enum neo_levels_e level, enum row_e row, uint8_t side, uint8_t col) {
+inline union keyout_u get_mapped_key(enum keymapping_mode_e mode, enum controller_e controller, enum row_e row, uint8_t col, enum neo_levels_e level) {
     return keymap[mode][level][row][side][col];
 }
 
