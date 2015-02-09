@@ -36,10 +36,12 @@ enum neo_levels_e {
 #define SIDE_LEFT  0
 #define SIDE_RIGHT 1
 
-enum controller_t {
+enum controller_e {
     CTLR_MASTER,
     CTLR_SLAVE
 };
+
+#define CTLR_COUNT 2
 
 // shall be defined by compiler switch (-DSIDE=SIDE_xyz)
 //#define SIDE SIDE_LEFT
@@ -50,5 +52,10 @@ enum controller_t {
 #else
 #  define CONTROLLER CTLR_SLAVE
 #endif
+
+enum warnings_e {
+    W_TOO_MANY_KEYS,
+    W_COMMUNICATION_FAILURE,
+};
 
 #endif // _NEOMYS_H_

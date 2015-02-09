@@ -110,7 +110,7 @@ const union keyout_u keymap[KMM_COUNT][ROW_COUNT][2][COL_COUNT][LEVEL_COUNT] = {
                     /* lvl4 > ^ */ { .single = {KO_PLAIN  , KEY_TILDE}}, // xxx
                     /* lvlM >pnt*/ { .single = {KO_PLAIN_X, KEY_PRINTSCREEN}},
                 },
-                    // remaining will be initialzed with zeros (=> KO_PHANTOM)
+                // remaining will be initialzed with zeros (=> KO_PHANTOM)
             },
         },
         // DE ROW_TOP
@@ -118,11 +118,11 @@ const union keyout_u keymap[KMM_COUNT][ROW_COUNT][2][COL_COUNT][LEVEL_COUNT] = {
             //  DE ROW_TOP left
             {
                 {
-                    /* lvl1 _M4 */ { .type   = {KO_MOD4_L}        },
-                    /* lvl2 _M4 */ { .type   = {KO_MOD4_L}        },
-                    /* lvl3 _M4 */ { .type   = {KO_MOD4_L}        },
-                    /* lvl4 _M4 */ { .type   = {KO_MOD4_L}        },
-                    /* lvlM _M4 */ { .type   = {KO_MOD4_L}        },
+                    /* lvl1 _M4 */ { .level_mod = {KO_LEVEL_MOD, LEVEL4} },
+                    /* lvl2 _M4 */ { .level_mod = {KO_LEVEL_MOD, LEVEL4} },
+                    /* lvl3 _M4 */ { .level_mod = {KO_LEVEL_MOD, LEVEL4} },
+                    /* lvl4 _M4 */ { .level_mod = {KO_LEVEL_MOD, LEVEL4} },
+                    /* lvlM _M4 */ { .level_mod = {KO_LEVEL_MOD, LEVEL4} },
                 },
                 {
                     /* lvl1 > x */ { .single = {KO_PLAIN  , KEY_X}},
@@ -214,15 +214,17 @@ const union keyout_u keymap[KMM_COUNT][ROW_COUNT][2][COL_COUNT][LEVEL_COUNT] = {
                 },
                 // remaining will be initialzed with zeros (=> KO_PHANTOM)
             },
-            // DE ROW_HOME
+        },
+        // DE ROW_HOME
+        {
+            // DE ROW_HOME left
             {
-                // DE ROW_HOME left
                 {
-                    /* lvl1 lM3 */ { .type   = {KO_MOD3_L}        },
-                    /* lvl2 lM3 */ { .type   = {KO_MOD3_L}        },
-                    /* lvl3 lM3 */ { .type   = {KO_MOD3_L}        },
-                    /* lvl4 lM3 */ { .type   = {KO_MOD3_L}        },
-                    /* lvlM lM3 */ { .type   = {KO_MOD3_L}        },
+                    /* lvl1 lM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
+                    /* lvl2 lM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
+                    /* lvl3 lM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
+                    /* lvl4 lM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
+                    /* lvlM lM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
                 },
                 {
                     /* lvl1 > u */ { .single = {KO_PLAIN  , KEY_U}},
@@ -306,11 +308,11 @@ const union keyout_u keymap[KMM_COUNT][ROW_COUNT][2][COL_COUNT][LEVEL_COUNT] = {
                     /* lvlM > . */ { .single = {KO_PLAIN  , KEY_PERIOD}}, // todo: mouse btn6
                 },
                 {
-                    /* lvl1 rM3 */ { .type   = {KO_MOD3_R        }},
-                    /* lvl2 rM3 */ { .type   = {KO_MOD3_R        }},
-                    /* lvl3 rM3 */ { .type   = {KO_MOD3_R        }},
-                    /* lvl4 rM3 */ { .type   = {KO_MOD3_R        }},
-                    /* lvlM rM3 */ { .type   = {KO_MOD3_R        }},
+                    /* lvl1 rM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
+                    /* lvl2 rM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
+                    /* lvl3 rM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
+                    /* lvl4 rM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
+                    /* lvlM rM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
                 },
                 // remaining will be initialzed with zeros (=> KO_PHANTOM)
             },
@@ -320,11 +322,11 @@ const union keyout_u keymap[KMM_COUNT][ROW_COUNT][2][COL_COUNT][LEVEL_COUNT] = {
             // DE ROW_BTM left
             {
                 {
-                    /* lvl1 lSH */ { .type   = {KO_MOD_SHIFT_L}   },
-                    /* lvl2 lSH */ { .type   = {KO_MOD_SHIFT_L}   },
-                    /* lvl3 lSH */ { .type   = {KO_MOD_SHIFT_L}   },
-                    /* lvl4 lSH */ { .type   = {KO_MOD_SHIFT_L}   },
-                    /* lvlM lSH */ { .type   = {KO_MOD_SHIFT_L}   },
+                    /* lvl1 lSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_LEFT_SHIFT} },
+                    /* lvl2 lSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_LEFT_SHIFT} },
+                    /* lvl3 lSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_LEFT_SHIFT} },
+                    /* lvl4 lSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_LEFT_SHIFT} },
+                    /* lvlM lSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_LEFT_SHIFT} },
                 },
                 {
                     /* lvl1 > ü */ { .single = {KO_PLAIN  , KEY_LEFT_BRACE}},
@@ -401,11 +403,11 @@ const union keyout_u keymap[KMM_COUNT][ROW_COUNT][2][COL_COUNT][LEVEL_COUNT] = {
                     /* lvlM > ; */ { .single = {KO_SHIFT  , KEY_COMMA}}, // todo: mouse btn4 double click
                 },
                 {
-                    /* lvl1 rSH */ { .type   = {KO_MOD_SHIFT_R   }},
-                    /* lvl2 rSH */ { .type   = {KO_MOD_SHIFT_R   }},
-                    /* lvl3 rSH */ { .type   = {KO_MOD_SHIFT_R   }},
-                    /* lvl4 rSH */ { .type   = {KO_MOD_SHIFT_R   }},
-                    /* lvlM rSH */ { .type   = {KO_MOD_SHIFT_R   }}, // todo: mouse btn6 double click
+                    /* lvl1 rSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_RIGHT_SHIFT} },
+                    /* lvl2 rSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_RIGHT_SHIFT} },
+                    /* lvl3 rSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_RIGHT_SHIFT} },
+                    /* lvl4 rSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_RIGHT_SHIFT} },
+                    /* lvlM rSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_RIGHT_SHIFT} },
                 },
                 // remaining will be initialzed with zeros (=> KO_PHANTOM)
             },
@@ -454,11 +456,11 @@ const union keyout_u keymap[KMM_COUNT][ROW_COUNT][2][COL_COUNT][LEVEL_COUNT] = {
                     /* lvlM alt */ { .single = {KO_PLAIN  , KEY_RIGHT_ALT}},
                 },
                 {
-                    /* lvl1 M4M */ { .type   = {KO_MOD4_MOUSE}},
-                    /* lvl2 M4M */ { .type   = {KO_MOD4_MOUSE}},
-                    /* lvl3 M4M */ { .type   = {KO_MOD4_MOUSE}},
-                    /* lvl4 M4M */ { .type   = {KO_MOD4_MOUSE}},
-                    /* lvlM M4M */ { .type   = {KO_MOD4_MOUSE}},
+                    /* lvl1 M4M */ { .level_mod = {KO_LEVEL_MOD, LEVEL4_MOUSE}},
+                    /* lvl2 M4M */ { .level_mod = {KO_LEVEL_MOD, LEVEL4_MOUSE}},
+                    /* lvl3 M4M */ { .level_mod = {KO_LEVEL_MOD, LEVEL4_MOUSE}},
+                    /* lvl4 M4M */ { .level_mod = {KO_LEVEL_MOD, LEVEL4_MOUSE}},
+                    /* lvlM M4M */ { .level_mod = {KO_LEVEL_MOD, LEVEL4_MOUSE}},
                 },
                 {
                     /* lvl1 spce*/ { .single = {KO_PLAIN  , KEY_SPACE}},
@@ -492,8 +494,8 @@ const union keyout_u keymap[KMM_COUNT][ROW_COUNT][2][COL_COUNT][LEVEL_COUNT] = {
             },
         },
     },
-   // KMM_NEO
-   // KMM_US
-   // KMM_DE_APPLE
-   // KMM_US_APPLE
+    // KMM_NEO
+    // KMM_US
+    // KMM_DE_APPLE
+    // KMM_US_APPLE
 };
