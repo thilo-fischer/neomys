@@ -10,7 +10,6 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <string.h>
-#include <stdbool.h>
 #include "usb_keyboard.h"
 #include "uart.h"
 #include "neomys.h"
@@ -113,7 +112,10 @@ const uint32_t UART_BAUD_RATE = 9600;
 
 // global symbols
 
-enum keymapping_mode_e keymapping_mode_current = KMM_DE;
+/**
+ * Keyboard layout the USB host is configured to use.
+ */
+enum keylayout_e keymapping_mode_current = TKL_DE;
 enum neo_levels_e level_current = LEVEL1;
 
 // key states
@@ -249,7 +251,7 @@ void process_key_states_deprecated() {
     enum neo_levels_e level = LEVEL1;
     for (i = 0; i < keychange_cnt; ++i) {
         if ((*(uint8_t*) &changed_keys[i]) != 0xFF) { // XXX this check should not be necessary ...
-            const union keyout_u *kout = get_mapped_key(keymapping_mode_current, LEVEL1, changed_keys[i].row, true ? CTLR_MASTER : CTLR_SLAVE, changed_keys[i].col);
+            const union keyseq_u *kout = get_mapped_key(keymapping_mode_current, LEVEL1, changed_keys[i].row, true ? CTLR_MASTER : CTLR_SLAVE, changed_keys[i].col);
             if (kout->type.type == KO_LEVEL_MOD) {
                 if (level == LEVEL1) {
                     level = kout->level_mod.level;
@@ -264,7 +266,7 @@ void process_key_states_deprecated() {
     // fill keyboard_keys
     for (i = 0; i < keychange_cnt; ++i) {
         if ((*(uint8_t*) &changed_keys[i]) != 0xFF) { // XXX this check should not be necessary ...
-            const union keyout_u *kout = get_mapped_key(keymapping_mode_current, LEVEL1, changed_keys[i].row, true ? CTLR_MASTER : CTLR_SLAVE, changed_keys[i].col);
+            const union keyseq_u *kout = get_mapped_key(keymapping_mode_current, LEVEL1, changed_keys[i].row, true ? CTLR_MASTER : CTLR_SLAVE, changed_keys[i].col);
             if (kout->type.type == KO_LEVEL_MOD) {
                 if (level == LEVEL1) {
                     level = kout->level_mod.level;
@@ -277,7 +279,7 @@ void process_key_states_deprecated() {
     }
 }    
 
-static inline const union keyout_u *get_current_mapped_key(enum controller_e controller, enum row_e row, uint8_t col) {
+static inline const union keyseq_u *get_current_mapped_key(enum controller_e controller, enum row_e row, uint8_t col) {
     return get_mapped_key(keymapping_mode_current, controller, row, col, level_current);
 }
 
@@ -296,7 +298,7 @@ void process_key_states() {
                     for (col = 0; col < COL_COUNT; ++col) {
                         if ((xor & (1 << col)) > 0) {
                             // key state at [row,col] has changed
-                            const union keyout_u *kout = get_current_mapped_key(controller, row, col);
+                            const union keyseq_u *kout = get_current_mapped_key(controller, row, col);
                             enum key_change_e kchange = (key_state[controller][row] & (1 << col)) > 0 ?
                                 KC_PRESS :
                                 KC_RELEASE;

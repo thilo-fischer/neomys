@@ -9,6 +9,7 @@
 #define _NEOMYS_H_
 
 #include <avr/io.h>
+#include <stdbool.h>
 
 enum row_e {
     ROW_NUM,
