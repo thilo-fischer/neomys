@@ -66,7 +66,7 @@ const    uint8_t         COL_PORT_BIT [COL_COUNT] = {      0,      1,      2,   
 static inline void init_col_io(uint8_t col) {
     // set up input with pull up
     *COL_PORT_DDR [col] &= ~(1 << COL_PORT_BIT[col]);
-    *COL_PORT_PORT[col] &=  (1 << COL_PORT_BIT[col]);
+    *COL_PORT_PORT[col] |=  (1 << COL_PORT_BIT[col]);
 }
 
 static inline char test_col(uint8_t col) {
@@ -189,26 +189,81 @@ int rx_keystates() {
     return 0;
 }
 
-
 // key changes
 
-enum key_change_e {
+enum key_change_e { // FIXME rename to key_state
     KC_PRESS   = 0,
     KC_RELEASE = 1,
 };
 
+enum key_change_e get_key_state(enum controller_e controller, enum row_e row, uint8_t col) {
+    return ((key_states[controller][row] & (1 << col)) > 0) ? KC_PRESS : KC_RELEASE;
+}
+
+void set_key_state(enum controller_e controller, enum row_e row, uint8_t col, enum key_change_e state) {
+    if (state == KC_PRESS) {
+        key_states[controller][row] |=  (1 << col);
+    } else {
+        key_states[controller][row] &= ~(1 << col);
+    }
+}
+
+struct key_id_s {
+    enum controller_e controller :1;
+    uint8_t row : 3;
+    uint8_t col : 3;
+};
+
 struct key_change_s {
-    enum key_change_e change; // :1;
     enum controller_e controller; // :1;
     uint8_t row; // :3;
     uint8_t col; // :3;
+    enum key_change_e change; // :1;
 };
+
+bool level_mod [LEVEL_COUNT] = { false };
+bool level_lock[LEVEL_COUNT] = { false };
 
 #define CHANGED_KEYS_CNT_MAX 8
 struct key_change_s changed_keys[CHANGED_KEYS_CNT_MAX] = {{ 0 }}; // XXX initialization is debugging aid only
 uint8_t keychange_cnt = 0;
 
-void add_levelchange(uint8_t row, enum controller_e controller, uint8_t col, enum key_change_e kchange) {};
+#define MAX_MOD_KEYS_PER_LEVEL 4
+struct key_id_s levelmod_keys[LEVEL_COUNT][MAX_MOD_KEYS_PER_LEVEL];
+
+void update_levelmod_keys() {
+    memset(levelmod_keys, 0xFF, sizeof(levelmod_keys));
+
+    enum controller_e controller;
+    for (controller = CTLR_MASTER; controller < CTLR_COUNT; ++controller) {
+        uint8_t row;
+        for (row = 0; row < ROW_COUNT; ++row) {
+            uint8_t col;
+            for (col = 0; col < COL_COUNT; ++col) {
+                const struct keyleveltranslations_s *klt = get_mapped_klt(controller, row, col);
+                if (klt->special == TT_LEVEL_MOD) {
+                    enum neo_levels_e level = klt->seq[0].level_mod.level;
+                    uint8_t i = 0;
+                    while ((*(uint8_t *) &levelmod_keys[level][i]) == 0xFF) {
+                        ++i;
+                        if (i >= MAX_MOD_KEYS_PER_LEVEL) {
+                            warning(W_PROGRAMMING_ERROR);
+                            return;
+                        }
+                    }
+                    levelmod_keys[level][i].controller = controller;
+                    levelmod_keys[level][i].row = row;
+                    levelmod_keys[level][i].col = col;
+                }
+            } // col loop
+        } // row loop
+    } // controller loop
+}
+
+void switch_layout(enum keylayout_e layout) {
+    // ...
+    update_levelmod_keys();
+}
 
 void add_keychange(uint8_t row, enum controller_e controller, uint8_t col, enum key_change_e change) {
     if (keychange_cnt < CHANGED_KEYS_CNT_MAX) {
@@ -283,10 +338,174 @@ static inline const union keyseq_u *get_current_mapped_key(enum controller_e con
     return get_mapped_key(keymapping_mode_current, controller, row, col, level_current);
 }
 
+// FIXME
+enum neo_levels_e determine_current_level() {
+    enum neo_levels_e l = LEVEL1;
+
+    if (level_lock[LEVEL3]) {
+        if (level_lock[LEVEL4] || level_lock[LEVEL4_MOUSE]) {
+            l = LEVEL6;
+        } else if (level_lock[LEVEL2]) {
+            l = LEVEL5;
+        } else {
+            l = LEVEL3;
+        }
+    } else if (level_lock[LEVEL4]) {
+        l = LEVEL4;
+    } else if (level_lock[LEVEL4_MOUSE]) {
+        l = LEVEL4_MOUSE;
+    } else if (level_lock[LEVEL2]) {
+        l = LEVEL2;
+    }
+
+    if (level_mod[LEVEL3]) {
+        if (level_mod[LEVEL4] || level_mod[LEVEL4_MOUSE]) {
+            l = LEVEL6;
+        } else if (level_mod[LEVEL2]) {
+            l = LEVEL5;
+        } else {
+            l = LEVEL3;
+        }
+    } else if (level_mod[LEVEL4]) {
+        l = LEVEL4;
+    } else if (level_mod[LEVEL4_MOUSE]) {
+        l = LEVEL4_MOUSE;
+    } else if (level_mod[LEVEL2]) {
+        l = LEVEL2;
+    }
+
+    if (level_mod[level] && level_lock[level]) {
+        if (level != LEVEL2 && level_mod[LEVEL2]) {
+            l = LEVEL2;
+        } else {
+            l = LEVEL1;
+        }
+    }
+
+    return l;
+}
+
+const struct keyleveltranslations_s *klt_charge[CHANGED_KEYS_CNT_MAX];
+uint8_t klt_charge_cnt = 0;
+
+void clear_klt_charge() {
+    klt_charge_cnt = 0;
+}
+
+void add_klt_charge(const struct keyleveltranslations_s *klt) {
+    klt_charge[klt_charge_cnt] = klt;
+    ++klt_charge_cnt;
+    if (klt_charge_cnt >= CHANGED_KEYS_CNT_MAX) {
+        warning(W_TOO_MANY_KEYS);
+    }
+}
+
+struct key_seq_step_s {
+    enum key_change_e change;
+    uint8_t key;
+    uint8_t modifier;
+};
+
+#define KEY_SEQ_QUEUE_LENGTH 32
+struct key_seq_step_s key_seq_queue[KEY_SEQ_QUEUE_LENGTH] = {0};
+size_t key_seq_queue_start = 0;
+size_t key_seq_queue_end   = 0;
+
+void key_seq_queue_enqueue(const struct key_seq_step_s *step) {
+    if (key_seq_queue_end <= key_seq_queue_start) {
+        key_seq_queue[end] = *step;
+        ++key_seq_queue_end;
+    }
+}
+
+struct key_seq_step_s step key_seq_queue_dequeue() {
+    
+}
+
+
+void process_klt_charge(enum neo_levels_e level) {
+    uint8_t i;
+    for (i = 0; i < klt_charge_cnt; ++i) {
+        const union keyseq_u *seq = &klt_charge[i]->seq[level];
+        switch (seq->type) {
+        case KO_PHANTOM:
+            // do nothing
+            break;
+        case KO_PLAIN:
+            seq->single.key;
+            break;
+        case KO_PLAIN_X:
+            break;
+        case KO_SHIFT:
+            break;
+        case KO_ALTGR:
+            break;
+        case KO_LEVEL_MOD:
+            warning(W_PROGRAMMING_ERROR);
+            break;
+        case KO_LEVEL_MOD_X:
+            seq->level_mod_X.key;
+            break;
+        default:
+            warning(W_PROGRAMMING_ERROR);
+        }
+    }
+}
+
+
+void process_keychange(row, controller, col) {
+    const struct keyleveltranslations_s *klt = get_mapped_klt(controller, row, col);
+    if (klt->special == TT_LEVEL_MOD) {
+        enum key_change_e kchange = get_key_state(controller, row, col);
+        enum neo_levels_e level = klt->seq[0].level_mod.level;
+        switch (level) {
+        case LEVEL4: // XXX
+            if (kchange == KC_PRESS) {
+                if (level_mod[LEVEL4_MOUSE] == true) {
+                    level_lock[LEVEL4_MOUSE] = true;
+                }
+                level_mod [level] = true;
+            } else {
+                level_mod[level] = !level_mod[level];
+            }
+            break;
+        case LEVEL4_MOUSE: // XXX
+            if (kchange == KC_PRESS) {
+                if (level_mod[LEVEL4] == true) {
+                    level_lock[LEVEL4] = true;
+                }
+                level_mod [level] = true;
+            } else {
+                level_mod[level] = !level_mod[level];
+            }
+            break;
+        default:
+            if (kchange == KC_PRESS) {
+                if (level_mod[level] == true) {
+                    level_lock[level] = !level_lock[level];
+                    level_mod [level] = false;
+                } else {
+                    level_mod [level] = true;
+                }
+            } else {
+                level_mod[level] = !level_mod[level];
+            }
+        }
+        if (klt->seq[0].type == LEVEL_MOD_X) {
+            add_klt_charge(klt);
+        }
+    } else {
+        add_klt_charge(klt);
+    }
+}
+
+
 void process_key_states() {
     // find changes
 
     if (memcmp(prev_key_state, key_state, sizeof(key_state))) {
+
+        clear_klt_charge();
 
         enum controller_e controller;
         for (controller = CTLR_MASTER; controller < CTLR_COUNT; ++controller) {
@@ -298,23 +517,31 @@ void process_key_states() {
                     for (col = 0; col < COL_COUNT; ++col) {
                         if ((xor & (1 << col)) > 0) {
                             // key state at [row,col] has changed
-                            const union keyseq_u *kout = get_current_mapped_key(controller, row, col);
-                            enum key_change_e kchange = (key_state[controller][row] & (1 << col)) > 0 ?
-                                KC_PRESS :
-                                KC_RELEASE;
-                            if (kout->type.type == KO_LEVEL_MOD) {
-                                add_levelchange(row, controller, col, kchange);
-                            } else {
-                                add_keychange(row, controller, col, kchange);
-                            }
+                            process_keychange(row, controller, col);
                         }
                     } // col loop
                 } // xor > 0
             } // row loop
-        } // side loop
+        } // controller loop
+
+        enum neo_levels_e level = determine_current_level();
+        process_klt_charge(level);
 
         memcpy(prev_key_state, key_state, sizeof(key_state));
     } // memcmp
+}
+
+static inline void init_usb_keyboard() {
+	// Initialize the USB, and then wait for the host to set configuration.
+	// If the Teensy is powered without a PC connected to the USB port,
+	// this will wait forever.
+	usb_init();
+	while (!usb_configured()) {
+		_delay_ms(5);
+	};
+	// Wait an extra second for the PC's operating system to load drivers
+	// and do whatever it does to actually be ready for input
+	_delay_ms(1000);
 }
 
 // global functions
@@ -329,23 +556,15 @@ static inline void init() {
         init_col_io(col);
     }
 
+    update_levelmod_keys();
+
     clear_changed_keys();
 
     init_warn_led();
 
     uart_init(UART_BAUD_RATE);
 
-    // Initialize the USB, and then wait for the host to set configuration.
-    // If the Teensy is powered without a PC connected to the USB port,
-    // this will wait forever.
-    usb_init();
-    while (!usb_configured()) {
-        _delay_ms(5);
-    };
-    // Wait an extra second for the PC's operating system to load drivers
-    // and do whatever it does to actually be ready for input
-    _delay_ms(1000);
-
+	init_usb_keyboard();
 }
 
 int main(void) {

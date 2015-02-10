@@ -57,6 +57,7 @@ enum controller_e {
 enum warnings_e {
     W_TOO_MANY_KEYS,
     W_COMMUNICATION_FAILURE,
+    W_PROGRAMMING_ERROR,
 };
 
 #endif // _NEOMYS_H_

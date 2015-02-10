@@ -70,7 +70,8 @@ union keyseq_u {
 
 enum translation_type_e {
     TT_DEFAULT = 0,
-    TT_IGNORE_SHIFTLOCK,   ///< Ignore if level2 is locked, i.e. use level1 key seq even if level2 lock is active. E.g. produce 6 instead of $ if level2 lock is active.
+    TT_IGNORE_SHIFTLOCK, ///< Ignore if level2 is locked, i.e. use level1 key seq even if level2 lock is active. E.g. produce 6 instead of $ if level2 lock is active.
+    TT_LEVEL_MOD,         ///< Key is level modifier key -> won't be translated and (except for level_mod_X keys) won't be communicated to USB host at all if a different target layout than Neo2 is being used.
 };
 
 struct keyleveltranslations_s {

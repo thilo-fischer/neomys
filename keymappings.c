@@ -158,13 +158,8 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
             //  DE ROW_TOP left
             {
                 {
-                    {
-                        /* lvl1 _M4 */ { .level_mod = {KO_LEVEL_MOD, LEVEL4} },
-                        /* lvl2 _M4 */ { .level_mod = {KO_LEVEL_MOD, LEVEL4} },
-                        /* lvl3 _M4 */ { .level_mod = {KO_LEVEL_MOD, LEVEL4} },
-                        /* lvl4 _M4 */ { .level_mod = {KO_LEVEL_MOD, LEVEL4} },
-                        /* lvlM _M4 */ { .level_mod = {KO_LEVEL_MOD, LEVEL4} },
-                    },
+                    .special = TT_LEVEL_MOD,
+                    .seq = {{ .level_mod = {KO_LEVEL_MOD, LEVEL4} }},
                 },
                 {
                     {
@@ -287,13 +282,8 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
             // DE ROW_HOME left
             {
                 {
-                    {
-                        /* lvl1 lM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
-                        /* lvl2 lM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
-                        /* lvl3 lM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
-                        /* lvl4 lM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
-                        /* lvlM lM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
-                    },
+                    .special = TT_LEVEL_MOD,
+                    .seq = {{ .level_mod = {KO_LEVEL_MOD, LEVEL3} }},
                 },
                 {
                     {
@@ -399,13 +389,8 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
                     },
                 },
                 {
-                    {
-                        /* lvl1 rM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
-                        /* lvl2 rM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
-                        /* lvl3 rM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
-                        /* lvl4 rM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
-                        /* lvlM rM3 */ { .level_mod = {KO_LEVEL_MOD, LEVEL3} },
-                    },
+                    .special = TT_LEVEL_MOD,
+                    .seq = {{ .level_mod = {KO_LEVEL_MOD, LEVEL3} }},
                 },
                 // remaining will be initialzed with zeros (=> KO_PHANTOM)
             },
@@ -415,13 +400,8 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
             // DE ROW_BTM left
             {
                 {
-                    {
-                        /* lvl1 lSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_LEFT_SHIFT} },
-                        /* lvl2 lSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_LEFT_SHIFT} },
-                        /* lvl3 lSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_LEFT_SHIFT} },
-                        /* lvl4 lSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_LEFT_SHIFT} },
-                        /* lvlM lSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_LEFT_SHIFT} },
-                    },
+                    .special = TT_LEVEL_MOD,
+                    .seq = {{ .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_LEFT_SHIFT} }},
                 },
                 {
                     {
@@ -520,13 +500,8 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
                     },
                 },
                 {
-                    {
-                        /* lvl1 rSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_RIGHT_SHIFT} },
-                        /* lvl2 rSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_RIGHT_SHIFT} },
-                        /* lvl3 rSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_RIGHT_SHIFT} },
-                        /* lvl4 rSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_RIGHT_SHIFT} },
-                        /* lvlM rSH */ { .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_RIGHT_SHIFT} },
-                    },
+                    .special = TT_LEVEL_MOD,
+                    .seq = {{ .level_mod_X = {KO_LEVEL_MOD_X, LEVEL2, KEY_RIGHT_SHIFT} }},
                 },
                 // remaining will be initialzed with zeros (=> KO_PHANTOM)
             },
@@ -585,13 +560,8 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
                     },
                 },
                 {
-                    {
-                        /* lvl1 M4M */ { .level_mod = {KO_LEVEL_MOD, LEVEL4_MOUSE}},
-                        /* lvl2 M4M */ { .level_mod = {KO_LEVEL_MOD, LEVEL4_MOUSE}},
-                        /* lvl3 M4M */ { .level_mod = {KO_LEVEL_MOD, LEVEL4_MOUSE}},
-                        /* lvl4 M4M */ { .level_mod = {KO_LEVEL_MOD, LEVEL4_MOUSE}},
-                        /* lvlM M4M */ { .level_mod = {KO_LEVEL_MOD, LEVEL4_MOUSE}},
-                    },
+                    .special = TT_LEVEL_MOD,
+                    .seq = {{ .level_mod = {KO_LEVEL_MOD, LEVEL4_MOUSE} }},
                 },
                 {
                     {
