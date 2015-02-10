@@ -17,42 +17,42 @@ const union keyout_u keymap[KMM_COUNT][ROW_COUNT][2][COL_COUNT][LEVEL_COUNT] = {
             {
                 {
                     /* lvl1 > 1 */ { .single = {KO_PLAIN  , KEY_1}},
-                    /* lvl2 > ! */ { .single = {KO_SHIFT  , KEY_1}},
+                    /* lvl2 > ° */ { .compose= {KO_SHIFT, KEY_TILDE, KO_PLAIN, KEY_SPACE}},
                     /* lvl3  -- */ { .type   = {KO_PHANTOM}       },
                     /* lvl4 > 1 */ { .single = {KO_PLAIN  , KEY_1}}, // xxx
                     /* lvlM >f1 */ { .single = {KO_PLAIN_X, KEY_F1}},
                 },
                 {
                     /* lvl1 > 2 */ { .single = {KO_PLAIN  , KEY_2}},
-                    /* lvl2 > " */ { .single = {KO_SHIFT  , KEY_2}},
+                    /* lvl2 > § */ { .single = {KO_SHIFT  , KEY_3}},
                     /* lvl3 > ² */ { .single = {KO_ALTGR  , KEY_2}},
                     /* lvl4 > 2 */ { .single = {KO_PLAIN  , KEY_2}}, // xxx
                     /* lvlM >f2 */ { .single = {KO_PLAIN_X, KEY_F2}},
                 },
                 {
                     /* lvl1 > 3 */ { .single = {KO_PLAIN  , KEY_3}},
-                    /* lvl2 > § */ { .single = {KO_SHIFT  , KEY_3}},
+                    /* lvl2 > 3 */ { .single = {KO_PLAIN  , KEY_3}}, // xxx
                     /* lvl3 > ³ */ { .single = {KO_ALTGR  , KEY_3}},
                     /* lvl4 > 3 */ { .single = {KO_PLAIN  , KEY_3}}, // xxx
                     /* lvlM >f3 */ { .single = {KO_PLAIN_X, KEY_F3}},
                 },
                 {
                     /* lvl1 > 4 */ { .single = {KO_PLAIN  , KEY_4}},
-                    /* lvl2 > $ */ { .single = {KO_SHIFT  , KEY_4}},
+                    /* lvl2 > $ */ { .single = {KO_SHIFT  , KEY_4}}, // FIXME
                     /* lvl3 > > */ { .single = {KO_SHIFT  , KEY_4}}, // FIXME
                     /* lvl4 > 4 */ { .single = {KO_PLAIN  , KEY_4}}, // xxx
                     /* lvlM >f4 */ { .single = {KO_PLAIN_X, KEY_F4}},
                 },
                 {
                     /* lvl1 > 5 */ { .single = {KO_PLAIN  , KEY_5}},
-                    /* lvl2 > % */ { .single = {KO_SHIFT  , KEY_5}},
+                    /* lvl2 > % */ { .single = {KO_SHIFT  , KEY_5}}, // FIXME
                     /* lvl3 > < */ { .single = {KO_SHIFT  , KEY_5}}, // FIXME
                     /* lvl4 > 5 */ { .single = {KO_PLAIN  , KEY_5}}, // xxx
                     /* lvlM >f5 */ { .single = {KO_PLAIN_X, KEY_F5}},
                 },
                 {
                     /* lvl1 > 6 */ { .single = {KO_PLAIN  , KEY_6}},
-                    /* lvl2 > & */ { .single = {KO_SHIFT  , KEY_6}},
+                    /* lvl2 > $ */ { .single = {KO_SHIFT  , KEY_4}},
                     /* lvl3  -- */ { .type   = {KO_PHANTOM}       },
                     /* lvl4 > 6 */ { .single = {KO_PLAIN  , KEY_6}}, // xxx
                     /* lvlM >f6 */ { .single = {KO_PLAIN_X, KEY_F6}},
@@ -63,36 +63,36 @@ const union keyout_u keymap[KMM_COUNT][ROW_COUNT][2][COL_COUNT][LEVEL_COUNT] = {
             {
                 {
                     /* lvl1 > 7 */ { .single = {KO_PLAIN  , KEY_7}},
-                    /* lvl2 > / */ { .single = {KO_SHIFT  , KEY_7}},
+                    /* lvl2 > € */ { .single = {KO_ALTGR  , KEY_E}},
                     /* lvl3  -- */ { .type   = {KO_PHANTOM}       },
                     /* lvl4 > 7 */ { .single = {KO_PLAIN  , KEY_7}}, // xxx
                     /* lvlM >f7 */ { .single = {KO_PLAIN_X, KEY_F7}},
                 },
                 {
                     /* lvl1 > 8 */ { .single = {KO_PLAIN  , KEY_8}},
-                    /* lvl2 > ( */ { .single = {KO_SHIFT  , KEY_8}},
+                    /* lvl2 > ,,*/ { .compose= {KO_PLAIN, KEY_COMMA, KO_PLAIN, KEY_COMMA}}, // FIXME misuse of compose, invent "double" for things like this
                     /* lvl3 > , */ { .single = {KO_PLAIN  , KEY_COMMA}},
                     /* lvl4 >tab*/ { .single = {KO_PLAIN_X, KEY_TAB}},
                     /* lvlM >f8 */ { .single = {KO_PLAIN_X, KEY_F8}},
                 },
                 {
                     /* lvl1 > 9 */ { .single = {KO_PLAIN  , KEY_9}},
-                    /* lvl2 > ) */ { .single = {KO_SHIFT  , KEY_9}},
-                    /* lvl3 > ' */ { .single = {KO_SHIFT  , KEY_BACKSLASH}},
+                    /* lvl2 > ``*/ { .single = {KO_SHIFT  , KEY_9}}, // FIXME
+                    /* lvl3 > ` */ { .single = {KO_SHIFT  , KEY_BACKSLASH}},
                     /* lvl4 > / */ { .single = {KO_PLAIN_X, KEYPAD_SLASH}},
                     /* lvlM >f9 */ { .single = {KO_PLAIN_X, KEY_F9}},
                 },
                 {
                     /* lvl1 > 0 */ { .single = {KO_PLAIN  , KEY_0}},
-                    /* lvl2 > = */ { .single = {KO_SHIFT  , KEY_0}},
+                    /* lvl2 > ''*/ { .compose= {KO_SHIFT  , KEY_BACKSLASH, KO_SHIFT  , KEY_BACKSLASH}}, // FIXME misuse of compose, invent "double" for things like this
                     /* lvl3 > ' */ { .single = {KO_SHIFT  , KEY_BACKSLASH}},
                     /* lvl4 > * */ { .single = {KO_PLAIN_X, KEYPAD_ASTERIX}},
                     /* lvlM >f10*/ { .single = {KO_PLAIN_X, KEY_F10}},
                 },
                 {
                     /* lvl1 > - */ { .single = {KO_PLAIN  , KEY_SLASH}},
-                    /* lvl2 > _ */ { .single = {KO_SHIFT  , KEY_SLASH}},
-                    /* lvl3 > _ */ { .type   = {KO_PHANTOM}       },
+                    /* lvl2 > --*/ { .compose= {KO_PLAIN  , KEY_SLASH, KO_PLAIN  , KEY_SLASH}}, // FIXME misuse of compose, invent "double" for things like this
+                    /* lvl3  -- */ { .type   = {KO_PHANTOM}       },
                     /* lvl4 > - */ { .single = {KO_PLAIN_X, KEYPAD_MINUS}},
                     /* lvlM >f11*/ { .single = {KO_PLAIN_X, KEY_F11}},
                 },
