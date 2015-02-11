@@ -511,22 +511,12 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
             // DE ROW_SPACE left
             {
                 {
-                    {
-                        /* lvl1 ctrl*/ { .single = {KO_PLAIN  , KEY_LEFT_CTRL}},
-                        /* lvl2 ctrl*/ { .single = {KO_SHIFT  , KEY_LEFT_CTRL}},
-                        /* lvl3 ctrl*/ { .single = {KO_PLAIN  , KEY_LEFT_CTRL}},
-                        /* lvl4 ctrl*/ { .single = {KO_PLAIN  , KEY_LEFT_CTRL}},
-                        /* lvlM ctrl*/ { .single = {KO_PLAIN  , KEY_LEFT_CTRL}},
-                    },
+                    .special = TT_LEVEL_MOD,
+                    .seq = {{ .single = {KO_MODIFIER, KEY_LEFT_CTRL} }},
                 },
                 {
-                    {
-                        /* lvl1 win */ { .single = {KO_PLAIN  , KEY_LEFT_GUI}}, // XXX correct?
-                        /* lvl2 win */ { .single = {KO_SHIFT  , KEY_LEFT_GUI}}, // XXX correct?
-                        /* lvl3 win */ { .single = {KO_PLAIN  , KEY_LEFT_GUI}}, // XXX correct?
-                        /* lvl4 win */ { .single = {KO_PLAIN  , KEY_LEFT_GUI}}, // XXX correct?
-                        /* lvlM win */ { .single = {KO_PLAIN  , KEY_LEFT_GUI}}, // XXX correct?
-                    },
+                    .special = TT_LEVEL_MOD,
+                    .seq = {{ .single = {KO_MODIFIER, KEY_LEFT_GUI}}, // XXX correct?
                 },
                 {
                     {
@@ -538,26 +528,15 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
                     },
                 },
                 {
-                    {
-                        /* lvl1 alt */ { .single = {KO_PLAIN  , KEY_LEFT_ALT}},
-                        /* lvl2 alt */ { .single = {KO_SHIFT  , KEY_LEFT_ALT}},
-                        /* lvl3 alt */ { .single = {KO_PLAIN  , KEY_LEFT_ALT}},
-                        /* lvl4 alt */ { .single = {KO_PLAIN  , KEY_LEFT_ALT}},
-                        /* lvlM alt */ { .single = {KO_PLAIN  , KEY_LEFT_ALT}},
-                    },
-                    // remaining will be initialzed with zeros (=> KO_PHANTOM)
+                    .special = TT_LEVEL_MOD,
+                    .seq = {{ .single = {KO_MODIFIER, KEY_LEFT_ALT}},
                 },
             },
             // DE ROW_SPACE right
             {
                 {
-                    {
-                        /* lvl1 alt */ { .single = {KO_PLAIN  , KEY_RIGHT_ALT}},
-                        /* lvl2 alt */ { .single = {KO_SHIFT  , KEY_RIGHT_ALT}},
-                        /* lvl3 alt */ { .single = {KO_PLAIN  , KEY_RIGHT_ALT}},
-                        /* lvl4 alt */ { .single = {KO_PLAIN  , KEY_RIGHT_ALT}},
-                        /* lvlM alt */ { .single = {KO_PLAIN  , KEY_RIGHT_ALT}},
-                    },
+                    .special = TT_LEVEL_MOD,
+                    .seq = {{ .single = {KO_MODIFIER, KEY_RIGHT_ALT}},
                 },
                 {
                     .special = TT_LEVEL_MOD,
@@ -573,13 +552,8 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
                     },
                 },
                 {
-                    {
-                        /* lvl1 win */ { .single = {KO_PLAIN  , KEY_RIGHT_GUI}}, // XXX correct?
-                        /* lvl2 win */ { .single = {KO_SHIFT  , KEY_RIGHT_GUI}}, // XXX correct?
-                        /* lvl3 win */ { .single = {KO_PLAIN  , KEY_RIGHT_GUI}}, // XXX correct?
-                        /* lvl4 win */ { .single = {KO_PLAIN  , KEY_RIGHT_GUI}}, // XXX correct?
-                        /* lvlM win */ { .single = {KO_PLAIN  , KEY_RIGHT_GUI}}, // XXX correct?
-                    },
+                    .special = TT_LEVEL_MOD,
+                    .seq = {{ .single = {KO_MODIFIER, KEY_RIGHT_GUI}}, // XXX correct?
                 },
                 {
                     {
@@ -591,13 +565,8 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
                     },
                 },
                 {
-                    {
-                        /* lvl1 ctrl*/ { .single = {KO_PLAIN  , KEY_RIGHT_CTRL}},
-                        /* lvl2 ctrl*/ { .single = {KO_SHIFT  , KEY_RIGHT_CTRL}},
-                        /* lvl3 ctrl*/ { .single = {KO_PLAIN  , KEY_RIGHT_CTRL}},
-                        /* lvl4 ctrl*/ { .single = {KO_PLAIN  , KEY_RIGHT_CTRL}},
-                        /* lvlM ctrl*/ { .single = {KO_PLAIN  , KEY_RIGHT_CTRL}},
-                    },
+                    .special = TT_LEVEL_MOD,
+                    .seq = {{ .single = {KO_MODIFIER, KEY_RIGHT_CTRL}},
                 },
                 // remaining will be initialzed with zeros (=> KO_PHANTOM)
             },

@@ -385,15 +385,21 @@ enum neo_levels_e determine_current_level() {
     return l;
 }
 
-const struct keyleveltranslations_s *klt_charge[CHANGED_KEYS_CNT_MAX];
+struct klt_changes_s {
+    const struct keyleveltranslations_s *klt;
+    enum key_change_e change;
+};
+
+const struct klt_changes_s *klt_charge[CHANGED_KEYS_CNT_MAX];
 uint8_t klt_charge_cnt = 0;
 
 void clear_klt_charge() {
     klt_charge_cnt = 0;
 }
 
-void add_klt_charge(const struct keyleveltranslations_s *klt) {
-    klt_charge[klt_charge_cnt] = klt;
+void add_klt_charge(const struct keyleveltranslations_s *klt, enum key_change_e kchange) {
+    klt_charge[klt_charge_cnt].klt = klt;
+    klt_charge[klt_charge_cnt].change = kchange;
     ++klt_charge_cnt;
     if (klt_charge_cnt >= CHANGED_KEYS_CNT_MAX) {
         warning(W_TOO_MANY_KEYS);
@@ -411,40 +417,77 @@ struct key_seq_step_s key_seq_queue[KEY_SEQ_QUEUE_LENGTH] = {0};
 size_t key_seq_queue_start = 0;
 size_t key_seq_queue_end   = 0;
 
+bool key_seq_queue_empty() {
+    return key_seq_queue_start == key_seq_queue_end;
+}
+
+bool key_seq_queue_full() {
+    if (key_seq_queue_start <= key_seq_queue_end) {
+        return key_seq_queue_start == 0 && key_seq_queue_end == KEY_SEQ_QUEUE_LENGTH - 1;
+    } else {
+        return key_seq_queue_end == key_seq_queue_start - 1;
+    }
+}
+
 void key_seq_queue_enqueue(const struct key_seq_step_s *step) {
-    if (key_seq_queue_end <= key_seq_queue_start) {
-        key_seq_queue[end] = *step;
-        ++key_seq_queue_end;
+    if (key_seq_queue_full()) {
+        warning(W_TOO_MANY_KEYS);
+        return;
+    }
+    key_seq_queue[key_seq_queue_end] = *step;
+    ++key_seq_queue_end;
+    if (key_seq_queue_end == KEY_SEQ_QUEUE_LENGTH) {
+        key_seq_queue_end = 0;
     }
 }
 
 struct key_seq_step_s step key_seq_queue_dequeue() {
-    
+    if (key_seq_queue_empty()) {
+        warning(W_PROGRAMMING_ERROR);
+        return;
+    }
+    struct key_seq_step_s step* result = &key_seq_queue[key_seq_queue_start];
+    ++key_seq_queue_start;
+    if (key_seq_queue_start == KEY_SEQ_QUEUE_LENGTH) {
+        key_seq_queue_start = 0;
+    }
+    return *result;
 }
 
+#define KEY_ANY_SHIFT (KEY_SHIFT | KEY_LEFT_SHIFT | KEY_RIGHT_SHIFT)
+uint8_t modifiers = 0;
+bool modifiers_changed = false;
 
 void process_klt_charge(enum neo_levels_e level) {
     uint8_t i;
     for (i = 0; i < klt_charge_cnt; ++i) {
-        const union keyseq_u *seq = &klt_charge[i]->seq[level];
+        const union keyseq_u *seq = &klt_charge[i].klt->seq[level];
         switch (seq->type) {
         case KO_PHANTOM:
             // do nothing
             break;
         case KO_PLAIN:
-            seq->single.key;
+            struct key_seq_step_s step = { .change = klt_charge[i].change, .key = seq->single.key, .modifier = (modifiers & ~KEY_ANY_SHIFT)};
+            key_seq_queue_enqueue(&step);
             break;
         case KO_PLAIN_X:
+            struct key_seq_step_s step = { .change = klt_charge[i].change, .key = seq->single.key, .modifier = modifiers};
+            key_seq_queue_enqueue(&step);
             break;
         case KO_SHIFT:
+            struct key_seq_step_s step = { .change = klt_charge[i].change, .key = seq->single.key, .modifier = (modifiers | KEY_SHIFT)};
+            key_seq_queue_enqueue(&step);
             break;
         case KO_ALTGR:
+            struct key_seq_step_s step = { .change = klt_charge[i].change, .key = seq->single.key, .modifier = (modifiers | KEY_CTRL | KEY_ALT)}; // FIXME !! need AltGr !!
+            key_seq_queue_enqueue(&step);
             break;
         case KO_LEVEL_MOD:
             warning(W_PROGRAMMING_ERROR);
             break;
+        case KO_MODIFIER:
         case KO_LEVEL_MOD_X:
-            seq->level_mod_X.key;
+            warning(W_PROGRAMMING_ERROR);
             break;
         default:
             warning(W_PROGRAMMING_ERROR);
@@ -455,8 +498,9 @@ void process_klt_charge(enum neo_levels_e level) {
 
 void process_keychange(row, controller, col) {
     const struct keyleveltranslations_s *klt = get_mapped_klt(controller, row, col);
+    enum key_change_e kchange = get_key_state(controller, row, col);
     if (klt->special == TT_LEVEL_MOD) {
-        enum key_change_e kchange = get_key_state(controller, row, col);
+        if (klt->seq[0].type.type == KO_LEVEL_MOD || klt->seq[0].type.type == KO_LEVEL_MOD_X) {
         enum neo_levels_e level = klt->seq[0].level_mod.level;
         switch (level) {
         case LEVEL4: // XXX
@@ -491,11 +535,23 @@ void process_keychange(row, controller, col) {
                 level_mod[level] = !level_mod[level];
             }
         }
-        if (klt->seq[0].type == LEVEL_MOD_X) {
-            add_klt_charge(klt);
+        }
+        if (klt->seq[0].type.type == KO_MODIFIER || klt->seq[0].type.type == KO_LEVEL_MOD_X) {
+            uint8_t key;
+            if (klt->seq[0].type.type == KO_MODIFIER) {
+                key = klt->seq[0].single.key;
+            } else {
+                key = klt->seq[0].level_mod_X.key;
+            }
+            if (kchange == KC_PRESS) {
+                modifiers |=  key;
+            } else {
+                modifiers &= ~key;
+            }
+            modifiers_changed = true;
         }
     } else {
-        add_klt_charge(klt);
+        add_klt_charge(klt, kchange);
     }
 }
 
@@ -526,6 +582,12 @@ void process_key_states() {
 
         enum neo_levels_e level = determine_current_level();
         process_klt_charge(level);
+
+        if (modifiers_changed == true) {
+            struct key_seq_step_s step = { .change = KC_PRESS, .key = 0, .modifier = modifiers};
+            key_seq_queue_enqueue(&step);            
+            modifiers_changed = false;
+        }
 
         memcpy(prev_key_state, key_state, sizeof(key_state));
     } // memcmp
@@ -567,6 +629,16 @@ static inline void init() {
 	init_usb_keyboard();
 }
 
+uint8_t *find_keyboard_key(uint8_t key) {
+    uint8_t i;
+    for (i = 0; i < 6; ++i) {
+        if (keyboard_keys[i] == key) {
+            return &keyboard_keys[i];
+        }
+    }
+    return NULL;
+}
+
 int main(void) {
     init();
     while (true) {
@@ -579,9 +651,29 @@ int main(void) {
         } else {
             warning(W_COMMUNICATION_FAILURE);
         }
+
+        struct key_seq_step_s step = key_seq_queue_dequeue();
+        if (step.change == KC_PRESS) {
+            uint8_t *free = find_keyboard_key(0);
+            if (free == NULL) {
+                warning(W_TOO_MANY_KEYS);
+            } else {
+                *free = step.key;
+            }
+        } else {
+            uint8_t *pos = find_keyboard_key(step.key);
+            if (pos == NULL) {
+                warning(W_PROGRAMMING_ERROR);
+            } else {
+                *pos = 0;
+            }
+        }
+        keyboard_modifier_keys = step.modifier;
+        usb_keyboard_send();
 #else
         tx_keystates();
 #endif
     }
+    _delay_ms(20);    
     return 0;
 }

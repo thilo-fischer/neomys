@@ -41,6 +41,7 @@ typedef enum keyseq_type_e {
     KO_ALTGR,          ///< translate hardware key press to a AltGr+key press
     KO_LEVEL_MOD,      ///< This key operates as a level modifier and will not be sent to the USB host if a different target layout than Neo2 is being used.
     KO_LEVEL_MOD_X,    ///< This key operates as a level modifier that will be sent to the USB host if combined with KO_PLAIN_X even if a different target layout than Neo2 is being used. (This applies to the SHIFT key.) // FIXME find appropriate name
+    KO_MODIFIER,      ///< A modifier key that does not have any effect on the current level.
 } kseq_type_t;
 
 union keyseq_u {
@@ -71,7 +72,9 @@ union keyseq_u {
 enum translation_type_e {
     TT_DEFAULT = 0,
     TT_IGNORE_SHIFTLOCK, ///< Ignore if level2 is locked, i.e. use level1 key seq even if level2 lock is active. E.g. produce 6 instead of $ if level2 lock is active.
-    TT_LEVEL_MOD,         ///< Key is level modifier key -> won't be translated and (except for level_mod_X keys) won't be communicated to USB host at all if a different target layout than Neo2 is being used.
+    // FIXME merge TT_LEVEL_MOD and TT_MODIFIER !!
+    TT_LEVEL_MOD,        ///< Key is level modifier key -> won't be translated and (except for level_mod_X keys) won't be communicated to USB host at all if a different target layout than Neo2 is being used.
+    TT_MODIFIER,         ///< A modifier key that does not have any effect on and is not effected by the current level.
 };
 
 struct keyleveltranslations_s {
