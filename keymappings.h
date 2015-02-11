@@ -88,4 +88,8 @@ inline const union keyseq_u *get_mapped_key(enum keylayout_e mode, enum controll
     return &(keymap[mode][row][controller][col].seq[level]);
 }
 
+inline const struct keyleveltranslations_s *get_mapped_klt(enum keylayout_e mode, enum controller_e controller, enum row_e row, uint8_t col) {
+    return &(keymap[mode][row][controller][col]);
+}
+
 #endif // _KEYMAPPINGS_H_

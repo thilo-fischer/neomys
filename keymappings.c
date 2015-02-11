@@ -516,7 +516,7 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
                 },
                 {
                     .special = TT_LEVEL_MOD,
-                    .seq = {{ .single = {KO_MODIFIER, KEY_LEFT_GUI}}, // XXX correct?
+                    .seq = {{ .single = {KO_MODIFIER, KEY_LEFT_GUI} }}, // XXX correct?
                 },
                 {
                     {
@@ -529,14 +529,14 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
                 },
                 {
                     .special = TT_LEVEL_MOD,
-                    .seq = {{ .single = {KO_MODIFIER, KEY_LEFT_ALT}},
+                    .seq = {{ .single = {KO_MODIFIER, KEY_LEFT_ALT} }},
                 },
             },
             // DE ROW_SPACE right
             {
                 {
                     .special = TT_LEVEL_MOD,
-                    .seq = {{ .single = {KO_MODIFIER, KEY_RIGHT_ALT}},
+                    .seq = {{ .single = {KO_MODIFIER, KEY_RIGHT_ALT} }},
                 },
                 {
                     .special = TT_LEVEL_MOD,
@@ -553,7 +553,7 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
                 },
                 {
                     .special = TT_LEVEL_MOD,
-                    .seq = {{ .single = {KO_MODIFIER, KEY_RIGHT_GUI}}, // XXX correct?
+                    .seq = {{ .single = {KO_MODIFIER, KEY_RIGHT_GUI} }}, // XXX correct?
                 },
                 {
                     {
@@ -566,7 +566,7 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
                 },
                 {
                     .special = TT_LEVEL_MOD,
-                    .seq = {{ .single = {KO_MODIFIER, KEY_RIGHT_CTRL}},
+                    .seq = {{ .single = {KO_MODIFIER, KEY_RIGHT_CTRL} }},
                 },
                 // remaining will be initialzed with zeros (=> KO_PHANTOM)
             },

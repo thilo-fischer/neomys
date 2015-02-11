@@ -118,6 +118,15 @@ const uint32_t UART_BAUD_RATE = 9600;
 enum keylayout_e keymapping_mode_current = TKL_DE;
 enum neo_levels_e level_current = LEVEL1;
 
+static inline const union keyseq_u *get_current_mapped_key(enum controller_e controller, enum row_e row, uint8_t col) {
+    return get_mapped_key(keymapping_mode_current, controller, row, col, level_current);
+}
+
+static inline const struct keyleveltranslations_s *get_current_mapped_klt(enum controller_e controller, enum row_e row, uint8_t col) {
+    return get_mapped_klt(keymapping_mode_current, controller, row, col);
+}
+
+
 // key states
 // Transmit states of all keys from slave to master. This is the simplest, most deterministic and probably most fail-safe approach (compared to sending only pressed keys or key state changes).
 
@@ -197,14 +206,14 @@ enum key_change_e { // FIXME rename to key_state
 };
 
 enum key_change_e get_key_state(enum controller_e controller, enum row_e row, uint8_t col) {
-    return ((key_states[controller][row] & (1 << col)) > 0) ? KC_PRESS : KC_RELEASE;
+    return ((key_state[controller][row] & (1 << col)) > 0) ? KC_PRESS : KC_RELEASE;
 }
 
 void set_key_state(enum controller_e controller, enum row_e row, uint8_t col, enum key_change_e state) {
     if (state == KC_PRESS) {
-        key_states[controller][row] |=  (1 << col);
+        key_state[controller][row] |=  (1 << col);
     } else {
-        key_states[controller][row] &= ~(1 << col);
+        key_state[controller][row] &= ~(1 << col);
     }
 }
 
@@ -240,7 +249,7 @@ void update_levelmod_keys() {
         for (row = 0; row < ROW_COUNT; ++row) {
             uint8_t col;
             for (col = 0; col < COL_COUNT; ++col) {
-                const struct keyleveltranslations_s *klt = get_mapped_klt(controller, row, col);
+                const struct keyleveltranslations_s *klt = get_current_mapped_klt(controller, row, col);
                 if (klt->special == TT_LEVEL_MOD) {
                     enum neo_levels_e level = klt->seq[0].level_mod.level;
                     uint8_t i = 0;
@@ -282,62 +291,6 @@ void clear_changed_keys() {
     keychange_cnt = 0;
 }
 
-
-// bitfield
-uint8_t level_modifiers = 0;
-
-
-const size_t KEYBOARD_KEYS_CNT = sizeof(keyboard_keys) / sizeof(keyboard_keys[0]);
-
-struct keyset_out_s {
-    uint8_t keyboard_modifier_keys;
-    uint8_t keyboard_keys[6];
-};
-
-#define KEYSET_QUEUE_CNT_MAX 8
-struct keyset_out_s keyset_queue[KEYSET_QUEUE_CNT_MAX];
-size_t keyset_queue_first = 0;
-size_t keyset_queue_last = 0;
-
-void process_key_states_deprecated() {
-    int i;
-
-    // find level
-    enum neo_levels_e level = LEVEL1;
-    for (i = 0; i < keychange_cnt; ++i) {
-        if ((*(uint8_t*) &changed_keys[i]) != 0xFF) { // XXX this check should not be necessary ...
-            const union keyseq_u *kout = get_mapped_key(keymapping_mode_current, LEVEL1, changed_keys[i].row, true ? CTLR_MASTER : CTLR_SLAVE, changed_keys[i].col);
-            if (kout->type.type == KO_LEVEL_MOD) {
-                if (level == LEVEL1) {
-                    level = kout->level_mod.level;
-                } else if (level == kout->level_mod.level) {
-                    //levellock(level);
-                    // TODO
-                }
-            }
-        }
-    }
-
-    // fill keyboard_keys
-    for (i = 0; i < keychange_cnt; ++i) {
-        if ((*(uint8_t*) &changed_keys[i]) != 0xFF) { // XXX this check should not be necessary ...
-            const union keyseq_u *kout = get_mapped_key(keymapping_mode_current, LEVEL1, changed_keys[i].row, true ? CTLR_MASTER : CTLR_SLAVE, changed_keys[i].col);
-            if (kout->type.type == KO_LEVEL_MOD) {
-                if (level == LEVEL1) {
-                    level = kout->level_mod.level;
-                } else if (level == kout->level_mod.level) {
-                    //levellock(level);
-                    // TODO
-                }
-            }
-        }
-    }
-}    
-
-static inline const union keyseq_u *get_current_mapped_key(enum controller_e controller, enum row_e row, uint8_t col) {
-    return get_mapped_key(keymapping_mode_current, controller, row, col, level_current);
-}
-
 // FIXME
 enum neo_levels_e determine_current_level() {
     enum neo_levels_e l = LEVEL1;
@@ -374,8 +327,8 @@ enum neo_levels_e determine_current_level() {
         l = LEVEL2;
     }
 
-    if (level_mod[level] && level_lock[level]) {
-        if (level != LEVEL2 && level_mod[LEVEL2]) {
+    if (level_mod[l] && level_lock[l]) {
+        if (l != LEVEL2 && level_mod[LEVEL2]) {
             l = LEVEL2;
         } else {
             l = LEVEL1;
@@ -390,7 +343,7 @@ struct klt_changes_s {
     enum key_change_e change;
 };
 
-const struct klt_changes_s *klt_charge[CHANGED_KEYS_CNT_MAX];
+struct klt_changes_s klt_charge[CHANGED_KEYS_CNT_MAX];
 uint8_t klt_charge_cnt = 0;
 
 void clear_klt_charge() {
@@ -413,7 +366,7 @@ struct key_seq_step_s {
 };
 
 #define KEY_SEQ_QUEUE_LENGTH 32
-struct key_seq_step_s key_seq_queue[KEY_SEQ_QUEUE_LENGTH] = {0};
+struct key_seq_step_s key_seq_queue[KEY_SEQ_QUEUE_LENGTH] = {{0}};
 size_t key_seq_queue_start = 0;
 size_t key_seq_queue_end   = 0;
 
@@ -441,12 +394,14 @@ void key_seq_queue_enqueue(const struct key_seq_step_s *step) {
     }
 }
 
-struct key_seq_step_s step key_seq_queue_dequeue() {
+const struct key_seq_step_s NULL_STEP = { KC_PRESS, 0, 0}; // FIXME
+
+struct key_seq_step_s key_seq_queue_dequeue() {
     if (key_seq_queue_empty()) {
         warning(W_PROGRAMMING_ERROR);
-        return;
+        return NULL_STEP; // FIXME
     }
-    struct key_seq_step_s step* result = &key_seq_queue[key_seq_queue_start];
+    struct key_seq_step_s* result = &key_seq_queue[key_seq_queue_start];
     ++key_seq_queue_start;
     if (key_seq_queue_start == KEY_SEQ_QUEUE_LENGTH) {
         key_seq_queue_start = 0;
@@ -462,26 +417,34 @@ void process_klt_charge(enum neo_levels_e level) {
     uint8_t i;
     for (i = 0; i < klt_charge_cnt; ++i) {
         const union keyseq_u *seq = &klt_charge[i].klt->seq[level];
-        switch (seq->type) {
+        switch (seq->type.type) {
         case KO_PHANTOM:
             // do nothing
             break;
         case KO_PLAIN:
-            struct key_seq_step_s step = { .change = klt_charge[i].change, .key = seq->single.key, .modifier = (modifiers & ~KEY_ANY_SHIFT)};
-            key_seq_queue_enqueue(&step);
-            break;
+            {
+                struct key_seq_step_s step = { .change = klt_charge[i].change, .key = seq->single.key, .modifier = (modifiers & ~KEY_ANY_SHIFT)};
+                key_seq_queue_enqueue(&step);
+                break;
+            }
         case KO_PLAIN_X:
-            struct key_seq_step_s step = { .change = klt_charge[i].change, .key = seq->single.key, .modifier = modifiers};
-            key_seq_queue_enqueue(&step);
-            break;
+            {
+                struct key_seq_step_s step = { .change = klt_charge[i].change, .key = seq->single.key, .modifier = modifiers};
+                key_seq_queue_enqueue(&step);
+                break;
+            }
         case KO_SHIFT:
-            struct key_seq_step_s step = { .change = klt_charge[i].change, .key = seq->single.key, .modifier = (modifiers | KEY_SHIFT)};
-            key_seq_queue_enqueue(&step);
-            break;
+            {
+                struct key_seq_step_s step = { .change = klt_charge[i].change, .key = seq->single.key, .modifier = (modifiers | KEY_SHIFT)};
+                key_seq_queue_enqueue(&step);
+                break;
+            }
         case KO_ALTGR:
-            struct key_seq_step_s step = { .change = klt_charge[i].change, .key = seq->single.key, .modifier = (modifiers | KEY_CTRL | KEY_ALT)}; // FIXME !! need AltGr !!
-            key_seq_queue_enqueue(&step);
-            break;
+            {
+                struct key_seq_step_s step = { .change = klt_charge[i].change, .key = seq->single.key, .modifier = (modifiers | KEY_CTRL | KEY_ALT)}; // FIXME !! need AltGr !!
+                key_seq_queue_enqueue(&step);
+                break;
+            }
         case KO_LEVEL_MOD:
             warning(W_PROGRAMMING_ERROR);
             break;
@@ -496,8 +459,8 @@ void process_klt_charge(enum neo_levels_e level) {
 }
 
 
-void process_keychange(row, controller, col) {
-    const struct keyleveltranslations_s *klt = get_mapped_klt(controller, row, col);
+void process_keychange(uint8_t row, enum controller_e controller, uint8_t col) {
+    const struct keyleveltranslations_s *klt = get_current_mapped_klt(controller, row, col);
     enum key_change_e kchange = get_key_state(controller, row, col);
     if (klt->special == TT_LEVEL_MOD) {
         if (klt->seq[0].type.type == KO_LEVEL_MOD || klt->seq[0].type.type == KO_LEVEL_MOD_X) {
