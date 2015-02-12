@@ -76,8 +76,20 @@ static inline char test_col(uint8_t col) {
 
 // warning LED
 
-const int WARN_CNTDN_START = 10;
-int warn_cntdn = 0;
+enum blink_pattern_e {
+    WP_OFF = 0x00,
+    WP_SHORT = 0xAA,
+    WP_MEDIUM = 0xCC,
+    WP_LONG = 0xF0,
+    WP_CONSTANT = 0xFF,
+    WP_SHORT_BREAK = 0xA5,
+    WP_LONG_BREAK = 0xC3,
+};
+
+#define WARN_CYCLE_MULTIPLIER 4
+const int WARN_CNTDN_START = 8 * WARN_CYCLE_MULTIPLIER;
+int warn_cntdn = -1;
+uint8_t current_pattern = WP_OFF;
 
 static inline void init_warn_led() {
     DDRD |= (1<<6);
@@ -92,23 +104,44 @@ static inline void switch_warn_led(bool on) {
 }
 
 static inline void warning(enum warnings_e code) {
-    switch_warn_led(true);
-    warn_cntdn = WARN_CNTDN_START;
+    warn_cntdn = WARN_CNTDN_START - 1;
+    switch (code) {
+    case W_TOO_MANY_KEYS:
+        current_pattern = WP_MEDIUM;        
+        break;
+    case W_COMMUNICATION_FAILURE:
+        current_pattern = WP_LONG;
+        break;
+    case W_PROGRAMMING_ERROR:
+        current_pattern = WP_SHORT;        
+        break;
+    case W_MASTER:
+        current_pattern = WP_CONSTANT;
+        break;
+    case W_SLAVE:
+        current_pattern = WP_SHORT;        
+        break;
+    default:
+        current_pattern = WP_CONSTANT;
+    }
 }
 
 static inline void update_warn_led() {
     if (warn_cntdn > 0) {
+        switch_warn_led((((uint8_t) current_pattern) & (1<<(warn_cntdn/WARN_CYCLE_MULTIPLIER))) > 0);
+        //switch_warn_led(true);
         --warn_cntdn;
-        if (warn_cntdn == 0) {
-            switch_warn_led(false);
-        }
+    } else if (warn_cntdn == 0) {
+        switch_warn_led(false);
+        warn_cntdn = -1;
     }
 }
 
 
 // UART
 
-const uint32_t UART_BAUD_RATE = 9600;
+//const uint32_t UART_BAUD_RATE = 9600;
+#define UART_BAUD_RATE 38400
 
 // global symbols
 
@@ -118,11 +151,13 @@ const uint32_t UART_BAUD_RATE = 9600;
 enum keylayout_e keymapping_mode_current = TKL_DE;
 enum neo_levels_e level_current = LEVEL1;
 
-static inline const union keyseq_u *get_current_mapped_key(enum controller_e controller, enum row_e row, uint8_t col) {
+const uint8_t cycle_delay = 20;
+
+static inline const union keyseq_u *get_current_mapped_key(uint8_t controller, enum row_e row, uint8_t col) {
     return get_mapped_key(keymapping_mode_current, controller, row, col, level_current);
 }
 
-static inline const struct keyleveltranslations_s *get_current_mapped_klt(enum controller_e controller, enum row_e row, uint8_t col) {
+static inline const struct keyleveltranslations_s *get_current_mapped_klt(uint8_t controller, enum row_e row, uint8_t col) {
     return get_mapped_klt(keymapping_mode_current, controller, row, col);
 }
 
@@ -205,11 +240,11 @@ enum key_change_e { // FIXME rename to key_state
     KC_RELEASE = 1,
 };
 
-enum key_change_e get_key_state(enum controller_e controller, enum row_e row, uint8_t col) {
+enum key_change_e get_key_state(uint8_t controller, enum row_e row, uint8_t col) {
     return ((key_state[controller][row] & (1 << col)) > 0) ? KC_PRESS : KC_RELEASE;
 }
 
-void set_key_state(enum controller_e controller, enum row_e row, uint8_t col, enum key_change_e state) {
+void set_key_state(uint8_t controller, enum row_e row, uint8_t col, enum key_change_e state) {
     if (state == KC_PRESS) {
         key_state[controller][row] |=  (1 << col);
     } else {
@@ -218,13 +253,13 @@ void set_key_state(enum controller_e controller, enum row_e row, uint8_t col, en
 }
 
 struct key_id_s {
-    enum controller_e controller :1;
+    uint8_t controller :1;
     uint8_t row : 3;
     uint8_t col : 3;
 };
 
 struct key_change_s {
-    enum controller_e controller; // :1;
+    uint8_t controller; // :1;
     uint8_t row; // :3;
     uint8_t col; // :3;
     enum key_change_e change; // :1;
@@ -237,44 +272,7 @@ bool level_lock[LEVEL_COUNT] = { false };
 struct key_change_s changed_keys[CHANGED_KEYS_CNT_MAX] = {{ 0 }}; // XXX initialization is debugging aid only
 uint8_t keychange_cnt = 0;
 
-#define MAX_MOD_KEYS_PER_LEVEL 4
-struct key_id_s levelmod_keys[LEVEL_COUNT][MAX_MOD_KEYS_PER_LEVEL];
-
-void update_levelmod_keys() {
-    memset(levelmod_keys, 0xFF, sizeof(levelmod_keys));
-
-    enum controller_e controller;
-    for (controller = CTLR_MASTER; controller < CTLR_COUNT; ++controller) {
-        uint8_t row;
-        for (row = 0; row < ROW_COUNT; ++row) {
-            uint8_t col;
-            for (col = 0; col < COL_COUNT; ++col) {
-                const struct keyleveltranslations_s *klt = get_current_mapped_klt(controller, row, col);
-                if (klt->special == TT_LEVEL_MOD) {
-                    enum neo_levels_e level = klt->seq[0].level_mod.level;
-                    uint8_t i = 0;
-                    while ((*(uint8_t *) &levelmod_keys[level][i]) == 0xFF) {
-                        ++i;
-                        if (i >= MAX_MOD_KEYS_PER_LEVEL) {
-                            warning(W_PROGRAMMING_ERROR);
-                            return;
-                        }
-                    }
-                    levelmod_keys[level][i].controller = controller;
-                    levelmod_keys[level][i].row = row;
-                    levelmod_keys[level][i].col = col;
-                }
-            } // col loop
-        } // row loop
-    } // controller loop
-}
-
-void switch_layout(enum keylayout_e layout) {
-    // ...
-    update_levelmod_keys();
-}
-
-void add_keychange(uint8_t row, enum controller_e controller, uint8_t col, enum key_change_e change) {
+void add_keychange(uint8_t row, uint8_t controller, uint8_t col, enum key_change_e change) {
     if (keychange_cnt < CHANGED_KEYS_CNT_MAX) {
         changed_keys[keychange_cnt].change = change;
         changed_keys[keychange_cnt].controller = controller;
@@ -459,7 +457,7 @@ void process_klt_charge(enum neo_levels_e level) {
 }
 
 
-void process_keychange(uint8_t row, enum controller_e controller, uint8_t col) {
+void process_keychange(uint8_t row, uint8_t controller, uint8_t col) {
     const struct keyleveltranslations_s *klt = get_current_mapped_klt(controller, row, col);
     enum key_change_e kchange = get_key_state(controller, row, col);
     if (klt->special == TT_LEVEL_MOD) {
@@ -526,7 +524,7 @@ void process_key_states() {
 
         clear_klt_charge();
 
-        enum controller_e controller;
+        uint8_t controller;
         for (controller = CTLR_MASTER; controller < CTLR_COUNT; ++controller) {
             uint8_t row;
             for (row = 0; row < ROW_COUNT; ++row) {
@@ -571,7 +569,11 @@ static inline void init_usb_keyboard() {
 
 // global functions
 
+#define CPU_PRESCALE(n) (CLKPR = 0x80, CLKPR = (n))
+
 static inline void init() {
+    CPU_PRESCALE(0);  // run at 16 MHz // TODO good idea?
+
     uint8_t row, col;
 
     for (row = 0; row < ROW_COUNT; ++row) {
@@ -581,15 +583,18 @@ static inline void init() {
         init_col_io(col);
     }
 
-    update_levelmod_keys();
-
     clear_changed_keys();
 
     init_warn_led();
 
     uart_init(UART_BAUD_RATE);
 
-	init_usb_keyboard();
+#if (CONTROLLER == CTLR_MASTER)
+    init_usb_keyboard();
+    warning(W_MASTER); // FIXME function and symbol names
+#else
+    warning(W_SLAVE);  // FIXME function and symbol names
+#endif
 }
 
 uint8_t *find_keyboard_key(uint8_t key) {
@@ -604,9 +609,60 @@ uint8_t *find_keyboard_key(uint8_t key) {
 
 int main(void) {
     init();
+//    uint8_t i = 0;
+//    while (true) {
+//        uart_putchar('S');
+//        update_warn_led();
+//        //switch_warn_led(warnled);
+//        //warnled = ! warnled;
+//        _delay_ms(cycle_delay);
+//        ++i;
+//        if (i >= 100) {
+//            //break;
+//        }
+//    }
     while (true) {
+//        if (CONTROLLER == CTLR_MASTER) {
+//            //warning(W_MASTER);
+//            //for (int i = 0; i < 100; ++i) {
+//            while (true) {
+//                uart_putchar('M');
+//                _delay_ms(cycle_delay);
+//            }
+//        } else {
+//            warning(W_SLAVE);
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            uart_putchar('S');
+//            //for (i = 0; i < 100; ++i) {
+//            //for (i = 0; i; ++i) {
+//            bool warnled = true;
+//        }
         update_warn_led();
-        update_own_key_states();
+        //update_own_key_states();
 #if (CONTROLLER == CTLR_MASTER)
         int rx_result = rx_keystates();
         if (rx_result == 0) {
@@ -633,10 +689,11 @@ int main(void) {
         }
         keyboard_modifier_keys = step.modifier;
         usb_keyboard_send();
-#else
-        tx_keystates();
-#endif
+#else // ! (CONTROLLER == CTLR_MASTER)
+        uart_putchar('S');
+        //tx_keystates();
+#endif // CONTROLLER == CTLR_MASTER
+        _delay_ms(cycle_delay);
     }
-    _delay_ms(20);    
     return 0;
 }

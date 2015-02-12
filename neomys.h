@@ -37,16 +37,13 @@ enum neo_levels_e {
 #define SIDE_LEFT  0
 #define SIDE_RIGHT 1
 
-enum controller_e {
-    CTLR_MASTER,
-    CTLR_SLAVE
-};
-
-#define CTLR_COUNT 2
+#define CTLR_MASTER 0
+#define CTLR_SLAVE  1
+#define CTLR_COUNT  2
 
 // shall be defined by compiler switch (-DSIDE=SIDE_xyz)
 //#define SIDE SIDE_LEFT
-//#define SIDE SIDE_RIGHT
+#define SIDE SIDE_RIGHT
 
 #if (SIDE == SIDE_LEFT)
 #  define CONTROLLER CTLR_MASTER
@@ -58,6 +55,8 @@ enum warnings_e {
     W_TOO_MANY_KEYS,
     W_COMMUNICATION_FAILURE,
     W_PROGRAMMING_ERROR,
+    W_MASTER, // FIXME not a warning ... blink LED differently on master or slave controller at startup
+    W_SLAVE,  // FIXME not a warning ... blink LED differently on master or slave controller at startup
 };
 
 #endif // _NEOMYS_H_
