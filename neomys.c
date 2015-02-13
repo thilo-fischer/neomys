@@ -140,8 +140,33 @@ static inline void update_warn_led() {
 
 // UART
 
-//const uint32_t UART_BAUD_RATE = 9600;
-#define UART_BAUD_RATE 38400
+// common baudrates: 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200
+// Baud rates higher than 4800 seems to cause problems, signal looks pretty messed up in my signal analyser. Is it the UART driver, the Teensy or just my signal analyser that does not work correctly at higher baud rates? FIXME.
+//#define UART_BAUD_RATE 38400
+#define UART_BAUD_RATE 4800
+
+// Test pattern for experimenting with other baud rates:
+#if 0
+    while (true) {
+        uart_putchar(0xAA);
+        _delay_ms(1);
+        uart_putchar(0x00);
+        _delay_ms(1);
+        uart_putchar(0xAA);
+        _delay_ms(1);
+        uart_putchar(0xFF);
+        _delay_ms(1);
+        uart_putchar(0xAA);
+        _delay_ms(1);
+        uart_putchar(0x0F);
+        _delay_ms(1);
+        uart_putchar(0xAA);
+        _delay_ms(1);
+        uart_putchar(0xF0);
+        _delay_ms(10);
+    }
+#endif
+
 
 // global symbols
 
@@ -175,7 +200,7 @@ void update_own_key_states() {
         key_state[CONTROLLER][row] = 0;
         uint8_t col;
         for (col = 0; col < COL_COUNT; ++col) {
-            key_state[CONTROLLER][row] |= (test_col(col) << row);
+            key_state[CONTROLLER][row] |= (test_col(col) << col);
         }
         deactivate_row(row);
     }
@@ -609,60 +634,9 @@ uint8_t *find_keyboard_key(uint8_t key) {
 
 int main(void) {
     init();
-//    uint8_t i = 0;
-//    while (true) {
-//        uart_putchar('S');
-//        update_warn_led();
-//        //switch_warn_led(warnled);
-//        //warnled = ! warnled;
-//        _delay_ms(cycle_delay);
-//        ++i;
-//        if (i >= 100) {
-//            //break;
-//        }
-//    }
     while (true) {
-//        if (CONTROLLER == CTLR_MASTER) {
-//            //warning(W_MASTER);
-//            //for (int i = 0; i < 100; ++i) {
-//            while (true) {
-//                uart_putchar('M');
-//                _delay_ms(cycle_delay);
-//            }
-//        } else {
-//            warning(W_SLAVE);
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            uart_putchar('S');
-//            //for (i = 0; i < 100; ++i) {
-//            //for (i = 0; i; ++i) {
-//            bool warnled = true;
-//        }
         update_warn_led();
-        //update_own_key_states();
+        update_own_key_states();
 #if (CONTROLLER == CTLR_MASTER)
         int rx_result = rx_keystates();
         if (rx_result == 0) {
@@ -690,8 +664,7 @@ int main(void) {
         keyboard_modifier_keys = step.modifier;
         usb_keyboard_send();
 #else // ! (CONTROLLER == CTLR_MASTER)
-        uart_putchar('S');
-        //tx_keystates();
+        tx_keystates();
 #endif // CONTROLLER == CTLR_MASTER
         _delay_ms(cycle_delay);
     }
