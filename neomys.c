@@ -276,7 +276,9 @@ void discard_uart() {
  * @return 0 on success, error code if transmission failure detected: 1 -- start byte not found; 2 -- end byte too early; 3 -- end byte not found.
  */
 int rx_keystates() {
-    while (uart_available() == 0);
+    while (uart_available() == 0) {
+        _delay_ms(1);
+    }
     uint8_t rx_byte;
     rx_byte = uart_getchar();
     if (rx_byte != startendbyte) {
@@ -726,11 +728,11 @@ int main(void) {
 #endif
 
         update_warn_led();
-        update_own_key_states();
 #if (CONTROLLER == CTLR_MASTER)
         dbg_uarttx_byte(0x01);
         int rx_result = rx_keystates();
         if (rx_result == 0) {
+            update_own_key_states(); // XXXXXXXXXXXXX
             process_key_states();
         } else {
             dbg_uarttx_byte(0xC0);
@@ -762,18 +764,20 @@ int main(void) {
                 }
             }
             keyboard_modifier_keys = step.modifier;
+
+            dbg_uarttx_byte(0x0D);
+            usb_keyboard_send();
+            
+            dbg_uarttx_usb_keys();
         }
-        dbg_uarttx_byte(0x0D);
-        usb_keyboard_send();
-
-        dbg_uarttx_usb_keys();
 #else // ! (CONTROLLER == CTLR_MASTER)
+        update_own_key_states();
         tx_keystates();
-#endif // CONTROLLER == CTLR_MASTER
-        dbg_uarttx_byte(0x0E);
+        // Slave induces the delay between loop iterations, master waits for slave in rx_keystates.
         _delay_ms(cycle_delay);
-        dbg_uarttx_byte(0x0F);
+#endif // CONTROLLER == CTLR_MASTER
 
+        dbg_uarttx_byte(0x0F);
     }
     return 0;
 }
