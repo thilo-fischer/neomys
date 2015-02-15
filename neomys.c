@@ -196,7 +196,11 @@ static inline struct keyleveltranslations_s get_current_mapped_klt(uint8_t contr
     return klt;
 }
 
-#define UART_LOGLEVEL 2
+#if (CONTROLLER == CTLR_MASTER)
+#  define UART_LOGLEVEL 1
+#else
+#  define UART_LOGLEVEL 0
+#endif
 
 #if (UART_LOGLEVEL == 0)
 #define dbg_uarttx_byte(b)
@@ -688,6 +692,12 @@ static inline void init() {
 #else
     warning(W_SLAVE);  // FIXME function and symbol names
 #endif
+    
+    uint8_t i;
+    for (i = 0; i < 8; ++i) {
+        update_warn_led();
+        _delay_ms(cycle_delay);        
+    }
 }
 
 uint8_t *find_keyboard_key(uint8_t key) {
@@ -719,7 +729,7 @@ int main(void) {
         update_own_key_states();
 #if (CONTROLLER == CTLR_MASTER)
         dbg_uarttx_byte(0x01);
-        int rx_result = 0; //rx_keystates();
+        int rx_result = rx_keystates();
         if (rx_result == 0) {
             process_key_states();
         } else {
