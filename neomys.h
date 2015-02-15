@@ -42,8 +42,8 @@ enum neo_levels_e {
 #define CTLR_COUNT  2
 
 // shall be defined by compiler switch (-DSIDE=SIDE_xyz)
-//#define SIDE SIDE_LEFT
-#define SIDE SIDE_RIGHT
+#define SIDE SIDE_LEFT
+//#define SIDE SIDE_RIGHT
 
 #if (SIDE == SIDE_LEFT)
 #  define CONTROLLER CTLR_MASTER

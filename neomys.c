@@ -31,10 +31,17 @@
 
 // Data structures for addressing rows
 
+#if 1
 volatile uint8_t * const ROW_PORT_DDR [ROW_COUNT] = { & DDRF, & DDRF, & DDRF, & DDRF, & DDRF };
 volatile uint8_t * const ROW_PORT_PORT[ROW_COUNT] = { &PORTF, &PORTF, &PORTF, &PORTF, &PORTF };
 volatile uint8_t * const ROW_PORT_PIN [ROW_COUNT] = { & PINF, & PINF, & PINF, & PINF, & PINF };
 const    uint8_t         ROW_PORT_BIT [ROW_COUNT] = {      0,      1,      4,      5,      6 };
+#else
+volatile uint8_t * const ROW_PORT_DDR [ROW_COUNT] = { & DDRF };
+volatile uint8_t * const ROW_PORT_PORT[ROW_COUNT] = { &PORTF };
+volatile uint8_t * const ROW_PORT_PIN [ROW_COUNT] = { & PINF };
+const    uint8_t         ROW_PORT_BIT [ROW_COUNT] = {      0 };
+#endif
 
 // Functions for addressing rows
 
@@ -178,14 +185,37 @@ enum neo_levels_e level_current = LEVEL1;
 
 const uint8_t cycle_delay = 20;
 
-static inline const union keyseq_u *get_current_mapped_key(uint8_t controller, enum row_e row, uint8_t col) {
-    return get_mapped_key(keymapping_mode_current, controller, row, col, level_current);
+static inline const union keyseq_u *get_current_mapped_key_ptr(uint8_t controller, enum row_e row, uint8_t col) {
+    return get_mapped_key_ptr(keymapping_mode_current, controller, row, col, level_current);
 }
 
-static inline const struct keyleveltranslations_s *get_current_mapped_klt(uint8_t controller, enum row_e row, uint8_t col) {
-    return get_mapped_klt(keymapping_mode_current, controller, row, col);
+static inline const struct keyleveltranslations_s *get_current_mapped_klt_ptr(uint8_t controller, enum row_e row, uint8_t col) {
+    return get_mapped_klt_ptr(keymapping_mode_current, controller, row, col);
 }
 
+static inline struct keyleveltranslations_s get_current_mapped_klt(uint8_t controller, enum row_e row, uint8_t col) {
+    struct keyleveltranslations_s klt;
+    uint8_t *ptr = (uint8_t *) get_current_mapped_klt_ptr(controller, row, col);
+    uint8_t i;
+    for (i = 0; i < sizeof(struct keyleveltranslations_s); ++i) {
+        ((uint8_t *) &klt)[i] = pgm_read_byte(ptr + i);
+    }
+    return klt;
+}
+
+
+void dbg_uarttx_byte(uint8_t b) {
+    uart_putchar(b);
+}
+
+void dbg_uarttx_usb_keys() {
+    uart_putchar(0xFF);
+    uart_putchar(keyboard_modifier_keys);
+    int i;
+    for (i = 0; i < 6; ++i) {
+        uart_putchar(keyboard_keys[i]);
+    }
+}
 
 // key states
 // Transmit states of all keys from slave to master. This is the simplest, most deterministic and probably most fail-safe approach (compared to sending only pressed keys or key state changes).
@@ -254,6 +284,10 @@ int rx_keystates() {
     if (rx_byte != startendbyte) {
         discard_uart();
         return 3;
+    }
+    if (uart_available() > 0) {
+        discard_uart();
+        return 4;        
     }
     return 0;
 }
@@ -362,7 +396,7 @@ enum neo_levels_e determine_current_level() {
 }
 
 struct klt_changes_s {
-    const struct keyleveltranslations_s *klt;
+    struct keyleveltranslations_s klt;
     enum key_change_e change;
 };
 
@@ -373,7 +407,7 @@ void clear_klt_charge() {
     klt_charge_cnt = 0;
 }
 
-void add_klt_charge(const struct keyleveltranslations_s *klt, enum key_change_e kchange) {
+void add_klt_charge(struct keyleveltranslations_s klt, enum key_change_e kchange) {
     klt_charge[klt_charge_cnt].klt = klt;
     klt_charge[klt_charge_cnt].change = kchange;
     ++klt_charge_cnt;
@@ -439,7 +473,7 @@ bool modifiers_changed = false;
 void process_klt_charge(enum neo_levels_e level) {
     uint8_t i;
     for (i = 0; i < klt_charge_cnt; ++i) {
-        const union keyseq_u *seq = &klt_charge[i].klt->seq[level];
+        const union keyseq_u *seq = &klt_charge[i].klt.seq[level];
         switch (seq->type.type) {
         case KO_PHANTOM:
             // do nothing
@@ -483,11 +517,11 @@ void process_klt_charge(enum neo_levels_e level) {
 
 
 void process_keychange(uint8_t row, uint8_t controller, uint8_t col) {
-    const struct keyleveltranslations_s *klt = get_current_mapped_klt(controller, row, col);
+    const struct keyleveltranslations_s klt = get_current_mapped_klt(controller, row, col);
     enum key_change_e kchange = get_key_state(controller, row, col);
-    if (klt->special == TT_LEVEL_MOD) {
-        if (klt->seq[0].type.type == KO_LEVEL_MOD || klt->seq[0].type.type == KO_LEVEL_MOD_X) {
-        enum neo_levels_e level = klt->seq[0].level_mod.level;
+    if (klt.special == TT_LEVEL_MOD) {
+        if (klt.seq[0].type.type == KO_LEVEL_MOD || klt.seq[0].type.type == KO_LEVEL_MOD_X) {
+        enum neo_levels_e level = klt.seq[0].level_mod.level;
         switch (level) {
         case LEVEL4: // XXX
             if (kchange == KC_PRESS) {
@@ -522,12 +556,12 @@ void process_keychange(uint8_t row, uint8_t controller, uint8_t col) {
             }
         }
         }
-        if (klt->seq[0].type.type == KO_MODIFIER || klt->seq[0].type.type == KO_LEVEL_MOD_X) {
+        if (klt.seq[0].type.type == KO_MODIFIER || klt.seq[0].type.type == KO_LEVEL_MOD_X) {
             uint8_t key;
-            if (klt->seq[0].type.type == KO_MODIFIER) {
-                key = klt->seq[0].single.key;
+            if (klt.seq[0].type.type == KO_MODIFIER) {
+                key = klt.seq[0].single.key;
             } else {
-                key = klt->seq[0].level_mod_X.key;
+                key = klt.seq[0].level_mod_X.key;
             }
             if (kchange == KC_PRESS) {
                 modifiers |=  key;
@@ -547,7 +581,11 @@ void process_key_states() {
 
     if (memcmp(prev_key_state, key_state, sizeof(key_state))) {
 
+        dbg_uarttx_byte(8);
+
         clear_klt_charge();
+
+        warning(W_PROGRAMMING_ERROR);
 
         uint8_t controller;
         for (controller = CTLR_MASTER; controller < CTLR_COUNT; ++controller) {
@@ -559,8 +597,10 @@ void process_key_states() {
                     for (col = 0; col < COL_COUNT; ++col) {
                         if ((xor & (1 << col)) > 0) {
                             // key state at [row,col] has changed
+#if 1
                             process_keychange(row, controller, col);
-                        }
+#endif
+                        }                     
                     } // col loop
                 } // xor > 0
             } // row loop
@@ -576,7 +616,15 @@ void process_key_states() {
         }
 
         memcpy(prev_key_state, key_state, sizeof(key_state));
+
+#if 0
+        uart_putchar(get_current_mapped_klt(0,0,0));
+#else
+        uart_putchar(0);
+#endif
     } // memcmp
+    else
+        dbg_uarttx_byte(7);
 }
 
 static inline void init_usb_keyboard() {
@@ -632,21 +680,37 @@ uint8_t *find_keyboard_key(uint8_t key) {
     return NULL;
 }
 
+
 int main(void) {
     init();
+
     while (true) {
+
+        uart_putchar(0xCA);
+        uart_putchar(0xFE);
+#if 0
+        uart_putchar((sizeof(keymap) << 0) & 0xFF);
+        uart_putchar((sizeof(keymap) << 1) & 0xFF);
+        uart_putchar((sizeof(union keyseq_u) << 0) & 0xFF);
+        uart_putchar((sizeof(struct keyleveltranslations_s) << 0) & 0xFF);
+#endif
+
         update_warn_led();
         update_own_key_states();
 #if (CONTROLLER == CTLR_MASTER)
-        int rx_result = rx_keystates();
+        dbg_uarttx_byte(0);
+        int rx_result = 0; //rx_keystates();
         if (rx_result == 0) {
             process_key_states();
         } else {
             warning(W_COMMUNICATION_FAILURE);
         }
 
+#  if 1
+        dbg_uarttx_byte(1);
         struct key_seq_step_s step = key_seq_queue_dequeue();
         if (step.change == KC_PRESS) {
+            dbg_uarttx_byte(2);
             uint8_t *free = find_keyboard_key(0);
             if (free == NULL) {
                 warning(W_TOO_MANY_KEYS);
@@ -654,6 +718,7 @@ int main(void) {
                 *free = step.key;
             }
         } else {
+            dbg_uarttx_byte(3);
             uint8_t *pos = find_keyboard_key(step.key);
             if (pos == NULL) {
                 warning(W_PROGRAMMING_ERROR);
@@ -661,12 +726,18 @@ int main(void) {
                 *pos = 0;
             }
         }
+        dbg_uarttx_byte(4);
         keyboard_modifier_keys = step.modifier;
-        usb_keyboard_send();
+        //usb_keyboard_send();
+#  endif
+        dbg_uarttx_usb_keys();
 #else // ! (CONTROLLER == CTLR_MASTER)
         tx_keystates();
 #endif // CONTROLLER == CTLR_MASTER
+        dbg_uarttx_byte(5);
         _delay_ms(cycle_delay);
+        dbg_uarttx_byte(6);
+
     }
     return 0;
 }

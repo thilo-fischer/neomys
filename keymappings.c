@@ -5,10 +5,11 @@
   This program is licenced under GPLv3.
 */
 
+#include <avr/pgmspace.h>
 #include "usb_keyboard.h"
 #include "keymappings.h"
 
-const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] = {
+const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] PROGMEM = {
     // TKL_DE
     {
         // DE ROW_NUM
@@ -153,6 +154,7 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
                 // remaining will be initialzed with zeros (=> KO_PHANTOM)
             },
         },
+#if 1
         // DE ROW_TOP
         {
             //  DE ROW_TOP left
@@ -571,6 +573,7 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] =
                 // remaining will be initialzed with zeros (=> KO_PHANTOM)
             },
         },
+#endif
     },
     // TKL_NEO
     // TKL_US
