@@ -31,17 +31,10 @@
 
 // Data structures for addressing rows
 
-#if 1
 volatile uint8_t * const ROW_PORT_DDR [ROW_COUNT] = { & DDRF, & DDRF, & DDRF, & DDRF, & DDRF };
 volatile uint8_t * const ROW_PORT_PORT[ROW_COUNT] = { &PORTF, &PORTF, &PORTF, &PORTF, &PORTF };
 volatile uint8_t * const ROW_PORT_PIN [ROW_COUNT] = { & PINF, & PINF, & PINF, & PINF, & PINF };
 const    uint8_t         ROW_PORT_BIT [ROW_COUNT] = {      0,      1,      4,      5,      6 };
-#else
-volatile uint8_t * const ROW_PORT_DDR [ROW_COUNT] = { & DDRF };
-volatile uint8_t * const ROW_PORT_PORT[ROW_COUNT] = { &PORTF };
-volatile uint8_t * const ROW_PORT_PIN [ROW_COUNT] = { & PINF };
-const    uint8_t         ROW_PORT_BIT [ROW_COUNT] = {      0 };
-#endif
 
 // Functions for addressing rows
 
@@ -203,11 +196,24 @@ static inline struct keyleveltranslations_s get_current_mapped_klt(uint8_t contr
     return klt;
 }
 
+#define UART_LOGLEVEL 2
 
+#if (UART_LOGLEVEL == 0)
+#define dbg_uarttx_byte(b)
+#define dbg_uarttx_usb_keys()
+
+#elif (UART_LOGLEVEL == 1)
+void dbg_uarttx_byte(uint8_t b) {
+    if (b > 0x1F) {
+        uart_putchar(b);
+    }
+}
+#define dbg_uarttx_usb_keys()
+
+#else
 void dbg_uarttx_byte(uint8_t b) {
     uart_putchar(b);
 }
-
 void dbg_uarttx_usb_keys() {
     uart_putchar(0xFF);
     uart_putchar(keyboard_modifier_keys);
@@ -216,6 +222,8 @@ void dbg_uarttx_usb_keys() {
         uart_putchar(keyboard_keys[i]);
     }
 }
+
+#endif
 
 // key states
 // Transmit states of all keys from slave to master. This is the simplest, most deterministic and probably most fail-safe approach (compared to sending only pressed keys or key state changes).
@@ -339,6 +347,7 @@ void add_keychange(uint8_t row, uint8_t controller, uint8_t col, enum key_change
         changed_keys[keychange_cnt].col = col;
         ++keychange_cnt;
     } else {
+        dbg_uarttx_byte(0xF0);
         warning(W_TOO_MANY_KEYS);
     }
 }
@@ -412,6 +421,7 @@ void add_klt_charge(struct keyleveltranslations_s klt, enum key_change_e kchange
     klt_charge[klt_charge_cnt].change = kchange;
     ++klt_charge_cnt;
     if (klt_charge_cnt >= CHANGED_KEYS_CNT_MAX) {
+        dbg_uarttx_byte(0xF1);
         warning(W_TOO_MANY_KEYS);
     }
 }
@@ -441,6 +451,7 @@ bool key_seq_queue_full() {
 
 void key_seq_queue_enqueue(const struct key_seq_step_s *step) {
     if (key_seq_queue_full()) {
+        dbg_uarttx_byte(0xF2);
         warning(W_TOO_MANY_KEYS);
         return;
     }
@@ -455,6 +466,7 @@ const struct key_seq_step_s NULL_STEP = { KC_PRESS, 0, 0}; // FIXME
 
 struct key_seq_step_s key_seq_queue_dequeue() {
     if (key_seq_queue_empty()) {
+        dbg_uarttx_byte(0xE0);
         warning(W_PROGRAMMING_ERROR);
         return NULL_STEP; // FIXME
     }
@@ -503,13 +515,16 @@ void process_klt_charge(enum neo_levels_e level) {
                 break;
             }
         case KO_LEVEL_MOD:
+            dbg_uarttx_byte(0xE1);
             warning(W_PROGRAMMING_ERROR);
             break;
         case KO_MODIFIER:
         case KO_LEVEL_MOD_X:
+            dbg_uarttx_byte(0xE2);
             warning(W_PROGRAMMING_ERROR);
             break;
         default:
+            dbg_uarttx_byte(0xE3);
             warning(W_PROGRAMMING_ERROR);
         }
     }
@@ -517,9 +532,11 @@ void process_klt_charge(enum neo_levels_e level) {
 
 
 void process_keychange(uint8_t row, uint8_t controller, uint8_t col) {
+    dbg_uarttx_byte(0x20);
     const struct keyleveltranslations_s klt = get_current_mapped_klt(controller, row, col);
     enum key_change_e kchange = get_key_state(controller, row, col);
     if (klt.special == TT_LEVEL_MOD) {
+        dbg_uarttx_byte(0x21);
         if (klt.seq[0].type.type == KO_LEVEL_MOD || klt.seq[0].type.type == KO_LEVEL_MOD_X) {
         enum neo_levels_e level = klt.seq[0].level_mod.level;
         switch (level) {
@@ -571,6 +588,7 @@ void process_keychange(uint8_t row, uint8_t controller, uint8_t col) {
             modifiers_changed = true;
         }
     } else {
+        dbg_uarttx_byte(0x22);
         add_klt_charge(klt, kchange);
     }
 }
@@ -578,14 +596,13 @@ void process_keychange(uint8_t row, uint8_t controller, uint8_t col) {
 
 void process_key_states() {
     // find changes
+    dbg_uarttx_byte(0x10);
 
     if (memcmp(prev_key_state, key_state, sizeof(key_state))) {
 
-        dbg_uarttx_byte(8);
+        dbg_uarttx_byte(0x11);
 
         clear_klt_charge();
-
-        warning(W_PROGRAMMING_ERROR);
 
         uint8_t controller;
         for (controller = CTLR_MASTER; controller < CTLR_COUNT; ++controller) {
@@ -596,35 +613,38 @@ void process_key_states() {
                     uint8_t col;
                     for (col = 0; col < COL_COUNT; ++col) {
                         if ((xor & (1 << col)) > 0) {
+                            dbg_uarttx_byte(0x12);
                             // key state at [row,col] has changed
-#if 1
                             process_keychange(row, controller, col);
-#endif
                         }                     
                     } // col loop
                 } // xor > 0
             } // row loop
         } // controller loop
 
+        dbg_uarttx_byte(0x13);
         enum neo_levels_e level = determine_current_level();
+        dbg_uarttx_byte(level);
+        dbg_uarttx_byte(0x14);
+        dbg_uarttx_byte(klt_charge_cnt);
         process_klt_charge(level);
 
+        dbg_uarttx_byte(0x18);
         if (modifiers_changed == true) {
+            dbg_uarttx_byte(0x19);
             struct key_seq_step_s step = { .change = KC_PRESS, .key = 0, .modifier = modifiers};
             key_seq_queue_enqueue(&step);            
             modifiers_changed = false;
         }
 
+        dbg_uarttx_byte(0x1E);
         memcpy(prev_key_state, key_state, sizeof(key_state));
 
-#if 0
-        uart_putchar(get_current_mapped_klt(0,0,0));
-#else
-        uart_putchar(0);
-#endif
     } // memcmp
     else
-        dbg_uarttx_byte(7);
+        dbg_uarttx_byte(0x1E);
+
+    dbg_uarttx_byte(0x1F);
 }
 
 static inline void init_usb_keyboard() {
@@ -686,8 +706,8 @@ int main(void) {
 
     while (true) {
 
-        uart_putchar(0xCA);
-        uart_putchar(0xFE);
+        dbg_uarttx_byte(0xAB);
+        dbg_uarttx_byte(0x00);
 #if 0
         uart_putchar((sizeof(keymap) << 0) & 0xFF);
         uart_putchar((sizeof(keymap) << 1) & 0xFF);
@@ -698,45 +718,51 @@ int main(void) {
         update_warn_led();
         update_own_key_states();
 #if (CONTROLLER == CTLR_MASTER)
-        dbg_uarttx_byte(0);
+        dbg_uarttx_byte(0x01);
         int rx_result = 0; //rx_keystates();
         if (rx_result == 0) {
             process_key_states();
         } else {
+            dbg_uarttx_byte(0xC0);
             warning(W_COMMUNICATION_FAILURE);
         }
 
-#  if 1
-        dbg_uarttx_byte(1);
-        struct key_seq_step_s step = key_seq_queue_dequeue();
-        if (step.change == KC_PRESS) {
-            dbg_uarttx_byte(2);
-            uint8_t *free = find_keyboard_key(0);
-            if (free == NULL) {
-                warning(W_TOO_MANY_KEYS);
+        dbg_uarttx_byte(0x02);
+        dbg_uarttx_byte(key_seq_queue_end);
+        if (! key_seq_queue_empty()) {
+            dbg_uarttx_byte(0x03);
+            struct key_seq_step_s step = key_seq_queue_dequeue();
+            if (step.change == KC_PRESS) {
+                dbg_uarttx_byte(0x04);
+                uint8_t *free = find_keyboard_key(0);
+                if (free == NULL) {
+                    dbg_uarttx_byte(0xF3);
+                    warning(W_TOO_MANY_KEYS);
+                } else {
+                    *free = step.key;
+                }
             } else {
-                *free = step.key;
+                dbg_uarttx_byte(0x05);
+                uint8_t *pos = find_keyboard_key(step.key);
+                if (pos == NULL) {
+                    dbg_uarttx_byte(0xE5);
+                    warning(W_PROGRAMMING_ERROR);
+                } else {
+                    *pos = 0;
+                }
             }
-        } else {
-            dbg_uarttx_byte(3);
-            uint8_t *pos = find_keyboard_key(step.key);
-            if (pos == NULL) {
-                warning(W_PROGRAMMING_ERROR);
-            } else {
-                *pos = 0;
-            }
+            keyboard_modifier_keys = step.modifier;
         }
-        dbg_uarttx_byte(4);
-        keyboard_modifier_keys = step.modifier;
-        //usb_keyboard_send();
-#  endif
+        dbg_uarttx_byte(0x0D);
+        usb_keyboard_send();
+
         dbg_uarttx_usb_keys();
 #else // ! (CONTROLLER == CTLR_MASTER)
         tx_keystates();
 #endif // CONTROLLER == CTLR_MASTER
-        dbg_uarttx_byte(5);
+        dbg_uarttx_byte(0x0E);
         _delay_ms(cycle_delay);
-        dbg_uarttx_byte(6);
+        dbg_uarttx_byte(0x0F);
 
     }
     return 0;
