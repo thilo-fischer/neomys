@@ -26,10 +26,10 @@
 
 enum keylayout_e {
    TKL_DE,        ///< DIN 2137:2012-06 T1 (with dead keys)
-   TKL_NEO,       ///< Neo2 (http://www.neo-layout.org/)
-   TKL_US,        ///< ANSI-INCITS 154-1988
-   TKL_DE_APPLE,
-   TKL_US_APPLE,
+//   TKL_NEO,       ///< Neo2 (http://www.neo-layout.org/)
+//   TKL_US,        ///< ANSI-INCITS 154-1988
+//   TKL_DE_APPLE,
+//   TKL_US_APPLE,
    TKL_COUNT
 };
 
@@ -84,11 +84,11 @@ struct keyleveltranslations_s {
 
 const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT];
 
-inline const union keyseq_u *get_mapped_key(enum keylayout_e mode, enum controller_e controller, enum row_e row, uint8_t col, enum neo_levels_e level) {
+inline const union keyseq_u *get_mapped_key_ptr(enum keylayout_e mode, uint8_t controller, enum row_e row, uint8_t col, enum neo_levels_e level) {
     return &(keymap[mode][row][controller][col].seq[level]);
 }
 
-inline const struct keyleveltranslations_s *get_mapped_klt(enum keylayout_e mode, enum controller_e controller, enum row_e row, uint8_t col) {
+inline const struct keyleveltranslations_s *get_mapped_klt_ptr(enum keylayout_e mode, uint8_t controller, enum row_e row, uint8_t col) {
     return &(keymap[mode][row][controller][col]);
 }
 
