@@ -34,22 +34,9 @@ enum neo_levels_e {
 };
 
 
-#define SIDE_LEFT  0
-#define SIDE_RIGHT 1
-
 #define CTLR_MASTER 0
 #define CTLR_SLAVE  1
 #define CTLR_COUNT  2
-
-// shall be defined by compiler switch (-DSIDE=SIDE_xyz)
-//#define SIDE SIDE_LEFT
-//#define SIDE SIDE_RIGHT
-
-#if (SIDE == SIDE_LEFT)
-#  define CONTROLLER CTLR_MASTER
-#else
-#  define CONTROLLER CTLR_SLAVE
-#endif
 
 enum warnings_e {
     W_TOO_MANY_KEYS,

@@ -41,7 +41,7 @@
 
 
 # Target file name (without extension).
-TARGET = neomys
+TARGET = neomys$(CTLR_SUFFIX)
 
 
 # List C source files here. (C dependencies are automatically generated.)
@@ -121,8 +121,7 @@ CSTANDARD = -std=gnu99
 
 
 # Place -D or -U options here for C sources
-CDEFS = -DF_CPU=$(F_CPU)UL
-
+CDEFS = -DF_CPU=$(F_CPU)UL $(CTLR_CDEF)
 
 # Place -D or -U options here for ASM sources
 ADEFS = -DF_CPU=$(F_CPU)
@@ -346,6 +345,7 @@ REMOVE = rm -f
 REMOVEDIR = rm -rf
 COPY = cp
 WINSHELL = cmd
+RENAME = mv
 
 
 # Define Messages
@@ -389,11 +389,18 @@ ALL_CPPFLAGS = -mmcu=$(MCU) -I. -x c++ $(CPPFLAGS) $(GENDEPFLAGS)
 ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 
-
-
-
 # Default target.
-all: begin gccversion sizebefore build sizeafter end
+all: begin gccversion master slave end
+
+
+master:
+	@echo "--> master"
+	$(MAKE) CTLR_CDEF="-DCONTROLLER=0" CTLR_SUFFIX="_$@" sizebefore build sizeafter
+
+slave:
+	@echo "--> slave"
+	$(MAKE) CTLR_CDEF="-DCONTROLLER=1" CTLR_SUFFIX="_$@" sizebefore build sizeafter
+
 
 # Change the build target to build a HEX file or a library.
 build: elf hex eep lss sym
@@ -543,6 +550,10 @@ extcoff: $(TARGET).elf
 	@echo
 	@echo $(MSG_LINKING) $@
 	$(CC) $(ALL_CFLAGS) $^ --output $@ $(LDFLAGS)
+
+
+%_master.o %_slave.o : %.o
+	$(RENAME) $< $@
 
 
 # Compile: create object files from C source files.
