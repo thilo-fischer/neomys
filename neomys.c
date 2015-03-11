@@ -5,6 +5,8 @@
    This program is licenced under GPLv3.
 */
 
+#define __DELAY_BACKWARD_COMPATIBLE__ // FIXME -- temporarily to be able to build with (probably) inconsistent toolchain setup ...
+
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 #include <avr/interrupt.h>
@@ -654,24 +656,27 @@ static inline void init() {
         init_col_io(col);
     }
 
+    // initialize state variables
     clear_changed_keys();
 
     init_warn_led();
 
-    uart_init(UART_BAUD_RATE);
-
+    // blink LED to destinct master from slave controller
 #if (CONTROLLER == CTLR_MASTER)
     init_usb_keyboard();
     warning(W_MASTER); // FIXME function and symbol names
 #else
     warning(W_SLAVE);  // FIXME function and symbol names
 #endif
-    
+
     uint8_t i;
     for (i = 0; i < 8; ++i) {
         update_warn_led();
         _delay_ms(cycle_delay);        
     }
+
+    // Initialize UART only after blinking LED. The delay before UART initialization will reduce the chance of latch up effects (at least if both controllers get powered simultaneously).
+    uart_init(UART_BAUD_RATE);
 }
 
 uint8_t *find_keyboard_key(uint8_t key) {
