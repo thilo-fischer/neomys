@@ -106,25 +106,27 @@ static inline void switch_warn_led(bool on) {
 }
 
 static inline void warning(enum warnings_e code) {
-    warn_cntdn = WARN_CNTDN_START - 1;
-    switch (code) {
-    case W_TOO_MANY_KEYS:
-        current_pattern = WP_MEDIUM;        
-        break;
-    case W_COMMUNICATION_FAILURE:
-        current_pattern = WP_LONG;
-        break;
-    case W_PROGRAMMING_ERROR:
-        current_pattern = WP_SHORT;        
-        break;
-    case W_MASTER:
-        current_pattern = WP_CONSTANT;
-        break;
-    case W_SLAVE:
-        current_pattern = WP_SHORT;        
-        break;
-    default:
-        current_pattern = WP_CONSTANT;
+    if (warn_cntdn == -1) {
+        warn_cntdn = WARN_CNTDN_START - 1;
+        switch (code) {
+        case W_TOO_MANY_KEYS:
+            current_pattern = WP_MEDIUM;
+            break;
+        case W_COMMUNICATION_FAILURE:
+            current_pattern = WP_LONG;
+            break;
+        case W_PROGRAMMING_ERROR:
+            current_pattern = WP_SHORT;
+            break;
+        case W_MASTER:
+            current_pattern = WP_LONG;
+            break;
+        case W_SLAVE:
+            current_pattern = WP_SHORT;
+            break;
+        default:
+            current_pattern = WP_CONSTANT;
+        }
     }
 }
 
