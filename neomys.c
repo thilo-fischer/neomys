@@ -267,7 +267,9 @@ void tx_keystates() {
 void discard_uart() {
     uint8_t available;
     do {
-        _delay_ms(1);
+        // FIXME: need 3ms delay at 4800 bauds becase transmission of 1 byte takes about 2ms
+        //_delay_ms(1);
+        _delay_ms(3);
         available = uart_available();
         int i;
         for (i = 0; i < available; ++i) {
