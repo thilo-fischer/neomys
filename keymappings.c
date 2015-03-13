@@ -520,6 +520,14 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] P
                     .seq = {{ .single = {KO_MODIFIER, KEY_LEFT_GUI} }}, // XXX correct?
                 },
                 {
+                    .special = TT_LEVEL_MOD,
+                    .seq = {{ .single = {KO_MODIFIER, KEY_LEFT_GUI} }}, // FIXME
+                },
+                {
+                    .special = TT_LEVEL_MOD,
+                    .seq = {{ .single = {KO_MODIFIER, KEY_LEFT_GUI} }}, // FIXME
+                },
+                {
                     {
                         /* lvl1 spce*/ { .single = {KO_PLAIN  , KEY_SPACE}},
                         /* lvl2 spce*/ { .single = {KO_SHIFT  , KEY_SPACE}},
@@ -557,13 +565,8 @@ const struct keyleveltranslations_s keymap[TKL_COUNT][ROW_COUNT][2][COL_COUNT] P
                     .seq = {{ .single = {KO_MODIFIER, KEY_RIGHT_GUI} }}, // XXX correct?
                 },
                 {
-                    {
-                        /* lvl1 menu*/ { .single = {KO_PLAIN  , KEY_GUI}}, // FIXME
-                        /* lvl2 menu*/ { .single = {KO_SHIFT  , KEY_GUI}}, // FIXME
-                        /* lvl3 menu*/ { .single = {KO_PLAIN  , KEY_GUI}}, // FIXME
-                        /* lvl4 menu*/ { .single = {KO_PLAIN  , KEY_GUI}}, // FIXME
-                        /* lvlM menu*/ { .single = {KO_PLAIN  , KEY_GUI}}, // FIXME
-                    },
+                    .special = TT_LEVEL_MOD,
+                    .seq = {{ .single = {KO_MODIFIER, KEY_RIGHT_GUI} }}, // FIXME
                 },
                 {
                     .special = TT_LEVEL_MOD,
