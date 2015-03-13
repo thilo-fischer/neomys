@@ -76,6 +76,39 @@ static inline char test_col(uint8_t col) {
     return (*COL_PORT_PIN[col] &  (1 << COL_PORT_BIT[col])) ? 0 : 1 ;
 }
 
+#if (CONTROLLER == CTLR_MASTER)
+#  define UART_LOGLEVEL 1
+#else
+#  define UART_LOGLEVEL 0
+#endif
+
+#if (UART_LOGLEVEL == 0)
+#define dbg_uarttx_byte(b)
+#define dbg_uarttx_usb_keys()
+
+#elif (UART_LOGLEVEL == 1)
+void dbg_uarttx_byte(uint8_t b) {
+    //    if (b > 0x1F) {
+        uart_putchar(b);
+        //    }
+}
+#define dbg_uarttx_usb_keys()
+
+#else
+void dbg_uarttx_byte(uint8_t b) {
+    uart_putchar(b);
+}
+void dbg_uarttx_usb_keys() {
+    uart_putchar(0xFF);
+    uart_putchar(keyboard_modifier_keys);
+    int i;
+    for (i = 0; i < 6; ++i) {
+        uart_putchar(keyboard_keys[i]);
+    }
+}
+
+#endif
+
 // warning LED
 
 enum blink_pattern_e {
@@ -107,13 +140,14 @@ static inline void switch_warn_led(bool on) {
 
 static inline void warning(enum warnings_e code) {
     if (warn_cntdn == -1) {
+        dbg_uarttx_byte(0xE0 | code);
         warn_cntdn = WARN_CNTDN_START - 1;
         switch (code) {
         case W_TOO_MANY_KEYS:
             current_pattern = WP_MEDIUM;
             break;
         case W_COMMUNICATION_FAILURE:
-            current_pattern = WP_LONG;
+            current_pattern = WP_LONG_BREAK;
             break;
         case W_PROGRAMMING_ERROR:
             current_pattern = WP_SHORT;
@@ -127,6 +161,13 @@ static inline void warning(enum warnings_e code) {
         default:
             current_pattern = WP_CONSTANT;
         }
+    }
+}
+
+static inline void flash_led() {
+    if (warn_cntdn == -1) {
+        warn_cntdn = 0;
+        switch_warn_led(true);
     }
 }
 
@@ -199,39 +240,6 @@ static inline struct keyleveltranslations_s get_current_mapped_klt(uint8_t contr
     }
     return klt;
 }
-
-#if (CONTROLLER == CTLR_MASTER)
-#  define UART_LOGLEVEL 1
-#else
-#  define UART_LOGLEVEL 0
-#endif
-
-#if (UART_LOGLEVEL == 0)
-#define dbg_uarttx_byte(b)
-#define dbg_uarttx_usb_keys()
-
-#elif (UART_LOGLEVEL == 1)
-void dbg_uarttx_byte(uint8_t b) {
-    if (b > 0x1F) {
-        uart_putchar(b);
-    }
-}
-#define dbg_uarttx_usb_keys()
-
-#else
-void dbg_uarttx_byte(uint8_t b) {
-    uart_putchar(b);
-}
-void dbg_uarttx_usb_keys() {
-    uart_putchar(0xFF);
-    uart_putchar(keyboard_modifier_keys);
-    int i;
-    for (i = 0; i < 6; ++i) {
-        uart_putchar(keyboard_keys[i]);
-    }
-}
-
-#endif
 
 // key states
 // Transmit states of all keys from slave to master. This is the simplest, most deterministic and probably most fail-safe approach (compared to sending only pressed keys or key state changes).
@@ -410,6 +418,8 @@ enum neo_levels_e determine_current_level() {
         }
     }
 
+    dbg_uarttx_byte(0xC0 | l);
+
     return l;
 }
 
@@ -533,10 +543,33 @@ void process_klt_charge(enum neo_levels_e level) {
     }
 }
 
+struct keychange_byte_b {
+    enum key_change_e kchange : 1;
+    uint8_t controller : 1;
+    uint8_t row : 3;
+    uint8_t col : 3;
+};
+
+struct keychange_byte_b keychange_byte(enum key_change_e kchange, uint8_t row, uint8_t controller, uint8_t col) {
+    struct keychange_byte_b result = {
+        .kchange = kchange,
+        .controller = controller,
+        .row = row,
+        .col = col,
+    };
+    return result;
+}
+
+char keychange_char(enum key_change_e kchange, uint8_t row, uint8_t controller, uint8_t col) {
+    struct keychange_byte_b var = keychange_byte(kchange, row, controller, col);
+    return * (char *) &var;
+}
 
 void process_keychange(uint8_t row, uint8_t controller, uint8_t col) {
+    flash_led();
     const struct keyleveltranslations_s klt = get_current_mapped_klt(controller, row, col);
     enum key_change_e kchange = get_key_state(controller, row, col);
+    dbg_uarttx_byte(keychange_char(kchange, row, controller, col));
     if (klt.special == TT_LEVEL_MOD) {
         if (klt.seq[0].type.type == KO_LEVEL_MOD || klt.seq[0].type.type == KO_LEVEL_MOD_X) {
         enum neo_levels_e level = klt.seq[0].level_mod.level;
