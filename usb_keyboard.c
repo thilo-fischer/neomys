@@ -3,6 +3,8 @@
 
    Copyright (c) 2015 Thilo Fischer
    This program is licenced under GPLv3.
+
+   usb_keyboard.c - USB HID keyboard support
 */
 
 #include "delay_wrapper.h"

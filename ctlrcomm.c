@@ -3,6 +3,8 @@
 
    Copyright (c) 2015 Thilo Fischer
    This program is licenced under GPLv3.
+
+   ctlrcomm.c - communication among teensy devices (master and slave keyboard controller)
 */
 
 #include "delay_wrapper.h"
