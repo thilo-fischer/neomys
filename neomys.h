@@ -8,8 +8,11 @@
 #ifndef _NEOMYS_H_
 #define _NEOMYS_H_
 
-#include <avr/io.h>
 #include <stdbool.h>
+#include <stdint.h>
+
+#include "inform.h"
+
 
 enum row_e {
     ROW_NUM,
@@ -22,28 +25,12 @@ enum row_e {
 
 #define COL_COUNT 8
 
-enum neo_levels_e {
-    LEVEL1,
-    LEVEL2,
-    LEVEL3,
-    LEVEL4,
-    LEVEL4_MOUSE,
-    LEVEL5,
-    LEVEL6,
-    LEVEL_COUNT
-};
-
-
 #define CTLR_MASTER 0
 #define CTLR_SLAVE  1
 #define CTLR_COUNT  2
 
-enum warnings_e {
-    W_TOO_MANY_KEYS,
-    W_COMMUNICATION_FAILURE,
-    W_PROGRAMMING_ERROR,
-    W_MASTER, // FIXME not a warning ... blink LED differently on master or slave controller at startup
-    W_SLAVE,  // FIXME not a warning ... blink LED differently on master or slave controller at startup
-};
+#ifndef CONTROLLER
+#  error CONTROLLER macro must be defined via compiler command line argument. Define as 0 to build software for master controller, as 1 to build for slave controllor. (-DCONTROLLER=0 or -DCONTROLLER=1 wit gcc.)
+#endif
 
 #endif // _NEOMYS_H_

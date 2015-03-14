@@ -19,10 +19,11 @@
  * translation tables in keymappings.c.
  */
 
-#ifndef _KEYMAPPINGS_H_
-#define _KEYMAPPINGS_H_
+#ifndef _KEYTRANSLATION_H_
+#define _KEYTRANSLATION_H_
 
 #include "neomys.h"
+#include "getkeys.h"
 
 enum keylayout_e {
    TKL_DE,        ///< DIN 2137:2012-06 T1 (with dead keys)

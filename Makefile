@@ -46,9 +46,16 @@ TARGET = neomys$(CTLR_SUFFIX)
 
 # List C source files here. (C dependencies are automatically generated.)
 SRC =	$(TARGET).c \
-	keymappings.c \
+	keytranslation.c \
+	ctlrcomm.c \
+	getkeys.c \
+	inform.c \
+	io.c \
+	uart.c \
+	usb_keyboard.c \
 	teensy_codelib/usb_keyboard/usb_keyboard.c \
 	teensy_codelib/uart/uart.c
+#	sendkeys.c \
 
 
 # MCU name, you MUST set this to match the board you are using
