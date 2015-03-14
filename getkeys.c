@@ -12,6 +12,392 @@
 #include "io.h"
 #include "ctlrcomm.h"
 
+
+typedef enum {
+    KT_PLAIN,
+    KT_LEVELMOD,
+    KT_IGNORE_SHIFTLOCK,
+    KT_IGNORE_LEVEL,
+    KT_DUMB,
+} keytype_t;
+
+typedef void (*keyfunc_t)();
+
+typedef struct {
+    keytype_t type;
+    keyfunc_t kf[LEVEL_COUNT];
+} keyrecord_t;
+
+keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
+    // ROW_NUM
+    {
+        //ROW_NUM left
+        {
+            // in contrast to neo layout, the key for the circumfex accent has been moved from the top left to the top right corner of the keyboard
+            // 1
+            {
+                .type = KT_IGNORE_SHIFTLOCK,
+                .kf = { kf_1, kf_degree, kf_superscript1, },
+            },
+            // 2
+            {
+                .type = KT_IGNORE_SHIFTLOCK,
+                .kf = { kf_2, kf_sectionsign, kf_superscript2, },
+            },
+            // 3
+            {
+                .type = KT_IGNORE_SHIFTLOCK,
+                .kf = { kf_3, NULL, kf_superscript3, },
+            },
+            // 4
+            {
+                .type = KT_IGNORE_SHIFTLOCK,
+                .kf = { kf_4, kf_guillemet_dbl_gt, kf_guillemet_sgl_gt, },
+            },
+            // 5
+            {
+                .type = KT_IGNORE_SHIFTLOCK,
+                .kf = { kf_5, kf_guillemet_dbl_lt, kf_guillemet_sgl_lt, },
+            },
+            // 6
+            {
+                .type = KT_IGNORE_SHIFTLOCK,
+                .kf = { kf_6, kf_dollar, kf_cent_currency, kf_pound_currency, },
+            },
+        }, // controller (left/right side)
+        //ROW_NUM right
+        {
+            // 7
+            {
+                .type = KT_IGNORE_SHIFTLOCK,
+                .kf = { kf_7, kf_euro_currency, kf_yen_currency, kf_currency_sign, },
+            },
+            // 8
+            {
+                .type = KT_IGNORE_SHIFTLOCK,
+                .kf = { kf_8, kf_low9quote_dbl, kf_low9quote_sgl, kf_tab, },
+            },
+            // 9
+            {
+                .type = KT_IGNORE_SHIFTLOCK,
+                .kf = { kf_9, kf_6quote_dbl, kf_6quote_sgl, kf_numpad_slash, },
+            },
+            // 0
+            {
+                .type = KT_IGNORE_SHIFTLOCK,
+                .kf = { kf_0, kf_9quote_dbl, kf_9quote_sgl, kf_numpad_asterisk, },
+            },
+            // -
+            {
+                .type = KT_IGNORE_SHIFTLOCK,
+                .kf = { kf_dash, kf_mdash, NULL, kf_numpad_dash},
+            },
+            // ò
+            {
+                .type = KT_IGNORE_SHIFTLOCK,
+                .kf = { kf_dead_grave, kf_dead_cedilla, kf_dead_ring, kf_dead_umlaut, },
+            },
+            // ô
+            {
+                .type = KT_IGNORE_SHIFTLOCK,
+                .kf = { kf_dead_circumfex, kf_dead_caron, NULL, kf_dead_dot, },
+            },
+        }, // controller (left/right side)
+    }, // row
+
+    
+    // ROW_TOP
+    {
+        //ROW_TOP left
+        {
+            // in contrast to neo layout, the left level4 modifier key has been moved from right of the left level2 mod key to ontop of the level3 mod ked
+            // level4 modifier
+            {
+                .type = KT_LEVELMOD,
+                .kf = { kf_level4mod_left },
+            },
+            // X
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_x, kf_X, kf_ellipsis, kf_page_up, },
+            },
+            // V
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_v, kf_V, kf_underscore, kf_backspace, },
+            },
+            // L
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_l, kf_L, kf_bracket_left, kf_up, },
+            },
+            // C
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_c, kf_C, kf_bracket_right, kf_delete, },
+            },
+            // W
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_w, kf_W, kf_caret, kf_page_down, },
+            },
+        }, // controller (left/right side)
+        //ROW_TOP right
+        {
+            // K
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_k, kf_K, kf_exclamation_mark, kf_inverted_exclamation_mark, },
+            },
+            // H
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_h, kf_H, kf_chevron_left, kf_numpad_7, },
+            },
+            // G
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_g, kf_G, kf_chevron_right, kf_numpad_8, },
+            },
+            // F
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_f, kf_F, kf_equals, kf_numpad_9, },
+            },
+            // Q
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_q, kf_Q, kf_ampersand, kf_numpad_plus, },
+            },
+            // ß
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_eszett, kf_ESZETT, kf_long_s, kf_minus, },
+            },
+            // ó
+            {
+                .type = KT_IGNORE_SHIFTLOCK,
+                .kf = { kf_dead_acute, kf_dead_perispomene, kf_dead_bar, kf_dead_double_acute},
+            },
+        }, // controller (left/right side)
+    }, // row
+
+    
+    // ROW_HOME
+    {
+        //ROW_HOME left
+        {
+            // level3 modifier
+            {
+                .type = KT_LEVELMOD,
+                .kf = { kf_level3mod_left },
+            },
+            // U
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_u, kf_U, kf_backslash, kf_home, },
+            },
+            // I
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_i, kf_I, kf_slash, kf_left, },
+            },
+            // A
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_a, kf_A, kf_brace_left, kf_down, },
+            },
+            // E
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_e, kf_E, kf_brace_right, kf_right, },
+            },
+            // O
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_o, kf_O, kf_asterisk, kf_end, },
+            },
+        }, // controller (left/right side)
+        //ROW_HOME right
+        {
+            // S
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_s, kf_S, kf_question_mark, kf_inverted_question_mark, },
+            },
+            // N
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_n, kf_N, kf_parentheses_left, kf_numpad_4, },
+            },
+            // R
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_r, kf_R, kf_parentheses_right, kf_numpad_5, },
+            },
+            // T
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_t, kf_T, kf_dash, kf_numpad_6, },
+            },
+            // D
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_d, kf_D, kf_colon, kf_numpad_comma, },
+            },
+            // Y
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_y, kf_Y, kf_at, kf_numpad_dot, },
+            },
+        }, // controller (left/right side)
+    }, // row
+
+    
+    // ROW_BTM
+    {
+        //ROW_BTM left
+        {
+            // level2 modifier
+            {
+                .type = KT_LEVELMOD,
+                .kf = { kf_level2mod_left },
+            },
+            // Ü
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_uuml, kf_UUML, kf_hash, kf_escape, },
+            },
+            // Ö
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_ouml, kf_OUML, kf_dollar, kf_tab, },
+            },
+            // Ä
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_auml, kf_AUML, kf_pipe, kf_insert, },
+            },
+            // P
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_p, kf_P, kf_tilde, kf_return, },
+            },
+            // Z
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_z, kf_Z, kf_backtick, kf_undo, },
+            },
+        }, // controller (left/right side)
+        //ROW_BTM right
+        {
+            // B
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_b, kf_B, kf_plus, kf_colon, },
+            },
+            // M
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_m, kf_M, kf_percent, kf_numpad_1, },
+            },
+            // ,
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_comma, kf_ndash, kf_straight_dbl_quote, kf_numpad_2, },
+            },
+            // .
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_dot, kf_bullet, kf_apostrophe, kf_numpad_3, },
+            },
+            // J
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_j, kf_J, kf_semicolon, kf_semicolon, },
+            },
+            // level2 modifier
+            {
+                .type = KT_LEVELMOD,
+                .kf = { kf_level2mod_right },
+            },
+        }, // controller (left/right side)
+    }, // row
+
+    
+    // ROW_SPACE
+    {
+        //ROW_SPACE left
+        {
+            // left Ctrl
+            {
+                .type = KT_IGNORE_LEVEL,
+                .kf = { kf_ctrl_left },
+            },
+            // left GUI
+            {
+                .type = KT_IGNORE_LEVEL,
+                .kf = { kf_gui_left },
+            },
+            // unused
+            {
+                .type = KT_DUMB,
+                .kf = { NULL },
+            },
+            // unused
+            {
+                .type = KT_DUMB,
+                .kf = { NULL },
+            },
+            // space
+            {
+                .type = KT_IGNORE_LEVEL,
+                .kf = { kf_space },
+            },
+            // left Alt
+            {
+                .type = KT_IGNORE_LEVEL,
+                .kf = { kf_alt_left },
+            },
+        }, // controller (left/right side)
+        //ROW_SPACE right
+        {
+            // left Alt
+            {
+                .type = KT_IGNORE_LEVEL,
+                .kf = { kf_alt_left },
+            },
+            // level4 modifier
+            {
+                .type = KT_LEVELMOD,
+                .kf = { kf_level4mod_right },
+            },
+            // space, numpad-zero
+            {
+                .type = KT_PLAIN,
+                .kf = { kf_space, kf_space, kf_space, kf_numpad_zero, },
+            },
+            // unused
+            {
+                .type = KT_DUMB,
+                .kf = { NULL },
+            },
+            // left GUI
+            {
+                .type = KT_IGNORE_LEVEL,
+                .kf = { kf_gui_left },
+            },
+            // left Ctrl
+            {
+                .type = KT_IGNORE_LEVEL,
+                .kf = { kf_ctrl_left },
+            },
+        }, // controller (left/right side)
+    }, // row
+};
+
+
+
 // FIXME
 #include "keytranslation.h"
 
