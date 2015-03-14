@@ -12,8 +12,8 @@
 #include <avr/interrupt.h>
 #include <util/delay.h>
 #include <string.h>
-#include "usb_keyboard.h"
-#include "uart.h"
+#include "teensy_codelib/usb_keyboard/usb_keyboard.h"
+#include "teensy_codelib/uart/uart.h"
 #include "neomys.h"
 #include "keymappings.h"
 
