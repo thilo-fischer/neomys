@@ -409,7 +409,7 @@ slave:
 	$(MAKE) CTLR_CDEF="-DCONTROLLER=1" CTLR_SUFFIX="_$@" sizebefore build sizeafter
 
 flash_%: %
-	teensy_loader_cli -mmcu=atmega32u4 neomys_$<.hex
+	teensy_loader_cli -mmcu=atmega32u4 -w -v neomys_$<.hex
 
 # Change the build target to build a HEX file or a library.
 build: elf hex eep lss sym
