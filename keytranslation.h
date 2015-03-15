@@ -38,6 +38,11 @@ typedef enum {
 
 
 
+typedef void (*keyfunc_t)();
+
+
+keyfunc_t get_keyfunc();
+
 
 
 inline const union keyseq_u *get_mapped_key_ptr(enum keylayout_e mode, uint8_t controller, enum row_e row, uint8_t col, enum neo_levels_e level) {

@@ -12,6 +12,13 @@
 #include "keyhandling.h"
 #include "sendkeys.h"
 
+
+/**
+ * Keyboard layout the USB host is configured to use.
+ */
+target_layout_t target_layout = TL_NEO;
+
+
 // KEY FUNCTIONS
 
 #define KF(name) static void kf_##name(target_layout_t tl, keystate_t event)
@@ -24,80 +31,211 @@ KF(TODO) {
     // todo: log to uart, light up warning LED
 }
 
+KF(next_target_layout) {
+    ++target_layout;
+    if (target_layout == TL_COUNT) {
+        target_layout = TL_NEO;
+    }
+    log(LL_INFO, LS_TARGET_LAYOUT, target_layout);
+}
+
+KF(prev_target_layout) {
+    if (target_layout == TL_NEO) {
+        target_layout = TL_COUNT;
+    }
+    --target_layout;
+    log(LL_INFO, LS_TARGET_LAYOUT, target_layout);
+}
+
 // level modifiers
 
-KF(kf_level4mod_left) {
+static inline void set_modifier_bit(enum neo_level_modifiers_e mod, keystate_t event) {
+    if (event == KS_PRESS) {
+        level_modifiers |=  mod;
+    } else {
+        level_modifiers &= ~mod;
+    }
 }
+
+// Currently no support to lock levels 5 and 6.
+static inline void toggle_levellock(enum neo_levels_e level) {
+    // LEVEL4 = 0x04, LEVEL4_MOUSE = 0x14 => test only 4 least significant bits
+    if ((locked_level & 0x0F) == (level & 0x0F)) {
+        locked_level = LEVEL1;
+    } else {
+        locked_level = level;
+    }
+}
+
+static inline void affect_levellock(enum neo_level_modifiers_e mod, enum neo_level_modifiers_e also_mod, enum neo_levels_e level, keystate_t event) {
+    if (event == KS_PRESS) {
+        if (level_modifiers & also_mod) {
+            toggle_levellock(level);
+        }
+    }
+}
+
+KF(kf_level2mod_left) {
+    set_modifier_bit(LM2_L, event);
+    affect_levellock(LM2_L, LM2_R, LEVEL2, event);
+    kev_modifier(KEY_LEFT_SHIFT, event);
+}
+
+KF(kf_level2mod_right) {
+    set_modifier_bit(LM2_R, event);
+    affect_levellock(LM2_R, LM2_L, LEVEL2, event);
+    kev_modifier(KEY_RIGHT_SHIFT, event);
+}
+
+KF(kf_level3mod_left) {
+    set_modifier_bit(LM3_L, event);
+    affect_levellock(LM3_L, LM3_R, LEVEL3, event);
+    if (tl == TL_NEO)
+        kev_virtual_modifier(KEY_CAPS_LOCK, event);
+}
+
+KF(kf_level3mod_right) {
+    set_modifier_bit(LM3_R, event);
+    affect_levellock(LM3_R, LM3_L, LEVEL3, event);
+    if (tl == TL_NEO)
+        kev_virtual_modifier(KEY_BACKSLASH, event);
+}
+
+KF(kf_level4mod_left) {
+    set_modifier_bit(LM4_L, event);
+    // if LM4_L is getting pressed while LM4_R is already pressed, lock LEVEL4_MOUSE
+    affect_levellock(LM4_L, LM4_R, LEVEL4_MOUSE, event);
+    if (tl == TL_NEO)
+        kev_modifier(KEY_RIGHT_ALT, event);
+    // TODO kev_virtual_modifier(KEY_<<ISO extra key>>, event);
+}
+
+KF(kf_level4mod_right) {
+    set_modifier_bit(LM4_R, event);
+    // if LM4_R is getting pressed while LM4_L is already pressed, lock LEVEL4
+    affect_levellock(LM4_R, LM4_L, LEVEL4, event);
+    if (tl == TL_NEO)
+        kev_modifier(KEY_RIGHT_ALT, event);
+}
+
+// modifiers
+
+KF(kf_ctrl_left) {
+    switch (tl) {
+    default:
+        kev_modifier(KEY_LEFT_CTRL, event);
+    }
+}
+
+KF(kf_ctrl_right) {
+    switch (tl) {
+    default:
+        kev_modifier(KEY_RIGHT_CTRL, event);
+    }
+}
+
+KF(kf_alt_left) {
+    switch (tl) {
+    default:
+        kev_modifier(KEY_LEFT_ALT, event);
+    }
+}
+
+KF(kf_alt_right) {
+    switch (tl) {
+    case TL_DE:
+    case TL_DE_NODEAD:
+        kev_modifier(KEY_ALT, event);
+        break;
+    default:
+        kev_modifier(KEY_RIGHT_ALT, event);
+    }
+}
+
+KF(kf_gui_left) {
+    switch (tl) {
+    default:
+        kev_modifier(KEY_LEFT_GUI, event);
+    }
+}
+
+KF(kf_gui_right) {
+    switch (tl) {
+    default:
+        kev_modifier(KEY_RIGHT_GUI, event);
+    }
+}
+
 
 // numbers
 
 KF(1) {
     switch (tl) {
     default:
-        kpress_plain(KEY_1);
+        kev_plain(KEY_1, event);
     }
 }
 
 KF(2) {
     switch (tl) {
     default:
-        kpress_plain(KEY_2);
+        kev_plain(KEY_2, event);
     }
 }
 
 KF(3) {
     switch (tl) {
     default:
-        kpress_plain(KEY_3);
+        kev_plain(KEY_3, event);
     }
 }
 
 KF(4) {
     switch (tl) {
     default:
-        kpress_plain(KEY_4);
+        kev_plain(KEY_4, event);
     }
 }
 
 KF(5) {
     switch (tl) {
     default:
-        kpress_plain(KEY_5);
+        kev_plain(KEY_5, event);
     }
 }
 
 KF(6) {
     switch (tl) {
     default:
-        kpress_plain(KEY_6);
+        kev_plain(KEY_6, event);
     }
 }
 
 KF(7) {
     switch (tl) {
     default:
-        kpress_plain(KEY_7);
+        kev_plain(KEY_7, event);
     }
 }
 
 KF(8) {
     switch (tl) {
     default:
-        kpress_plain(KEY_8);
+        kev_plain(KEY_8, event);
     }
 }
 
 KF(9) {
     switch (tl) {
     default:
-        kpress_plain(KEY_9);
+        kev_plain(KEY_9, event);
     }
 }
 
 KF(0) {
     switch (tl) {
     default:
-        kpress_plain(KEY_0);
+        kev_plain(KEY_0, event);
     }
 }
 
@@ -107,320 +245,320 @@ KF(0) {
 KF(A) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_D);
+        kev_w_shift(KEY_D, event);
         break;
     default:
-        kpress_w_shift(KEY_A);
+        kev_w_shift(KEY_A, event);
     }
 }
 
 KF(B) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_N);
+        kev_w_shift(KEY_N, event);
         break;
     default:
-        kpress_w_shift(KEY_B);
+        kev_w_shift(KEY_B, event);
     }
 }
 
 KF(C) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_R);
+        kev_w_shift(KEY_R, event);
         break;
     default:
-        kpress_w_shift(KEY_C);
+        kev_w_shift(KEY_C, event);
     }
 }
 
 KF(D) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_SEMICOLON);
+        kev_w_shift(KEY_SEMICOLON, event);
         break;
     default:
-        kpress_w_shift(KEY_D);
+        kev_w_shift(KEY_D, event);
     }
 }
 
 KF(E) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_F);
+        kev_w_shift(KEY_F, event);
         break;
     default:
-        kpress_w_shift(KEY_E);
+        kev_w_shift(KEY_E, event);
     }
 }
 
 KF(F) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_O);
+        kev_w_shift(KEY_O, event);
         break;
     default:
-        kpress_w_shift(KEY_F);
+        kev_w_shift(KEY_F, event);
     }
 }
 
 KF(G) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_I);
+        kev_w_shift(KEY_I, event);
         break;
     default:
-        kpress_w_shift(KEY_G);
+        kev_w_shift(KEY_G, event);
     }
 }
 
 KF(H) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_U);
+        kev_w_shift(KEY_U, event);
         break;
     default:
-        kpress_w_shift(KEY_H);
+        kev_w_shift(KEY_H, event);
     }
 }
 
 KF(I) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_S);
+        kev_w_shift(KEY_S, event);
         break;
     default:
-        kpress_w_shift(KEY_I);
+        kev_w_shift(KEY_I, event);
     }
 }
 
 KF(J) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_SLASH);
+        kev_w_shift(KEY_SLASH, event);
         break;
     default:
-        kpress_w_shift(KEY_J);
+        kev_w_shift(KEY_J, event);
     }
 }
 
 KF(K) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_Y);
+        kev_w_shift(KEY_Y, event);
         break;
     default:
-        kpress_w_shift(KEY_K);
+        kev_w_shift(KEY_K, event);
     }
 }
 
 KF(L) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_E);
+        kev_w_shift(KEY_E, event);
         break;
     default:
-        kpress_w_shift(KEY_L);
+        kev_w_shift(KEY_L, event);
     }
 }
 
 KF(M) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_M);
+        kev_w_shift(KEY_M, event);
         break;
     default:
-        kpress_w_shift(KEY_M);
+        kev_w_shift(KEY_M, event);
     }
 }
 
 KF(N) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_J);
+        kev_w_shift(KEY_J, event);
         break;
     default:
-        kpress_w_shift(KEY_N);
+        kev_w_shift(KEY_N, event);
     }
 }
 
 KF(O) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_G);
+        kev_w_shift(KEY_G, event);
         break;
     default:
-        kpress_w_shift(KEY_O);
+        kev_w_shift(KEY_O, event);
     }
 }
 
 KF(P) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_V);
+        kev_w_shift(KEY_V, event);
         break;
     default:
-        kpress_w_shift(KEY_P);
+        kev_w_shift(KEY_P, event);
     }
 }
 
 KF(Q) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_P);
+        kev_w_shift(KEY_P, event);
         break;
     default:
-        kpress_w_shift(KEY_Q);
+        kev_w_shift(KEY_Q, event);
     }
 }
 
 KF(R) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_K);
+        kev_w_shift(KEY_K, event);
         break;
     default:
-        kpress_w_shift(KEY_R);
+        kev_w_shift(KEY_R, event);
     }
 }
 
 KF(S) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_H);
+        kev_w_shift(KEY_H, event);
         break;
     default:
-        kpress_w_shift(KEY_S);
+        kev_w_shift(KEY_S, event);
     }
 }
 
 KF(T) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_L);
+        kev_w_shift(KEY_L, event);
         break;
     default:
-        kpress_w_shift(KEY_T);
+        kev_w_shift(KEY_T, event);
     }
 }
 
 KF(U) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_A);
+        kev_w_shift(KEY_A, event);
         break;
     default:
-        kpress_w_shift(KEY_U);
+        kev_w_shift(KEY_U, event);
     }
 }
 
 KF(V) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_W);
+        kev_w_shift(KEY_W, event);
         break;
     default:
-        kpress_w_shift(KEY_V);
+        kev_w_shift(KEY_V, event);
     }
 }
 
 KF(W) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_T);
+        kev_w_shift(KEY_T, event);
         break;
     default:
-        kpress_w_shift(KEY_W);
+        kev_w_shift(KEY_W, event);
     }
 }
 
 KF(X) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_Q);
+        kev_w_shift(KEY_Q, event);
         break;
     default:
-        kpress_w_shift(KEY_X);
+        kev_w_shift(KEY_X, event);
     }
 }
 
 KF(Y) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_QUOTE);
+        kev_w_shift(KEY_QUOTE, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_Z);
+        kev_w_shift(KEY_Z, event);
         break;
     default:
-        kpress_w_shift(KEY_Y);
+        kev_w_shift(KEY_Y, event);
     }
 }
 
 KF(Z) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_B);
+        kev_w_shift(KEY_B, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_Y);
+        kev_w_shift(KEY_Y, event);
         break;
     default:
-        kpress_w_shift(KEY_Z);
+        kev_w_shift(KEY_Z, event);
     }
 }
 
 KF(AUML) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_C);
+        kev_w_shift(KEY_C, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_QUOTE);
+        kev_w_shift(KEY_QUOTE, event);
         break;
     default:
-        kpress_TODO();
+        kev_TODO();
     }
 }
 
 KF(OUML) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_X);
+        kev_w_shift(KEY_X, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_SEMICOLON);
+        kev_w_shift(KEY_SEMICOLON, event);
         break;
     default:
-        kpress_TODO();
+        kev_TODO();
     }
 }
 
 KF(UUML) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_Z);
+        kev_w_shift(KEY_Z, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_LEFT_BRACE);
+        kev_w_shift(KEY_LEFT_BRACE, event);
         break;
     default:
-        kpress_TODO();
+        kev_TODO();
     }
 }
 
 KF(ESZETT) {
     switch (tl) {
     case TL_NEO:
-        kpress_w_shift(KEY_LEFT_BRACE);
+        kev_w_shift(KEY_LEFT_BRACE, event);
         break;
     default:
-        kpress_TODO();
+        kev_TODO();
     }
 }
 
@@ -430,510 +568,510 @@ KF(ESZETT) {
 KF(a) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_D);
+        kev_plain(KEY_D, event);
         break;
     default:
-        kpress_plain(KEY_A);
+        kev_plain(KEY_A, event);
     }
 }
 
 KF(b) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_N);
+        kev_plain(KEY_N, event);
         break;
     default:
-        kpress_plain(KEY_B);
+        kev_plain(KEY_B, event);
     }
 }
 
 KF(c) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_R);
+        kev_plain(KEY_R, event);
         break;
     default:
-        kpress_plain(KEY_C);
+        kev_plain(KEY_C, event);
     }
 }
 
 KF(d) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_SEMICOLON);
+        kev_plain(KEY_SEMICOLON, event);
         break;
     default:
-        kpress_plain(KEY_D);
+        kev_plain(KEY_D, event);
     }
 }
 
 KF(e) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_F);
+        kev_plain(KEY_F, event);
         break;
     default:
-        kpress_plain(KEY_E);
+        kev_plain(KEY_E, event);
     }
 }
 
 KF(f) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_O);
+        kev_plain(KEY_O, event);
         break;
     default:
-        kpress_plain(KEY_F);
+        kev_plain(KEY_F, event);
     }
 }
 
 KF(g) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_I);
+        kev_plain(KEY_I, event);
         break;
     default:
-        kpress_plain(KEY_G);
+        kev_plain(KEY_G, event);
     }
 }
 
 KF(h) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_U);
+        kev_plain(KEY_U, event);
         break;
     default:
-        kpress_plain(KEY_H);
+        kev_plain(KEY_H, event);
     }
 }
 
 KF(i) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_S);
+        kev_plain(KEY_S, event);
         break;
     default:
-        kpress_plain(KEY_I);
+        kev_plain(KEY_I, event);
     }
 }
 
 KF(j) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_SLASH);
+        kev_plain(KEY_SLASH, event);
         break;
     default:
-        kpress_plain(KEY_J);
+        kev_plain(KEY_J, event);
     }
 }
 
 KF(k) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_Y);
+        kev_plain(KEY_Y, event);
         break;
     default:
-        kpress_plain(KEY_K);
+        kev_plain(KEY_K, event);
     }
 }
 
 KF(l) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_E);
+        kev_plain(KEY_E, event);
         break;
     default:
-        kpress_plain(KEY_L);
+        kev_plain(KEY_L, event);
     }
 }
 
 KF(m) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_M);
+        kev_plain(KEY_M, event);
         break;
     default:
-        kpress_plain(KEY_M);
+        kev_plain(KEY_M, event);
     }
 }
 
 KF(n) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_J);
+        kev_plain(KEY_J, event);
         break;
     default:
-        kpress_plain(KEY_N);
+        kev_plain(KEY_N, event);
     }
 }
 
 KF(o) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_G);
+        kev_plain(KEY_G, event);
         break;
     default:
-        kpress_plain(KEY_O);
+        kev_plain(KEY_O, event);
     }
 }
 
 KF(p) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_V);
+        kev_plain(KEY_V, event);
         break;
     default:
-        kpress_plain(KEY_P);
+        kev_plain(KEY_P, event);
     }
 }
 
 KF(q) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_P);
+        kev_plain(KEY_P, event);
         break;
     default:
-        kpress_plain(KEY_Q);
+        kev_plain(KEY_Q, event);
     }
 }
 
 KF(r) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_K);
+        kev_plain(KEY_K, event);
         break;
     default:
-        kpress_plain(KEY_R);
+        kev_plain(KEY_R, event);
     }
 }
 
 KF(s) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_H);
+        kev_plain(KEY_H, event);
         break;
     default:
-        kpress_plain(KEY_S);
+        kev_plain(KEY_S, event);
     }
 }
 
 KF(t) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_L);
+        kev_plain(KEY_L, event);
         break;
     default:
-        kpress_plain(KEY_T);
+        kev_plain(KEY_T, event);
     }
 }
 
 KF(u) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_A);
+        kev_plain(KEY_A, event);
         break;
     default:
-        kpress_plain(KEY_U);
+        kev_plain(KEY_U, event);
     }
 }
 
 KF(v) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_W);
+        kev_plain(KEY_W, event);
         break;
     default:
-        kpress_plain(KEY_V);
+        kev_plain(KEY_V, event);
     }
 }
 
 KF(w) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_T);
+        kev_plain(KEY_T, event);
         break;
     default:
-        kpress_plain(KEY_W);
+        kev_plain(KEY_W, event);
     }
 }
 
 KF(x) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_Q);
+        kev_plain(KEY_Q, event);
         break;
     default:
-        kpress_plain(KEY_X);
+        kev_plain(KEY_X, event);
     }
 }
 
 KF(y) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_QUOTE);
+        kev_plain(KEY_QUOTE, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_plain(KEY_Z);
+        kev_plain(KEY_Z, event);
         break;
     default:
-        kpress_plain(KEY_Y);
+        kev_plain(KEY_Y, event);
     }
 }
 
 KF(z) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_B);
+        kev_plain(KEY_B, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_plain(KEY_Y);
+        kev_plain(KEY_Y, event);
         break;
     default:
-        kpress_plain(KEY_Z);
+        kev_plain(KEY_Z, event);
     }
 }
 
 KF(auml) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_C);
+        kev_plain(KEY_C, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_plain(KEY_QUOTE);
+        kev_plain(KEY_QUOTE, event);
         break;
     default:
-        kpress_TODO();
+        kev_TODO();
     }
 }
 
 KF(ouml) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_X);
+        kev_plain(KEY_X, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_plain(KEY_SEMICOLON);
+        kev_plain(KEY_SEMICOLON, event);
         break;
     default:
-        kpress_TODO();
+        kev_TODO();
     }
 }
 
 KF(uuml) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_Z);
+        kev_plain(KEY_Z, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_plain(KEY_LEFT_BRACE);
+        kev_plain(KEY_LEFT_BRACE, event);
         break;
     default:
-        kpress_TODO();
+        kev_TODO();
     }
 }
 
 KF(eszett) {
     switch (tl) {
     case TL_NEO:
-        kpress_plain(KEY_LEFT_BRACE);
+        kev_plain(KEY_LEFT_BRACE, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_plain(KEY_MINUS);
+        kev_plain(KEY_MINUS, event);
         break;
     default:
-        kpress_TODO();
+        kev_TODO();
     }
 }
 
 // basic punctuation characters (in ASCII order)
 
 KF(space) {
-    kpress_allow_modifiers(KEY_SPACE);
+    kev_allow_modifiers(KEY_SPACE, event);
 }
 
 KF(exclamation_mark) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_H);
+        kev_level3(KEY_H, event);
         break;
     default:
-        kpress_w_shift(KEY_1);
+        kev_w_shift(KEY_1, event);
     }
 }
 
 KF(straight_dbl_quote) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_COMMA);
+        kev_level3(KEY_COMMA, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_2);
+        kev_w_shift(KEY_2, event);
         break;
     default:
-        kpress_w_shift(KEY_QUOTE);
+        kev_w_shift(KEY_QUOTE, event);
     }
 }
 
 KF(hash) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_Z);
+        kev_level3(KEY_Z, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_plain(KEY_BACKSLASH);
+        kev_plain(KEY_BACKSLASH, event);
         break;
     default:
-        kpress_w_shift(KEY_3);
+        kev_w_shift(KEY_3, event);
     }
 }
 
 KF(dollar) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_X);
+        kev_level3(KEY_X, event);
         break;
     default:
-        kpress_w_shift(KEY_4);
+        kev_w_shift(KEY_4, event);
     }
 }
 
 KF(percent) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_M);
+        kev_level3(KEY_M, event);
         break;
     default:
-        kpress_w_shift(KEY_5);
+        kev_w_shift(KEY_5, event);
     }
 }
 
 KF(ampersand) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_P);
+        kev_level3(KEY_P, event);
         break;
     default:
-        kpress_w_shift(KEY_6);
+        kev_w_shift(KEY_6, event);
     }
 }
 
 KF(apostrophe) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_PERIOD);
+        kev_level3(KEY_PERIOD, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_HASH);
+        kev_w_shift(KEY_HASH, event);
         break;
     default:
-        kpress_plain(KEY_QUOTE);
+        kev_plain(KEY_QUOTE, event);
     }
 }
 
 KF(parentheses_left) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_J);
+        kev_level3(KEY_J, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_8);
+        kev_w_shift(KEY_8, event);
         break;
     default:
-        kpress_w_shift(KEY_9);
+        kev_w_shift(KEY_9, event);
     }
 }
 
 KF(parentheses_right) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_K);
+        kev_level3(KEY_K, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_9);
+        kev_w_shift(KEY_9, event);
         break;
     default:
-        kpress_w_shift(KEY_0);
+        kev_w_shift(KEY_0, event);
     }
 }
 
 KF(asterisk) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_G);
+        kev_level3(KEY_G, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_RIGHT_BRACE);
+        kev_w_shift(KEY_RIGHT_BRACE, event);
         break;
     default:
-        kpress_w_shift(KEY_8);
+        kev_w_shift(KEY_8, event);
     }
 }
 
 KF(plus) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_N);
+        kev_level3(KEY_N, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_plain(KEY_RIGHT_BRACE);
+        kev_plain(KEY_RIGHT_BRACE, event);
         break;
     default:
-        kpress_w_shift(KEY_EQUALS);
+        kev_w_shift(KEY_EQUALS, event);
     }
 }
 
 KF(comma) {
     switch (tl) {
     default:
-        kpress_plain(KEY_COMMA);
+        kev_plain(KEY_COMMA, event);
     }
 }
 
 KF(dash) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_L);
+        kev_level3(KEY_L, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_plain(KEY_SLASH);
+        kev_plain(KEY_SLASH, event);
         break;
     default:
-        kpress_plain(KEY_MINUS);
+        kev_plain(KEY_MINUS, event);
     }
 }
 
 KF(period) {
     switch (tl) {
     default:
-        kpress_plain(KEY_PERIOD);
+        kev_plain(KEY_PERIOD, event);
     }
 }
 
 KF(slash) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_S);
+        kev_level3(KEY_S, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_7);
+        kev_w_shift(KEY_7, event);
         break;
     default:
-        kpress_plain(KEY_SLASH);
+        kev_plain(KEY_SLASH, event);
     }
 }
 
@@ -941,98 +1079,98 @@ KF(slash) {
 KF(colon) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_SEMICOLON);
+        kev_level3(KEY_SEMICOLON, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_PERIOD);
+        kev_w_shift(KEY_PERIOD, event);
         break;
     default:
-        kpress_w_shift(KEY_SEMICOLON);
+        kev_w_shift(KEY_SEMICOLON, event);
     }
 }
 
 KF(semicolon) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_SLASH);
+        kev_level3(KEY_SLASH, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_COMMA);
+        kev_w_shift(KEY_COMMA, event);
         break;
     default:
-        kpress_plain(KEY_SEMICOLON);
+        kev_plain(KEY_SEMICOLON, event);
     }
 }
 
 KF(chevron_left) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_U);
+        kev_level3(KEY_U, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_TODO();
+        kev_TODO();
         break;
     default:
-        kpress_w_shift(KEY_COMMA);
+        kev_w_shift(KEY_COMMA, event);
     }
 }
 
 KF(equals) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_O);
+        kev_level3(KEY_O, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_0);
+        kev_w_shift(KEY_0, event);
         break;
     default:
-        kpress_plain(KEY_EQUALS);
+        kev_plain(KEY_EQUALS, event);
     }
 }
 
 KF(chevron_right) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_I);
+        kev_level3(KEY_I, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_TODO();
+        kev_TODO();
         break;
     default:
-        kpress_w_shift(KEY_PERIOD);
+        kev_w_shift(KEY_PERIOD, event);
     }
 }
 
 KF(question_mark) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_H);
+        kev_level3(KEY_H, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_MINUS);
+        kev_w_shift(KEY_MINUS, event);
         break;
     default:
-        kpress_w_shift(KEY_SLASH);
+        kev_w_shift(KEY_SLASH, event);
     }
 }
 
 KF(at) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_QUOTE);
+        kev_level3(KEY_QUOTE, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_Q);
+        kev_w_altgr(KEY_Q, event);
         break;
     default:
-        kpress_w_shift(KEY_2);
+        kev_w_shift(KEY_2, event);
     }
 }
 
@@ -1040,90 +1178,90 @@ KF(at) {
 KF(bracket_left) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_E);
+        kev_level3(KEY_E, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_8);
+        kev_w_altgr(KEY_8, event);
         break;
     default:
-        kpress_plain(KEY_LEFT_BRACE);
+        kev_plain(KEY_LEFT_BRACE, event);
     }
 }
 
 KF(backslash) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_A);
+        kev_level3(KEY_A, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_MINUS);
+        kev_w_altgr(KEY_MINUS, event);
         break;
     default:
-        kpress_plain(KEY_BACKSLASH);
+        kev_plain(KEY_BACKSLASH, event);
     }
 }
 
 KF(bracket_right) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_R);
+        kev_level3(KEY_R, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_9);
+        kev_w_altgr(KEY_9, event);
         break;
     default:
-        kpress_plain(KEY_RIGHT_BRACE);
+        kev_plain(KEY_RIGHT_BRACE, event);
     }
 }
 
 KF(caret) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_T);
+        kev_level3(KEY_T, event);
         break;
     case TL_DE:
-        kpress_plain(KEY_GRAVE);
-        kpress_plain(KEY_SPACE);
+        kev_plain(KEY_GRAVE, event);
+        kev_plain(KEY_SPACE, event);
         break;
     case TL_DE_NODEAD:
-        kpress_plain(KEY_GRAVE);
+        kev_plain(KEY_GRAVE, event);
         break;
     default:
-        kpress_w_shift(KEY_6);
+        kev_w_shift(KEY_6, event);
     }
 }
 
 KF(underscore) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_W);
+        kev_level3(KEY_W, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_SLASH);
+        kev_w_shift(KEY_SLASH, event);
         break;
     default:
-        kpress_w_shift(KEY_MINUS);
+        kev_w_shift(KEY_MINUS, event);
     }
 }
 
 KF(backtick) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_B);
+        kev_level3(KEY_B, event);
         break;
     case TL_DE:
-        kpress_w_shift(KEY_EQUALS);
-        kpress_plain  (KEY_SPACE);
+        kev_w_shift(KEY_EQUALS, event);
+        kev_plain  (KEY_SPACE, event);
         break;
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_EQUALS);
+        kev_w_shift(KEY_EQUALS, event);
         break;
     default:
-        kpress_w_shift(KEY_GRAVE);
+        kev_w_shift(KEY_GRAVE, event);
     }
 }
 
@@ -1131,56 +1269,56 @@ KF(backtick) {
 KF(brace_left) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_D);
+        kev_level3(KEY_D, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_7);
+        kev_w_altgr(KEY_7, event);
         break;
     default:
-        kpress_w_shift(KEY_LEFT_BRACE);
+        kev_w_shift(KEY_LEFT_BRACE, event);
     }
 }
 
 KF(pipe) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_C);
+        kev_level3(KEY_C, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_TODO();
+        kev_TODO();
         break;
     default:
-        kpress_w_shift(KEY_BACKSLASH);
+        kev_w_shift(KEY_BACKSLASH, event);
     }
 }
 
 KF(brace_right) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_F);
+        kev_level3(KEY_F, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_0);
+        kev_w_altgr(KEY_0, event);
         break;
     default:
-        kpress_w_shift(KEY_RIGHT_BRACE);
+        kev_w_shift(KEY_RIGHT_BRACE, event);
     }
 }
 
 KF(tilde) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_V);
+        kev_level3(KEY_V, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_RIGHT_BRACE);
+        kev_w_altgr(KEY_RIGHT_BRACE, event);
         break;
     default:
-        kpress_w_shift(KEY_GRAVE);
+        kev_w_shift(KEY_GRAVE, event);
     }
 }
 
@@ -1190,42 +1328,42 @@ KF(tilde) {
 KF(degree) {
     switch (tl) {
     case TL_NEO:
-        kpress_level2(KEY_1);
+        kev_level2(KEY_1, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_GRAVE);
+        kev_w_shift(KEY_GRAVE, event);
         break;
     default:
-        kpress_TODO();
+        kev_TODO();
     }
 }
 
 KF(sectionsign) {
     switch (tl) {
     case TL_NEO:
-        kpress_level2(KEY_2);
+        kev_level2(KEY_2, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_shift(KEY_3);
+        kev_w_shift(KEY_3, event);
         break;
     default:
-        kpress_TODO();
+        kev_TODO();
     }
 }
 
 KF(euro_currency) {
     switch (tl) {
     case TL_NEO:
-        kpress_level2(KEY_7);
+        kev_level2(KEY_7, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_E);
+        kev_w_altgr(KEY_E, event);
         break;
     default:
-        kpress_TODO();
+        kev_TODO();
     }
 }
 
@@ -1234,38 +1372,38 @@ KF(euro_currency) {
 KF(superscript_1) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_1);
+        kev_level3(KEY_1, event);
         break;
     default:
-        kpress_TODO();
+        kev_TODO();
     }
 }
 
 KF(superscript_2) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_2);
+        kev_level3(KEY_2, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_2);
+        kev_w_altgr(KEY_2, event);
         break;
     default:
-        kpress_TODO();
+        kev_TODO();
     }
 }
 
 KF(superscript_3) {
     switch (tl) {
     case TL_NEO:
-        kpress_level3(KEY_3);
+        kev_level3(KEY_3, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_3);
+        kev_w_altgr(KEY_3, event);
         break;
     default:
-        kpress_TODO();
+        kev_TODO();
     }
 }
 
@@ -1276,103 +1414,103 @@ KF(superscript_3) {
 KF(page_up) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEY_PAGE_UP);
+        kev_allow_modifiers(KEY_PAGE_UP, event);
     }
 }
 
 KF(page_down) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEY_PAGE_DOWN);
+        kev_allow_modifiers(KEY_PAGE_DOWN, event);
     }
 }
 
 KF(backspace) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEY_BACKSPACE);
+        kev_allow_modifiers(KEY_BACKSPACE, event);
     }
 }
 
 KF(delete) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEY_DELETE);
+        kev_allow_modifiers(KEY_DELETE, event);
     }
 }
 
 KF(up) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEY_UP);
+        kev_allow_modifiers(KEY_UP, event);
     }
 }
 
 KF(down) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEY_DOWN);
+        kev_allow_modifiers(KEY_DOWN, event);
     }
 }
 
 KF(left) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEY_LEFT);
+        kev_allow_modifiers(KEY_LEFT, event);
     }
 }
 
 KF(right) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEY_RIGHT);
+        kev_allow_modifiers(KEY_RIGHT, event);
     }
 }
 
 KF(home) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEY_HOME);
+        kev_allow_modifiers(KEY_HOME, event);
     }
 }
 
 KF(end) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEY_END);
+        kev_allow_modifiers(KEY_END, event);
     }
 }
 
 KF(escape) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEY_ESC);
+        kev_allow_modifiers(KEY_ESC, event);
     }
 }
 
 KF(tab) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEY_TAB);
+        kev_allow_modifiers(KEY_TAB, event);
     }
 }
 
 KF(insert) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEY_INSERT);
+        kev_allow_modifiers(KEY_INSERT, event);
     }
 }
 
 KF(return) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEY_ENTER);
+        kev_allow_modifiers(KEY_ENTER, event);
     }
 }
 
 KF(undo) {
-    kpress_TODO();
+    kev_TODO();
 }
 
 
@@ -1381,132 +1519,132 @@ KF(undo) {
 KF(numpad_1) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEYPAD_1);
+        kev_allow_modifiers(KEYPAD_1, event);
     }
 }
 
 KF(numpad_2) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEYPAD_2);
+        kev_allow_modifiers(KEYPAD_2, event);
     }
 }
 
 KF(numpad_3) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEYPAD_3);
+        kev_allow_modifiers(KEYPAD_3, event);
     }
 }
 
 KF(numpad_4) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEYPAD_4);
+        kev_allow_modifiers(KEYPAD_4, event);
     }
 }
 
 KF(numpad_5) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEYPAD_5);
+        kev_allow_modifiers(KEYPAD_5, event);
     }
 }
 
 KF(numpad_6) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEYPAD_6);
+        kev_allow_modifiers(KEYPAD_6, event);
     }
 }
 
 KF(numpad_7) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEYPAD_7);
+        kev_allow_modifiers(KEYPAD_7, event);
     }
 }
 
 KF(numpad_8) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEYPAD_8);
+        kev_allow_modifiers(KEYPAD_8, event);
     }
 }
 
 KF(numpad_9) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEYPAD_9);
+        kev_allow_modifiers(KEYPAD_9, event);
     }
 }
 
 KF(numpad_0) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEYPAD_0);
+        kev_allow_modifiers(KEYPAD_0, event);
     }
 }
 
 KF(numpad_slash) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEYPAD_SLASH);
+        kev_allow_modifiers(KEYPAD_SLASH, event);
     }
 }
 
 KF(numpad_asterisk) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEYPAD_ASTERIX);
+        kev_allow_modifiers(KEYPAD_ASTERIX, event);
     }
 }
 
 KF(numpad_plus) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEYPAD_PLUS);
+        kev_allow_modifiers(KEYPAD_PLUS, event);
     }
 }
 
 KF(numpad_minus) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEYPAD_MINUS);
+        kev_allow_modifiers(KEYPAD_MINUS, event);
     }
 }
 
 KF(numpad_period) {
     switch (tl) {
     default:
-        kpress_allow_modifiers(KEYPAD_PERIOD);
+        kev_allow_modifiers(KEYPAD_PERIOD, event);
     }
 }
 
 // special keys
 
 KF(undo) {
-    kpress_TODO();
+    kev_TODO();
 }
 
 KF(copy) {
-    kpress_TODO();
+    kev_TODO();
 }
 
 KF(paste) {
-    kpress_TODO();
+    kev_TODO();
 }
 
 KF(cut) {
-    kpress_TODO();
+    kev_TODO();
 }
 
 KF(forward) {
-    kpress_TODO();
+    kev_TODO();
 }
 
 KF(back) {
-    kpress_TODO();
+    kev_TODO();
 }
 
 
@@ -1514,11 +1652,11 @@ KF(back) {
 
 
 typedef enum {
+    KT_DUMB, // fixme -- rename: PHANTOM
     KT_PLAIN,
-    KT_LEVELMOD,
     KT_IGNORE_SHIFTLOCK,
     KT_IGNORE_LEVEL,
-    KT_DUMB, // rename: PHANTOM
+    KT_LEVELMOD,
 } keytype_t;
 
 
@@ -1839,10 +1977,10 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
                 .type = KT_IGNORE_LEVEL,
                 .kf = { kf_gui_left },
             },
-            // unused
+            // switch target layout // TODO preliminary use of this key
             {
-                .type = KT_DUMB,
-                .kf = { NULL },
+                .type = KT_IGNORE_LEVEL,
+                .kf = { prev_target_layout },
             },
             // unused
             {
@@ -1877,10 +2015,10 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
                 .type = KT_PLAIN,
                 .kf = { kf_space, kf_space, kf_space, kf_numpad_zero, kf_nop, },
             },
-            // unused
+            // switch target layout // TODO preliminary use of this key
             {
-                .type = KT_DUMB,
-                .kf = { NULL },
+                .type = KT_IGNORE_LEVEL,
+                .kf = { next_target_layout },
             },
             // left GUI
             {

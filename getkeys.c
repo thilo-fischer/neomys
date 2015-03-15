@@ -9,1933 +9,131 @@
 
 #include "getkeys.h"
 
+#include "keyhandling.h"
 #include "io.h"
 #include "ctlrcomm.h"
 
 
-typedef enum {
-   TL_NEO,       ///< Neo2 (http://www.neo-layout.org/)
-   TL_DE,        ///< DIN 2137:2012-06 T1 (with dead keys)
-   TL_DE_NODEAD,
-   //TL_DE_APPLE,
-   TL_US,        ///< ANSI-INCITS 154-1988
-   //TL_US_APPLE,
-   TL_COUNT
-} target_layout_t;
+enum neo_levels_e locked_level = LEVEL1;
+enum uint8_t level_modifiers = 0x00;
 
-#define KF(name) static void kf_##name(target_layout_t tl)
 
-
-// numbers
-
-KF(1) {
-    switch (tl) {
-    default:
-        kpress_plain(KEY_1);
-    }
-}
-
-KF(2) {
-    switch (tl) {
-    default:
-        kpress_plain(KEY_2);
-    }
-}
-
-KF(3) {
-    switch (tl) {
-    default:
-        kpress_plain(KEY_3);
-    }
-}
-
-KF(4) {
-    switch (tl) {
-    default:
-        kpress_plain(KEY_4);
-    }
-}
-
-KF(5) {
-    switch (tl) {
-    default:
-        kpress_plain(KEY_5);
-    }
-}
-
-KF(6) {
-    switch (tl) {
-    default:
-        kpress_plain(KEY_6);
-    }
-}
-
-KF(7) {
-    switch (tl) {
-    default:
-        kpress_plain(KEY_7);
-    }
-}
-
-KF(8) {
-    switch (tl) {
-    default:
-        kpress_plain(KEY_8);
-    }
-}
-
-KF(9) {
-    switch (tl) {
-    default:
-        kpress_plain(KEY_9);
-    }
-}
-
-KF(0) {
-    switch (tl) {
-    default:
-        kpress_plain(KEY_0);
-    }
-}
-
-// letters
-// upper case
-
-KF(A) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_D);
-        break;
-    default:
-        kpress_w_shift(KEY_A);
-    }
-}
-
-KF(B) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_N);
-        break;
-    default:
-        kpress_w_shift(KEY_B);
-    }
-}
-
-KF(C) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_R);
-        break;
-    default:
-        kpress_w_shift(KEY_C);
-    }
-}
-
-KF(D) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_SEMICOLON);
-        break;
-    default:
-        kpress_w_shift(KEY_D);
-    }
-}
-
-KF(E) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_F);
-        break;
-    default:
-        kpress_w_shift(KEY_E);
-    }
-}
-
-KF(F) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_O);
-        break;
-    default:
-        kpress_w_shift(KEY_F);
-    }
-}
-
-KF(G) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_I);
-        break;
-    default:
-        kpress_w_shift(KEY_G);
-    }
-}
-
-KF(H) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_U);
-        break;
-    default:
-        kpress_w_shift(KEY_H);
-    }
-}
-
-KF(I) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_S);
-        break;
-    default:
-        kpress_w_shift(KEY_I);
-    }
-}
-
-KF(J) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_SLASH);
-        break;
-    default:
-        kpress_w_shift(KEY_J);
-    }
-}
-
-KF(K) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_Y);
-        break;
-    default:
-        kpress_w_shift(KEY_K);
-    }
-}
-
-KF(L) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_E);
-        break;
-    default:
-        kpress_w_shift(KEY_L);
-    }
-}
-
-KF(M) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_M);
-        break;
-    default:
-        kpress_w_shift(KEY_M);
-    }
-}
-
-KF(N) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_J);
-        break;
-    default:
-        kpress_w_shift(KEY_N);
-    }
-}
-
-KF(O) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_G);
-        break;
-    default:
-        kpress_w_shift(KEY_O);
-    }
-}
-
-KF(P) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_V);
-        break;
-    default:
-        kpress_w_shift(KEY_P);
-    }
-}
-
-KF(Q) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_P);
-        break;
-    default:
-        kpress_w_shift(KEY_Q);
-    }
-}
-
-KF(R) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_K);
-        break;
-    default:
-        kpress_w_shift(KEY_R);
-    }
-}
-
-KF(S) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_H);
-        break;
-    default:
-        kpress_w_shift(KEY_S);
-    }
-}
-
-KF(T) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_L);
-        break;
-    default:
-        kpress_w_shift(KEY_T);
-    }
-}
-
-KF(U) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_A);
-        break;
-    default:
-        kpress_w_shift(KEY_U);
-    }
-}
-
-KF(V) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_W);
-        break;
-    default:
-        kpress_w_shift(KEY_V);
-    }
-}
-
-KF(W) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_T);
-        break;
-    default:
-        kpress_w_shift(KEY_W);
-    }
-}
-
-KF(X) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_Q);
-        break;
-    default:
-        kpress_w_shift(KEY_X);
-    }
-}
-
-KF(Y) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_QUOTE);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_Z);
-        break;
-    default:
-        kpress_w_shift(KEY_Y);
-    }
-}
-
-KF(Z) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_B);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_Y);
-        break;
-    default:
-        kpress_w_shift(KEY_Z);
-    }
-}
-
-KF(AUML) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_C);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_QUOTE);
-        break;
-    default:
-        kpress_TODO();
-    }
-}
-
-KF(OUML) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_X);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_SEMICOLON);
-        break;
-    default:
-        kpress_TODO();
-    }
-}
-
-KF(UUML) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_Z);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_LEFT_BRACE);
-        break;
-    default:
-        kpress_TODO();
-    }
-}
-
-KF(ESZETT) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_w_shift(KEY_LEFT_BRACE);
-        break;
-    default:
-        kpress_TODO();
-    }
-}
-
-// letters
-// lower case
-
-KF(a) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_D);
-        break;
-    default:
-        kpress_plain(KEY_A);
-    }
-}
-
-KF(b) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_N);
-        break;
-    default:
-        kpress_plain(KEY_B);
-    }
-}
-
-KF(c) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_R);
-        break;
-    default:
-        kpress_plain(KEY_C);
-    }
-}
-
-KF(d) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_SEMICOLON);
-        break;
-    default:
-        kpress_plain(KEY_D);
-    }
-}
-
-KF(e) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_F);
-        break;
-    default:
-        kpress_plain(KEY_E);
-    }
-}
-
-KF(f) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_O);
-        break;
-    default:
-        kpress_plain(KEY_F);
-    }
-}
-
-KF(g) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_I);
-        break;
-    default:
-        kpress_plain(KEY_G);
-    }
-}
-
-KF(h) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_U);
-        break;
-    default:
-        kpress_plain(KEY_H);
-    }
-}
-
-KF(i) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_S);
-        break;
-    default:
-        kpress_plain(KEY_I);
-    }
-}
-
-KF(j) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_SLASH);
-        break;
-    default:
-        kpress_plain(KEY_J);
-    }
-}
-
-KF(k) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_Y);
-        break;
-    default:
-        kpress_plain(KEY_K);
-    }
-}
-
-KF(l) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_E);
-        break;
-    default:
-        kpress_plain(KEY_L);
-    }
-}
-
-KF(m) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_M);
-        break;
-    default:
-        kpress_plain(KEY_M);
-    }
-}
-
-KF(n) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_J);
-        break;
-    default:
-        kpress_plain(KEY_N);
-    }
-}
-
-KF(o) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_G);
-        break;
-    default:
-        kpress_plain(KEY_O);
-    }
-}
-
-KF(p) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_V);
-        break;
-    default:
-        kpress_plain(KEY_P);
-    }
-}
-
-KF(q) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_P);
-        break;
-    default:
-        kpress_plain(KEY_Q);
-    }
-}
-
-KF(r) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_K);
-        break;
-    default:
-        kpress_plain(KEY_R);
-    }
-}
-
-KF(s) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_H);
-        break;
-    default:
-        kpress_plain(KEY_S);
-    }
-}
-
-KF(t) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_L);
-        break;
-    default:
-        kpress_plain(KEY_T);
-    }
-}
-
-KF(u) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_A);
-        break;
-    default:
-        kpress_plain(KEY_U);
-    }
-}
-
-KF(v) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_W);
-        break;
-    default:
-        kpress_plain(KEY_V);
-    }
-}
-
-KF(w) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_T);
-        break;
-    default:
-        kpress_plain(KEY_W);
-    }
-}
-
-KF(x) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_Q);
-        break;
-    default:
-        kpress_plain(KEY_X);
-    }
-}
-
-KF(y) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_QUOTE);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_plain(KEY_Z);
-        break;
-    default:
-        kpress_plain(KEY_Y);
-    }
-}
-
-KF(z) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_B);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_plain(KEY_Y);
-        break;
-    default:
-        kpress_plain(KEY_Z);
-    }
-}
-
-KF(auml) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_C);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_plain(KEY_QUOTE);
-        break;
-    default:
-        kpress_TODO();
-    }
-}
-
-KF(ouml) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_X);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_plain(KEY_SEMICOLON);
-        break;
-    default:
-        kpress_TODO();
-    }
-}
-
-KF(uuml) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_Z);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_plain(KEY_LEFT_BRACE);
-        break;
-    default:
-        kpress_TODO();
-    }
-}
-
-KF(eszett) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_LEFT_BRACE);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_plain(KEY_MINUS);
-        break;
-    default:
-        kpress_TODO();
-    }
-}
-
-// basic punctuation characters (in ASCII order)
-
-KF(space) {
-    kpress_allow_modifiers(KEY_SPACE);
-}
-
-KF(exclamation_mark) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_H);
-        break;
-    default:
-        kpress_w_shift(KEY_1);
-    }
-}
-
-KF(straight_dbl_quote) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_COMMA);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_2);
-        break;
-    default:
-        kpress_w_shift(KEY_QUOTE);
-    }
-}
-
-KF(hash) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_Z);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_plain(KEY_BACKSLASH);
-        break;
-    default:
-        kpress_w_shift(KEY_3);
-    }
-}
-
-KF(dollar) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_X);
-        break;
-    default:
-        kpress_w_shift(KEY_4);
-    }
-}
-
-KF(percent) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_M);
-        break;
-    default:
-        kpress_w_shift(KEY_5);
-    }
-}
-
-KF(ampersand) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_P);
-        break;
-    default:
-        kpress_w_shift(KEY_6);
-    }
-}
-
-KF(apostrophe) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_PERIOD);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_HASH);
-        break;
-    default:
-        kpress_plain(KEY_QUOTE);
-    }
-}
-
-KF(parentheses_left) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_J);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_8);
-        break;
-    default:
-        kpress_w_shift(KEY_9);
-    }
-}
-
-KF(parentheses_right) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_K);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_9);
-        break;
-    default:
-        kpress_w_shift(KEY_0);
-    }
-}
-
-KF(asterisk) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_G);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_RIGHT_BRACE);
-        break;
-    default:
-        kpress_w_shift(KEY_8);
-    }
-}
-
-KF(plus) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_N);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_plain(KEY_RIGHT_BRACE);
-        break;
-    default:
-        kpress_w_shift(KEY_EQUALS);
-    }
-}
-
-KF(comma) {
-    switch (tl) {
-    default:
-        kpress_plain(KEY_COMMA);
-    }
-}
-
-KF(dash) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_L);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_plain(KEY_SLASH);
-        break;
-    default:
-        kpress_plain(KEY_MINUS);
-    }
-}
-
-KF(period) {
-    switch (tl) {
-    default:
-        kpress_plain(KEY_PERIOD);
-    }
-}
-
-KF(slash) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_S);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_7);
-        break;
-    default:
-        kpress_plain(KEY_SLASH);
-    }
-}
-
-
-KF(colon) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_SEMICOLON);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_PERIOD);
-        break;
-    default:
-        kpress_w_shift(KEY_SEMICOLON);
-    }
-}
-
-KF(semicolon) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_SLASH);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_COMMA);
-        break;
-    default:
-        kpress_plain(KEY_SEMICOLON);
-    }
-}
-
-KF(chevron_left) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_U);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_TODO();
-        break;
-    default:
-        kpress_w_shift(KEY_COMMA);
-    }
-}
-
-KF(equals) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_O);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_0);
-        break;
-    default:
-        kpress_plain(KEY_EQUALS);
-    }
-}
-
-KF(chevron_right) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_I);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_TODO();
-        break;
-    default:
-        kpress_w_shift(KEY_PERIOD);
-    }
-}
-
-KF(question_mark) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_H);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_MINUS);
-        break;
-    default:
-        kpress_w_shift(KEY_SLASH);
-    }
-}
-
-KF(at) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_QUOTE);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_Q);
-        break;
-    default:
-        kpress_w_shift(KEY_2);
-    }
-}
-
-
-KF(bracket_left) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_E);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_8);
-        break;
-    default:
-        kpress_plain(KEY_LEFT_BRACE);
-    }
-}
-
-KF(backslash) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_A);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_MINUS);
-        break;
-    default:
-        kpress_plain(KEY_BACKSLASH);
-    }
-}
-
-KF(bracket_right) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_R);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_9);
-        break;
-    default:
-        kpress_plain(KEY_RIGHT_BRACE);
-    }
-}
-
-KF(caret) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_T);
-        break;
-    case TL_DE:
-        kpress_plain(KEY_GRAVE);
-        kpress_plain(KEY_SPACE);
-        break;
-    case TL_DE_NODEAD:
-        kpress_plain(KEY_GRAVE);
-        break;
-    default:
-        kpress_w_shift(KEY_6);
-    }
-}
-
-KF(underscore) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_W);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_SLASH);
-        break;
-    default:
-        kpress_w_shift(KEY_MINUS);
-    }
-}
-
-KF(backtick) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_B);
-        break;
-    case TL_DE:
-        kpress_w_shift(KEY_EQUALS);
-        kpress_plain  (KEY_SPACE);
-        break;
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_EQUALS);
-        break;
-    default:
-        kpress_w_shift(KEY_GRAVE);
-    }
-}
-
-
-KF(brace_left) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_D);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_7);
-        break;
-    default:
-        kpress_w_shift(KEY_LEFT_BRACE);
-    }
-}
-
-KF(pipe) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_C);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_TODO();
-        break;
-    default:
-        kpress_w_shift(KEY_BACKSLASH);
-    }
-}
-
-KF(brace_right) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_F);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_0);
-        break;
-    default:
-        kpress_w_shift(KEY_RIGHT_BRACE);
-    }
-}
-
-KF(tilde) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_V);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_RIGHT_BRACE);
-        break;
-    default:
-        kpress_w_shift(KEY_GRAVE);
-    }
-}
-
-
-// enhanced punctuation characters (in order of appearance on the Neo layout from left to right, from top to bottom)
-
-KF(degree) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level2(KEY_1);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_GRAVE);
-        break;
-    default:
-        kpress_TODO();
-    }
-}
-
-KF(sectionsign) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level2(KEY_2);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_shift(KEY_3);
-        break;
-    default:
-        kpress_TODO();
-    }
-}
-
-KF(euro_currency) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level2(KEY_7);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_E);
-        break;
-    default:
-        kpress_TODO();
-    }
-}
-
-// esoteric punctuation characters (in order of appearance on the Neo layout from left to right, from top to bottom)
-
-KF(superscript_1) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_1);
-        break;
-    default:
-        kpress_TODO();
-    }
-}
-
-KF(superscript_2) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_2);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_2);
-        break;
-    default:
-        kpress_TODO();
-    }
-}
-
-KF(superscript_3) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_level3(KEY_3);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-        kpress_w_altgr(KEY_3);
-        break;
-    default:
-        kpress_TODO();
-    }
-}
-
-
-
-// control and navigation keys
-
-KF(page_up) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEY_PAGE_UP);
-    }
-}
-
-KF(page_down) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEY_PAGE_DOWN);
-    }
-}
-
-KF(backspace) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEY_BACKSPACE);
-    }
-}
-
-KF(delete) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEY_DELETE);
-    }
-}
-
-KF(up) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEY_UP);
-    }
-}
-
-KF(down) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEY_DOWN);
-    }
-}
-
-KF(left) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEY_LEFT);
-    }
-}
-
-KF(right) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEY_RIGHT);
-    }
-}
-
-KF(home) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEY_HOME);
-    }
-}
-
-KF(end) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEY_END);
-    }
-}
-
-KF(escape) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEY_ESC);
-    }
-}
-
-KF(tab) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEY_TAB);
-    }
-}
-
-KF(insert) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEY_INSERT);
-    }
-}
-
-KF(return) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEY_ENTER);
-    }
-}
-
-KF(undo) {
-    kpress_TODO();
-}
-
-
-// numpad
-
-KF(numpad_1) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEYPAD_1);
-    }
-}
-
-KF(numpad_2) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEYPAD_2);
-    }
-}
-
-KF(numpad_3) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEYPAD_3);
-    }
-}
-
-KF(numpad_4) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEYPAD_4);
-    }
-}
-
-KF(numpad_5) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEYPAD_5);
-    }
-}
-
-KF(numpad_6) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEYPAD_6);
-    }
-}
-
-KF(numpad_7) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEYPAD_7);
-    }
-}
-
-KF(numpad_8) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEYPAD_8);
-    }
-}
-
-KF(numpad_9) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEYPAD_9);
-    }
-}
-
-KF(numpad_0) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEYPAD_0);
-    }
-}
-
-KF(numpad_slash) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEYPAD_SLASH);
-    }
-}
-
-KF(numpad_asterisk) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEYPAD_ASTERIX);
-    }
-}
-
-KF(numpad_plus) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEYPAD_PLUS);
-    }
-}
-
-KF(numpad_minus) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEYPAD_MINUS);
-    }
-}
-
-KF(numpad_period) {
-    switch (tl) {
-    default:
-        kpress_allow_modifiers(KEYPAD_PERIOD);
-    }
-}
-
-
-
-/* TEMPLATE
-
-KF(a) {
-    switch (tl) {
-    case TL_NEO:
-        kpress_plain(KEY_D);
-        break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_US:
-    default:
-        kpress_plain(KEY_1);
-    }
-}
-
- */
-
-
-typedef void (*keyfunc_t)();
-
-typedef enum {
-    KT_PLAIN,
-    KT_LEVELMOD,
-    KT_IGNORE_SHIFTLOCK,
-    KT_IGNORE_LEVEL,
-    KT_DUMB,
-} keytype_t;
-
-typedef struct {
-    keytype_t type;
-    keyfunc_t kf[LEVEL_COUNT];
-} keyrecord_t;
-
-keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
-    // ROW_NUM
-    {
-        //ROW_NUM left
-        {
-            // in contrast to neo layout, the key for the circumfex accent has been moved from the top left to the top right corner of the keyboard
-            // 1
-            {
-                .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_1, kf_degree, kf_superscript1, },
-            },
-            // 2
-            {
-                .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_2, kf_sectionsign, kf_superscript2, },
-            },
-            // 3
-            {
-                .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_3, NULL, kf_superscript3, kf_numero_sign, },
-            },
-            // 4
-            {
-                .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_4, kf_guillemet_dbl_gt, kf_guillemet_sgl_gt, },
-            },
-            // 5
-            {
-                .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_5, kf_guillemet_dbl_lt, kf_guillemet_sgl_lt, },
-            },
-            // 6
-            {
-                .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_6, kf_dollar, kf_cent_currency, kf_pound_currency, },
-            },
-        }, // controller (left/right side)
-        //ROW_NUM right
-        {
-            // 7
-            {
-                .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_7, kf_euro_currency, kf_yen_currency, kf_currency_sign, },
-            },
-            // 8
-            {
-                .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_8, kf_low9quote_dbl, kf_low9quote_sgl, kf_tab, },
-            },
-            // 9
-            {
-                .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_9, kf_6quote_dbl, kf_6quote_sgl, kf_numpad_slash, },
-            },
-            // 0
-            {
-                .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_0, kf_9quote_dbl, kf_9quote_sgl, kf_numpad_asterisk, },
-            },
-            // -
-            {
-                .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_dash, kf_mdash, NULL, kf_numpad_dash},
-            },
-            // ò
-            {
-                .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_dead_grave, kf_dead_cedilla, kf_dead_ring, kf_dead_umlaut, },
-            },
-            // ô
-            {
-                .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_dead_circumfex, kf_dead_caron, NULL, kf_dead_dot, },
-            },
-        }, // controller (left/right side)
-    }, // row
-
+enum neo_levels_e get_level_from_modifiers(uint8_t mods) {
     
-    // ROW_TOP
-    {
-        //ROW_TOP left
-        {
-            // in contrast to neo layout, the left level4 modifier key has been moved from right of the left level2 mod key to ontop of the level3 mod ked
-            // level4 modifier
-            {
-                .type = KT_LEVELMOD,
-                .kf = { kf_level4mod_left },
-            },
-            // X
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_x, kf_X, kf_ellipsis, kf_page_up, },
-            },
-            // V
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_v, kf_V, kf_underscore, kf_backspace, },
-            },
-            // L
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_l, kf_L, kf_bracket_left, kf_up, },
-            },
-            // C
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_c, kf_C, kf_bracket_right, kf_delete, },
-            },
-            // W
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_w, kf_W, kf_caret, kf_page_down, },
-            },
-        }, // controller (left/right side)
-        //ROW_TOP right
-        {
-            // K
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_k, kf_K, kf_exclamation_mark, kf_inverted_exclamation_mark, },
-            },
-            // H
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_h, kf_H, kf_chevron_left, kf_numpad_7, },
-            },
-            // G
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_g, kf_G, kf_chevron_right, kf_numpad_8, },
-            },
-            // F
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_f, kf_F, kf_equals, kf_numpad_9, },
-            },
-            // Q
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_q, kf_Q, kf_ampersand, kf_numpad_plus, },
-            },
-            // ß
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_eszett, kf_ESZETT, kf_long_s, kf_minus, },
-            },
-            // ó
-            {
-                .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_dead_acute, kf_dead_perispomene, kf_dead_bar, kf_dead_double_acute},
-            },
-        }, // controller (left/right side)
-    }, // row
+    switch (mods) {
+    case 0x00:
+    case (LM2_L | LM2_R):
+    case (LM3_L | LM3_R):
+    case (LM4_L | LM4_R):
+    case (LM2_L | LM2_R | LM3_L | LM3_R):
+    case (LM3_L | LM3_R | LM4_L | LM4_R):
+    case (LM2_L | LM2_R | LM3_L | LM3_R | LM4_L | LM4_R):
+        return LEVEL1;
+    case LM2_L:
+    case LM2_R:
+    case (LM2_L | LM3_L | LM3_R | LM4_L | LM4_R):
+    case (LM2_R | LM3_L | LM3_R | LM4_L | LM4_R):
+        return LEVEL2;
+    case LM3_L:
+    case LM3_R:
+        return LEVEL3;
+    case (LM2_L | LM3_L):
+    case (LM2_L | LM3_R):
+    case (LM2_R | LM3_L):
+    case (LM2_R | LM3_R):
+        return LEVEL5;
+    case (LM3_L | LM4_L):
+    case (LM3_L | LM4_R):
+    case (LM3_R | LM4_L):
+    case (LM3_R | LM4_R):
+        return LEVEL6;
+    }
 
-    
-    // ROW_HOME
-    {
-        //ROW_HOME left
-        {
-            // level3 modifier
-            {
-                .type = KT_LEVELMOD,
-                .kf = { kf_level3mod_left },
-            },
-            // U
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_u, kf_U, kf_backslash, kf_home, },
-            },
-            // I
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_i, kf_I, kf_slash, kf_left, },
-            },
-            // A
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_a, kf_A, kf_brace_left, kf_down, },
-            },
-            // E
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_e, kf_E, kf_brace_right, kf_right, },
-            },
-            // O
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_o, kf_O, kf_asterisk, kf_end, },
-            },
-        }, // controller (left/right side)
-        //ROW_HOME right
-        {
-            // S
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_s, kf_S, kf_question_mark, kf_inverted_question_mark, },
-            },
-            // N
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_n, kf_N, kf_parentheses_left, kf_numpad_4, },
-            },
-            // R
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_r, kf_R, kf_parentheses_right, kf_numpad_5, },
-            },
-            // T
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_t, kf_T, kf_dash, kf_numpad_6, },
-            },
-            // D
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_d, kf_D, kf_colon, kf_numpad_comma, },
-            },
-            // Y
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_y, kf_Y, kf_at, kf_numpad_period, },
-            },
-        }, // controller (left/right side)
-    }, // row
+    // ignore LM2_x (because it shall be possible to combine shift (LM2_x) and keys from LEVEL4/LEVEL4_MOUSE [e.g. arrow keys, return, F1, mouse clicks])
+    switch (mods & ~(LM2_L|LM2_R)) {    
+    case LM4_L:
+        return LEVEL4;
+    case LM4_R:
+        return LEVEL4_MOUSE;
+    }
 
-    
-    // ROW_BTM
-    {
-        //ROW_BTM left
-        {
-            // level2 modifier
-            {
-                .type = KT_LEVELMOD,
-                .kf = { kf_level2mod_left },
-            },
-            // Ü
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_uuml, kf_UUML, kf_hash, kf_escape, },
-            },
-            // Ö
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_ouml, kf_OUML, kf_dollar, kf_tab, },
-            },
-            // Ä
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_auml, kf_AUML, kf_pipe, kf_insert, },
-            },
-            // P
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_p, kf_P, kf_tilde, kf_return, },
-            },
-            // Z
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_z, kf_Z, kf_backtick, kf_undo, },
-            },
-        }, // controller (left/right side)
-        //ROW_BTM right
-        {
-            // B
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_b, kf_B, kf_plus, kf_colon, },
-            },
-            // M
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_m, kf_M, kf_percent, kf_numpad_1, },
-            },
-            // ,
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_comma, kf_ndash, kf_straight_dbl_quote, kf_numpad_2, },
-            },
-            // .
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_period, kf_bullet, kf_apostrophe, kf_numpad_3, },
-            },
-            // J
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_j, kf_J, kf_semicolon, kf_semicolon, },
-            },
-            // level2 modifier
-            {
-                .type = KT_LEVELMOD,
-                .kf = { kf_level2mod_right },
-            },
-        }, // controller (left/right side)
-    }, // row
+    // fallback behaviour for weired modifier key press combinations (like 3 or 4 L/R modifiers at it time)
+    if (mods & LM4_R)
+        return LEVEL4_MOUSE;
+    if (mods & LM4_L)
+        return LEVEL4;
+    if (mods & LM2_L || mods & LM2_R)
+        return LEVEL2;
+    if (mods & LM3_L || mods & LM3_R)
+        return LEVEL3;
 
-    
-    // ROW_SPACE
-    {
-        //ROW_SPACE left
-        {
-            // left Ctrl
-            {
-                .type = KT_IGNORE_LEVEL,
-                .kf = { kf_ctrl_left },
-            },
-            // left GUI
-            {
-                .type = KT_IGNORE_LEVEL,
-                .kf = { kf_gui_left },
-            },
-            // unused
-            {
-                .type = KT_DUMB,
-                .kf = { NULL },
-            },
-            // unused
-            {
-                .type = KT_DUMB,
-                .kf = { NULL },
-            },
-            // space
-            {
-                .type = KT_IGNORE_LEVEL,
-                .kf = { kf_space },
-            },
-            // left Alt
-            {
-                .type = KT_IGNORE_LEVEL,
-                .kf = { kf_alt_left },
-            },
-        }, // controller (left/right side)
-        //ROW_SPACE right
-        {
-            // left Alt
-            {
-                .type = KT_IGNORE_LEVEL,
-                .kf = { kf_alt_left },
-            },
-            // level4 modifier
-            {
-                .type = KT_LEVELMOD,
-                .kf = { kf_level4mod_right },
-            },
-            // space, numpad-zero
-            {
-                .type = KT_PLAIN,
-                .kf = { kf_space, kf_space, kf_space, kf_numpad_zero, },
-            },
-            // unused
-            {
-                .type = KT_DUMB,
-                .kf = { NULL },
-            },
-            // left GUI
-            {
-                .type = KT_IGNORE_LEVEL,
-                .kf = { kf_gui_left },
-            },
-            // left Ctrl
-            {
-                .type = KT_IGNORE_LEVEL,
-                .kf = { kf_ctrl_left },
-            },
-        }, // controller (left/right side)
-    }, // row
-};
+    return LEVEL1;
+
+}
 
 
+enum neo_levels_e get_level() {
+    enum neo_levels_e pressed_level = get_level_from_modifiers(level_modifiers);
+    if (pressed_level == LEVEL1)
+        return locked_level;
+    if (locked_level == pressed_level)
+        return LEVEL1;
+    return pressed_level;
+}
 
-// FIXME
-#include "keytranslation.h"
+// ignore level2 lock
+enum neo_levels_e get_level_il2l() {
+    if (locked_level == LEVEL2)
+        return get_level_from_modifiers(level_modifiers);
+    return get_level();
+}
 
-enum neo_levels_e level_current = LEVEL1;
+
 
 // key states
 // Transmit states of all keys from slave to master. This is the simplest, most deterministic and probably most fail-safe approach (compared to sending only pressed keys or key state changes).
 
-uint8_t key_state[2][ROW_COUNT] = {{0}, {0}};
-uint8_t prev_key_state[2][ROW_COUNT] = {{0}, {0}};
+uint8_t key_states[2][ROW_COUNT] = {{0}, {0}};
+uint8_t prev_key_states[2][ROW_COUNT] = {{0}, {0}};
 
-bool level_mod [LEVEL_COUNT] = { false };
-bool level_lock[LEVEL_COUNT] = { false };
+enum keystate_e get_keystate(uint8_t controller, enum row_e row, uint8_t col) {
+    return ((key_states[controller][row] & (1 << col)) > 0) ? KS_PRESS : KS_RELEASE;
+}
 
-#define CHANGED_KEYS_CNT_MAX 8
-struct key_change_s changed_keys[CHANGED_KEYS_CNT_MAX] = {{ 0 }}; // XXX initialization is debugging aid only
-uint8_t keychange_cnt = 0;
+void set_keystate(uint8_t controller, enum row_e row, uint8_t col, enum keystate_e state) {
+    if (state == KS_PRESS) {
+        key_states[controller][row] |=  (1 << col);
+    } else {
+        key_states[controller][row] &= ~(1 << col);
+    }
+}
 
-// FIXME
-#include "sendkeys.c"
+
+#define KEYEVENTS_CNT_MAX 8
+struct keyevent_b keyevents[KEYEVENTS_CNT_MAX] /*= {{ 0 }}*/;
+uint8_t keyevents_cnt = 0;
+
 
 void update_own_key_states() {
     uint8_t row;
     for (row = 0; row < ROW_COUNT; ++row) {
         activate_row(row);
-        key_state[CONTROLLER][row] = 0;
+        key_states[CONTROLLER][row] = 0;
         uint8_t col;
         for (col = 0; col < COL_COUNT; ++col) {
-            key_state[CONTROLLER][row] |= (test_col(col) << col);
+            set_keystate(CONTROLLER, row, col, test_col(col));
         }
         deactivate_row(row);
     }
 }
 
+
 // key changes
 
-enum key_change_e get_key_state(uint8_t controller, enum row_e row, uint8_t col) {
-    return ((key_state[controller][row] & (1 << col)) > 0) ? KC_PRESS : KC_RELEASE;
-}
-
-void set_key_state(uint8_t controller, enum row_e row, uint8_t col, enum key_change_e state) {
-    if (state == KC_PRESS) {
-        key_state[controller][row] |=  (1 << col);
-    } else {
-        key_state[controller][row] &= ~(1 << col);
-    }
-}
-
-void add_keychange(uint8_t row, uint8_t controller, uint8_t col, enum key_change_e change) {
+#if 0
+void add_keyevent(uint8_t controller, uint8_t row, uint8_t col, enum keyevent_e event) {
     if (keychange_cnt < CHANGED_KEYS_CNT_MAX) {
-        changed_keys[keychange_cnt].change = change;
+        changed_keys[keychange_cnt].event = event;
         changed_keys[keychange_cnt].controller = controller;
         changed_keys[keychange_cnt].row = row;
         changed_keys[keychange_cnt].col = col;
@@ -1945,148 +143,99 @@ void add_keychange(uint8_t row, uint8_t controller, uint8_t col, enum key_change
     }
 }
 
-void clear_changed_keys() {
-    memset(changed_keys, 0, sizeof(changed_keys)); // XXX debugging aid only
+void clear_keyevents() {
+    //memset(keyevents, 0, sizeof(keyevents));
+    keyevents_cnt = 0;
+}
+#endif
+
+
+void enqueue_keychange(const keyrecord_t *record, enum keyevent_e state) {
+    if (keychange_cnt < CHANGED_KEYS_CNT_MAX) {
+        keychange[keychange_cnt].record = record;
+        keychange[keychange_cnt].state = state;
+        ++keychange_cnt;
+    } else {
+        warning(W_TOO_MANY_KEYS);
+    }
+}
+
+void clear_keychanges() {
+    //memset(keyevents, 0, sizeof(keyevents));
     keychange_cnt = 0;
 }
 
-// FIXME
-enum neo_levels_e determine_current_level() {
-    enum neo_levels_e l = LEVEL1;
 
-    if (level_lock[LEVEL3]) {
-        if (level_lock[LEVEL4] || level_lock[LEVEL4_MOUSE]) {
-            l = LEVEL6;
-        } else if (level_lock[LEVEL2]) {
-            l = LEVEL5;
-        } else {
-            l = LEVEL3;
-        }
-    } else if (level_lock[LEVEL4]) {
-        l = LEVEL4;
-    } else if (level_lock[LEVEL4_MOUSE]) {
-        l = LEVEL4_MOUSE;
-    } else if (level_lock[LEVEL2]) {
-        l = LEVEL2;
-    }
 
-    if (level_mod[LEVEL3]) {
-        if (level_mod[LEVEL4] || level_mod[LEVEL4_MOUSE]) {
-            l = LEVEL6;
-        } else if (level_mod[LEVEL2]) {
-            l = LEVEL5;
-        } else {
-            l = LEVEL3;
-        }
-    } else if (level_mod[LEVEL4]) {
-        l = LEVEL4;
-    } else if (level_mod[LEVEL4_MOUSE]) {
-        l = LEVEL4_MOUSE;
-    } else if (level_mod[LEVEL2]) {
-        l = LEVEL2;
-    }
-
-    if (level_mod[l] && level_lock[l]) {
-        if (l != LEVEL2 && level_mod[LEVEL2]) {
-            l = LEVEL2;
-        } else {
-            l = LEVEL1;
-        }
-    }
-
-    dbg_uarttx_byte(0xC0 | l);
-
-    return l;
-}
-
-void process_keychange(uint8_t row, uint8_t controller, uint8_t col) {
+void process_keychange(uint8_t controller, uint8_t row, uint8_t col) {
     flash_led();
-    const struct keyleveltranslations_s klt = get_current_mapped_klt(controller, row, col);
-    enum key_change_e kchange = get_key_state(controller, row, col);
     dbg_uarttx_byte(keychange_char(kchange, row, controller, col));
-    if (klt.special == TT_LEVEL_MOD) {
-        if (klt.seq[0].type.type == KO_LEVEL_MOD || klt.seq[0].type.type == KO_LEVEL_MOD_X) {
-        enum neo_levels_e level = klt.seq[0].level_mod.level;
-        switch (level) {
-        case LEVEL4: // XXX
-            if (kchange == KC_PRESS) {
-                if (level_mod[LEVEL4_MOUSE] == true) {
-                    level_lock[LEVEL4_MOUSE] = true;
-                }
-                level_mod [level] = true;
-            } else {
-                level_mod[level] = !level_mod[level];
-            }
-            break;
-        case LEVEL4_MOUSE: // XXX
-            if (kchange == KC_PRESS) {
-                if (level_mod[LEVEL4] == true) {
-                    level_lock[LEVEL4] = true;
-                }
-                level_mod [level] = true;
-            } else {
-                level_mod[level] = !level_mod[level];
-            }
-            break;
-        default:
-            if (kchange == KC_PRESS) {
-                if (level_mod[level] == true) {
-                    level_lock[level] = !level_lock[level];
-                    level_mod [level] = false;
-                } else {
-                    level_mod [level] = true;
-                }
-            } else {
-                level_mod[level] = !level_mod[level];
-            }
-        }
-        }
-        if (klt.seq[0].type.type == KO_MODIFIER || klt.seq[0].type.type == KO_LEVEL_MOD_X) {
-            uint8_t key;
-            if (klt.seq[0].type.type == KO_MODIFIER) {
-                key = klt.seq[0].single.key;
-            } else {
-                key = klt.seq[0].level_mod_X.key;
-            }
-            if (kchange == KC_PRESS) {
-                modifiers |=  key;
-            } else {
-                modifiers &= ~key;
-            }
-            modifiers_changed = true;
-        }
-    } else {
-        add_klt_charge(klt, kchange);
+
+    const keyrecord_t *keyrecord = get_keyrecord(controller, row, col);
+    enum keystate_e keystate = get_keystate(controller, row, col);
+    
+    switch (keyrecord->type) {
+    case KT_LEVELMOD:
+    case KT_IGNORE_LEVEL:
+        keyrecord->kf[0](keystate);
+        break;
+    case KT_DUMB:
+        // do nothing
+        break;
+    default:
+#if 0
+        add_keyevent(controller, row, col, keystate);
+#endif
+        enqueue_keychange(keyrecord, keystate);
     }
 }
 
+void process_queued_keychange(const keychange_t *change) {
+    const keyrecord_t *record = change->record;
+    enum neo_levels_e level;
+    
+    switch (record->type) {
+    case KT_LEVELMOD:
+    case KT_IGNORE_LEVEL:
+        // FIXME: log PROGRAMMING ERROR
+        break;
+    case IGNORE_SHIFTLOCK:
+        level = get_level_il2l();
+    default:
+        level = get_level();
+    }
+    record->kf[level](change->state);
+}
 
-void process_key_states() {
+void process_change_queue() {
+    
+}
+
+void process_keystates() {
     // find changes
 
-    if (memcmp(prev_key_state, key_state, sizeof(key_state))) {
+    if (memcmp(prev_key_states, key_states, sizeof(key_states))) {
 
-        clear_klt_charge();
+        clear_keyevents();
 
         uint8_t controller;
         for (controller = CTLR_MASTER; controller < CTLR_COUNT; ++controller) {
             uint8_t row;
             for (row = 0; row < ROW_COUNT; ++row) {
-                uint8_t xor = prev_key_state[controller][row] ^ key_state[controller][row];
+                uint8_t xor = prev_key_states[controller][row] ^ key_states[controller][row];
                 if (xor > 0) {
                     uint8_t col;
                     for (col = 0; col < COL_COUNT; ++col) {
                         if ((xor & (1 << col)) > 0) {
                             // key state at [row,col] has changed
-                            process_keychange(row, controller, col);
+                            process_keychange(controller, row, col);
                         }
                     } // col loop
                 } // xor > 0
             } // row loop
         } // controller loop
 
-        enum neo_levels_e level = determine_current_level();
-        process_klt_charge(level);
+        process_change_queue();
 
         if (modifiers_changed == true) {
             struct key_seq_step_s step = { .change = KC_PRESS, .key = 0, .modifier = modifiers};
@@ -2094,6 +243,6 @@ void process_key_states() {
             modifiers_changed = false;
         }
 
-        memcpy(prev_key_state, key_state, sizeof(key_state));
+        memcpy(prev_key_states, key_states, sizeof(key_states));
     } // memcmp
 }
