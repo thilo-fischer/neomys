@@ -11,51 +11,41 @@
 // TODO
 #include "teensy_codelib/uart/uart.h"
 
-enum warnings_e {
-    W_TOO_MANY_KEYS,
-    W_COMMUNICATION_FAILURE,
-    W_PROGRAMMING_ERROR,
-    W_MASTER, // FIXME not a warning ... blink LED differently on master or slave controller at startup
-    W_SLAVE,  // FIXME not a warning ... blink LED differently on master or slave controller at startup
+enum status_code_e {
+    SC_BOOT_MASTER               = 0x00,
+    SC_BOOT_SLAVE                = 0x01,
+    
+    SC_ERR_TOO_MANY_KEYS         = 0x10,
+    SC_ERR_COMMUNICATION_FAILURE = 0x20,
+    SC_ERR_PROGRAMMING_ERROR     = 0x30,
+    
+    SC_DBG_KEYSTATES             = 0xF1,
+    SC_DBG_USB_KEYS              = 0xF2,
 };
 
+enum infolevel_e {
+    IL_DBG   = 0x00,
+    IL_INFO  = 0x01,
+    IL_WARN  = 0x02,
+    IL_ERR   = 0x03,
+    IL_FATAL = 0x04,
+    IL_OFF   = 0x05
+};
 
 #if (CONTROLLER == CTLR_MASTER)
-#  define UART_LOGLEVEL 1
+#  define UART_INFOLEVEL IL_INFO
 #else
-#  define UART_LOGLEVEL 0
+#  define UART_INFOLEVEL IL_OFF
 #endif
 
-#if (UART_LOGLEVEL == 0)
-#define dbg_uarttx_byte(b)
-#define dbg_uarttx_usb_keys()
-
-#elif (UART_LOGLEVEL == 1)
-static inline void dbg_uarttx_byte(uint8_t b) {
-        uart_putchar(b);
-}
-#define dbg_uarttx_usb_keys()
-
-#else
-static inline void dbg_uarttx_byte(uint8_t b) {
-    uart_putchar(b);
-}
-static inline void dbg_uarttx_usb_keys() {
-    uart_putchar(0xFF);
-    uart_putchar(keyboard_modifier_keys);
-    int i;
-    for (i = 0; i < 6; ++i) {
-        uart_putchar(keyboard_keys[i]);
-    }
-}
-
-#endif
+#define BLINK_INFOLEVEL IL_WARN
 
 
+void inform(enum infolevel_e il, enum status_code_e code);
+void info_add(enum infolevel_e il, uint8_t v);
 
-void init_warn_led();
-void warning(enum warnings_e code);
 void flash_led();
+
 void update_warn_led();
 
 

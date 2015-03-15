@@ -54,13 +54,26 @@ char test_col(uint8_t col) {
     return (*COL_PORT_PIN[col] &  (1 << COL_PORT_BIT[col])) ? 0 : 1 ;
 }
 
+void init_onboard_led() {
+    DDRD |= (1<<6);
+}
+
+void switch_onboard_led(bool on) {
+    if (on == true) {
+        PORTD |=  (1<<6);
+    } else {
+        PORTD &= ~(1<<6);
+    }
+}
+
 void init_io() {
-	uint8_t row, col;
-	for (row = 0; row < ROW_COUNT; ++row) {
-		init_row_io(row);
-	}
-	for (col = 0; col < COL_COUNT; ++col) {
-		init_col_io(col);
-	}
+    uint8_t row, col;
+    for (row = 0; row < ROW_COUNT; ++row) {
+        init_row_io(row);
+    }
+    for (col = 0; col < COL_COUNT; ++col) {
+        init_col_io(col);
+    }
+    init_onboard_led();
 }
 

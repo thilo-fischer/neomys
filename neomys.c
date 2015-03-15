@@ -62,7 +62,7 @@ static inline void init() {
 int main(void) {
     init();
     while (true) {
-        update_warn_led();
+        progress_blink_pattern();
 #if (CONTROLLER == CTLR_MASTER)
         int rx_result = rx_keystates();
         if (rx_result == 0) {

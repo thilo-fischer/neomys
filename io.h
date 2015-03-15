@@ -32,4 +32,6 @@ void deactivate_row(uint8_t row);
 
 char test_col(uint8_t col);
 
+void switch_onboard_led(bool on);
+
 #endif /* IO_H_ */

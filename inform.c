@@ -12,78 +12,83 @@
 #include "getkeys.h"
 #include "io.h"
 
-// warning LED
+// status LED
 
 enum blink_pattern_e {
-    WP_OFF = 0x00,
-    WP_SHORT = 0xAA,
-    WP_MEDIUM = 0xCC,
-    WP_LONG = 0xF0,
-    WP_CONSTANT = 0xFF,
-    WP_SHORT_BREAK = 0xA5,
-    WP_LONG_BREAK = 0xC3,
+    BP_OFF = 0x00,
+    BP_SHORT = 0xAA,
+    BP_MEDIUM = 0xCC,
+    BP_LONG = 0xF0,
+    BP_CONSTANT = 0xFF,
+    BP_SHORT_BREAK = 0xA5,
+    BP_LONG_BREAK = 0xC3,
 };
 
-#define WARN_CYCLE_MULTIPLIER 4
-const int WARN_CNTDN_START = 8 * WARN_CYCLE_MULTIPLIER;
-int warn_cntdn = -1;
-uint8_t current_pattern = WP_OFF;
+#define BLINK_CYCLE_MULTIPLIER 4
+#define BLINK_CNTDN_START = 8 * BLINK_CYCLE_MULTIPLIER;
+int blink_cntdn = -1;
+uint8_t blink_pattern = BP_OFF;
 
-void init_warn_led() {
-    DDRD |= (1<<6);
-}
-
-static inline void switch_warn_led(bool on) {
-    if (on == true) {
-        PORTD |= (1<<6);
-    } else {
-        PORTD &= ~(1<<6);
-    }
-}
-
-void warning(enum warnings_e code) {
-    if (warn_cntdn == -1) {
-        dbg_uarttx_byte(0xE0 | code);
-        warn_cntdn = WARN_CNTDN_START - 1;
-        switch (code) {
-        case W_TOO_MANY_KEYS:
-            current_pattern = WP_MEDIUM;
-            break;
-        case W_COMMUNICATION_FAILURE:
-            current_pattern = WP_LONG_BREAK;
-            break;
-        case W_PROGRAMMING_ERROR:
-            current_pattern = WP_SHORT;
-            break;
-        case W_MASTER:
-            current_pattern = WP_LONG;
-            break;
-        case W_SLAVE:
-            current_pattern = WP_SHORT;
-            break;
-        default:
-            current_pattern = WP_CONSTANT;
-        }
-    }
-}
 
 void flash_led() {
-    if (warn_cntdn == -1) {
-        warn_cntdn = 0;
-        switch_warn_led(true);
+    if (blink_cntdn == -1) {
+        blink_pattern = BP_CONSTANT;
+        blink_cntdn = 1;
     }
 }
 
-void update_warn_led() {
-    if (warn_cntdn > 0) {
-        switch_warn_led((((uint8_t) current_pattern) & (1<<(warn_cntdn/WARN_CYCLE_MULTIPLIER))) > 0);
-        //switch_warn_led(true);
-        --warn_cntdn;
-    } else if (warn_cntdn == 0) {
-        switch_warn_led(false);
-        warn_cntdn = -1;
+void blink_led(enum blink_pattern_e pattern) {
+    if (blink_cntdn == -1) {
+        blink_pattern = pattern;
+        blink_cntdn = BLINK_CNTDN_START - 1;
     }
 }
+
+void progress_blink_pattern() {
+    if (blink_cntdn > 0) {
+        switch_blink_led((((uint8_t) current_pattern) & (1<<(blink_cntdn/BLINK_CYCLE_MULTIPLIER))) > 0);
+        --blink_cntdn;
+    } else if (blink_cntdn == 0) {
+        switch_blink_led(false);
+        blink_cntdn = -1;
+    }
+}
+
+enum blink_pattern_e get_blink_pattern(enum status_code_e code) {
+    switch (code) {
+    case SC_BOOT_MASTER:
+        return BP_LONG_BREAK;
+    case SC_BOOT_SLAVE:
+        return BP_SHORT_BREAK;
+    case SC_ERR_TOO_MANY_KEYS:
+        return BP_SHORT;
+    case SC_ERR_COMMUNICATION_FAIURE:
+        return BP_MEDIUM;
+    case SC_ERR_PROGRAMMING_ERROR:
+    default:
+        return WP_CONSTANT;
+    }
+}
+
+// how to spread information
+
+
+void inform(enum infolevel_e il, enum status_code_e code) {
+    if (il >= BLINK_INFOLEVEL) {
+        blink_led(get_pattern(code));
+    }
+    if (il >= UART_INFOLEVEL) {
+        //uart_putchar(0xA0 | il);
+        uart_putchar(code);
+    }
+}
+
+void info_add(enum infolevel_e il, uint8_t v) {
+    if (il >= UART_INFOLEVEL) {
+        uart_putchar(v);
+    }
+}
+
 
 #if 0
 // FIXME redundant to key_change_s

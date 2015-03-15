@@ -125,6 +125,15 @@ struct keychange_t {
 struct keychange_t keychange[KEYCHANGE_CNT_MAX] /*= {{ 0 }}*/;
 uint8_t keychange_cnt = 0;
 
+// xxxxxxxxxxxxxxxxxx
+static inline void dbg_uarttx_usb_keys() {
+    inform(IL_DBG, SC_DBG_KEYSTATES);
+    uart_putchar(keyboard_modifier_keys);
+    int i;
+    for (i = 0; i < 6; ++i) {
+        uart_putchar(keyboard_keys[i]);
+    }
+}
 
 void update_own_key_states() {
     uint8_t row;
@@ -137,6 +146,7 @@ void update_own_key_states() {
         }
         deactivate_row(row);
     }
+    dbg_uarttx_usb_keys(); // xxxxxxxxxxxxxxxxxx
 }
 
 
