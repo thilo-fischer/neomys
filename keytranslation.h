@@ -23,34 +23,26 @@
 #define _KEYTRANSLATION_H_
 
 #include "neomys.h"
-#include "getkeys.h"
+#include "keyhandling.h"
 
+
+typedef void (*keyfunc_t)(target_layout_t tl, keystate_t event);
 
 typedef enum {
-   TL_NEO,       ///< Neo2 (http://www.neo-layout.org/)
-   TL_DE,        ///< DIN 2137:2012-06 T1 (with dead keys)
-   TL_DE_NODEAD,
-   //TL_DE_APPLE,
-   TL_US,        ///< ANSI-INCITS 154-1988
-   //TL_US_APPLE,
-   TL_COUNT
-} target_layout_t;
+    KT_DUMB, // fixme -- rename: PHANTOM
+    KT_PLAIN,
+    KT_IGNORE_SHIFTLOCK,
+    KT_IGNORE_LEVEL,
+    KT_LEVELMOD,
+} keytype_t;
+
+typedef struct {
+    keytype_t type;
+    keyfunc_t kf[LEVEL_COUNT];
+} keyrecord_t;
 
 
+const keyrecord_t *get_keyrecord(uint8_t controller, uint8_t row, uint8_t col);
 
-typedef void (*keyfunc_t)();
-
-
-keyfunc_t get_keyfunc();
-
-
-
-inline const union keyseq_u *get_mapped_key_ptr(enum keylayout_e mode, uint8_t controller, enum row_e row, uint8_t col, enum neo_levels_e level) {
-    return &(keymap[mode][row][controller][col].seq[level]);
-}
-
-inline const struct keyleveltranslations_s *get_mapped_klt_ptr(enum keylayout_e mode, uint8_t controller, enum row_e row, uint8_t col) {
-    return &(keymap[mode][row][controller][col]);
-}
 
 #endif // _KEYMAPPINGS_H_

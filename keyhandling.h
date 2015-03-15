@@ -9,6 +9,17 @@
 #define _KEYHANDLING_H_
 
 typedef enum {
+   TL_NEO,       ///< Neo2 (http://www.neo-layout.org/)
+   TL_DE,        ///< DIN 2137:2012-06 T1 (with dead keys)
+   TL_DE_NODEAD,
+   //TL_DE_APPLE,
+   TL_US,        ///< ANSI-INCITS 154-1988
+   //TL_US_APPLE,
+   TL_COUNT
+} target_layout_t;
+
+
+typedef enum {
     KS_PRESS,
     KS_RELEASE,
 } keystate_t;
@@ -25,8 +36,6 @@ enum neo_levels_e {
     LEVEL_COUNT
 };
 
-extern enum neo_levels_e locked_level;
-
 enum neo_level_modifiers_e {
     LM2_L = 0x01,
     LM2_R = 0x02,
@@ -36,8 +45,9 @@ enum neo_level_modifiers_e {
     LM4_R = 0x20,
 };
 
-extern uint8_t level_modifiers;
 
+extern enum neo_levels_e locked_level;
+extern uint8_t level_modifiers;
 
 
 #endif // _KEYHANDLING_H_

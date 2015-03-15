@@ -17,6 +17,13 @@
 enum neo_levels_e locked_level = LEVEL1;
 enum uint8_t level_modifiers = 0x00;
 
+struct keyevent_b {
+    keystate_t event :1;
+    uint8_t controller :1;
+    uint8_t row :3;
+    uint8_t col :3;
+};
+
 
 enum neo_levels_e get_level_from_modifiers(uint8_t mods) {
     
@@ -205,10 +212,6 @@ void process_queued_keychange(const keychange_t *change) {
         level = get_level();
     }
     record->kf[level](change->state);
-}
-
-void process_change_queue() {
-    
 }
 
 void process_keystates() {

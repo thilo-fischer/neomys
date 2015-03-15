@@ -72,7 +72,7 @@ int main(void) {
             warning(W_COMMUNICATION_FAILURE);
         }
 
-        process_keyseqqueue();
+        keyseq_queue_progress();
 #else // ! (CONTROLLER == CTLR_MASTER)
         update_own_key_states();
         tx_keystates();

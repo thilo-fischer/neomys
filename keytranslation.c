@@ -9,7 +9,6 @@
 
 #include "keytranslation.h"
 
-#include "keyhandling.h"
 #include "sendkeys.h"
 
 
@@ -36,7 +35,7 @@ KF(next_target_layout) {
     if (target_layout == TL_COUNT) {
         target_layout = TL_NEO;
     }
-    log(LL_INFO, LS_TARGET_LAYOUT, target_layout);
+    // todo: log(LL_INFO, LS_TARGET_LAYOUT, target_layout);
 }
 
 KF(prev_target_layout) {
@@ -44,7 +43,7 @@ KF(prev_target_layout) {
         target_layout = TL_COUNT;
     }
     --target_layout;
-    log(LL_INFO, LS_TARGET_LAYOUT, target_layout);
+    // todo: log(LL_INFO, LS_TARGET_LAYOUT, target_layout);
 }
 
 // level modifiers
@@ -143,12 +142,15 @@ KF(kf_alt_left) {
 
 KF(kf_alt_right) {
     switch (tl) {
+    case TL_NEO:
     case TL_DE:
     case TL_DE_NODEAD:
         kev_modifier(KEY_ALT, event);
         break;
     default:
-        kev_modifier(KEY_RIGHT_ALT, event);
+        // KEY_RIGHT_ALT is AltGr key on some target layouts and may affect the level => use KEY_ALT instead of KEY_RIGHT_ALT to avoid further confusion ...
+        // kev_modifier(KEY_RIGHT_ALT, event);
+        kev_modifier(KEY_ALT, event);
     }
 }
 
@@ -970,7 +972,7 @@ KF(apostrophe) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kev_w_shift(KEY_HASH, event);
+        kev_w_shift(KEY_BACKSLASH, event);
         break;
     default:
         kev_plain(KEY_QUOTE, event);
@@ -1029,7 +1031,7 @@ KF(plus) {
         kev_plain(KEY_RIGHT_BRACE, event);
         break;
     default:
-        kev_w_shift(KEY_EQUALS, event);
+        kev_w_shift(KEY_EQUAL, event);
     }
 }
 
@@ -1128,7 +1130,7 @@ KF(equals) {
         kev_w_shift(KEY_0, event);
         break;
     default:
-        kev_plain(KEY_EQUALS, event);
+        kev_plain(KEY_EQUAL, event);
     }
 }
 
@@ -1223,11 +1225,11 @@ KF(caret) {
         kev_level3(KEY_T, event);
         break;
     case TL_DE:
-        kev_plain(KEY_GRAVE, event);
+        kev_plain(KEY_TILDE, event);
         kev_plain(KEY_SPACE, event);
         break;
     case TL_DE_NODEAD:
-        kev_plain(KEY_GRAVE, event);
+        kev_plain(KEY_TILDE, event);
         break;
     default:
         kev_w_shift(KEY_6, event);
@@ -1254,14 +1256,14 @@ KF(backtick) {
         kev_level3(KEY_B, event);
         break;
     case TL_DE:
-        kev_w_shift(KEY_EQUALS, event);
+        kev_w_shift(KEY_EQUAL, event);
         kev_plain  (KEY_SPACE, event);
         break;
     case TL_DE_NODEAD:
-        kev_w_shift(KEY_EQUALS, event);
+        kev_w_shift(KEY_EQUAL, event);
         break;
     default:
-        kev_w_shift(KEY_GRAVE, event);
+        kev_w_shift(KEY_TILDE, event);
     }
 }
 
@@ -1318,7 +1320,7 @@ KF(tilde) {
         kev_w_altgr(KEY_RIGHT_BRACE, event);
         break;
     default:
-        kev_w_shift(KEY_GRAVE, event);
+        kev_w_shift(KEY_TILDE, event);
     }
 }
 
@@ -1332,7 +1334,7 @@ KF(degree) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kev_w_shift(KEY_GRAVE, event);
+        kev_w_shift(KEY_TILDE, event);
         break;
     default:
         kev_TODO();
@@ -1509,10 +1511,6 @@ KF(return) {
     }
 }
 
-KF(undo) {
-    kev_TODO();
-}
-
 
 // numpad
 
@@ -1647,23 +1645,6 @@ KF(back) {
     kev_TODO();
 }
 
-
-// KEY MAP
-
-
-typedef enum {
-    KT_DUMB, // fixme -- rename: PHANTOM
-    KT_PLAIN,
-    KT_IGNORE_SHIFTLOCK,
-    KT_IGNORE_LEVEL,
-    KT_LEVELMOD,
-} keytype_t;
-
-
-typedef struct {
-    keytype_t type;
-    keyfunc_t kf[LEVEL_COUNT];
-} keyrecord_t;
 
 
 keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
@@ -2036,37 +2017,6 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
 
 
 
-keyfunc_t get_keyfunc(uint8_t controller, uint8_t row, uint8_t col, /*xxx>*/enum neo_levels_e locked_level,  enum neo_levels_e active_level/*<xxx*/) {
-    keyrecord_t *record = keymap[row][controller][col];
-    keyfunc_t result = NULL;
-    switch (record->type) {
-    case KT_PLAIN:
-        // FIXME
-        result = record->kf[level];
-        break;
-    case KT_LEVELMOD:
-        // keyfunc of level mod should not be touched -> TODO: warning(programming error)
-        break;
-    case KT_IGNORE_SHIFTLOCK:
-        // FIXME
-        if (level_locked == LEVEL2) {
-            result = record->kf[level];
-        } else {
-            result = record->kf[level];
-        }
-        break;
-    case KT_IGNORE_LEVEL:
-        return record->kf[0];
-        break;
-    case KT_DUMB:
-        return kf_nop;
-        break;
-    default:
-        // todo
-    }
-
-    // if NULL and LEVEL4_MOUSE, fallback to LEVEL4
-    if (result = NULL && LEVEL4_MOUSE) {
-        result = record->kf[LEVEL4];
-    }
+const keyrecord_t *get_keyrecord(uint8_t controller, uint8_t row, uint8_t col) {
+    return keymap[row][controller][col];
 }
