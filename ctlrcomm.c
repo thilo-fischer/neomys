@@ -15,7 +15,7 @@
 #include "teensy_codelib/uart/uart.h"
 
 
-extern uint8_t key_state[2][ROW_COUNT]; // XXX
+extern uint8_t key_states[2][ROW_COUNT]; // XXX
 
     // No row has 8 keys (COL_COUNT < 8), so every row state byte will always have at least one 0-bit in it. 0xFF is an impossible row byte value, so if can be used to mark beginning and end of a transmission.
     const uint8_t startendbyte = 0xFF;
@@ -24,7 +24,7 @@ extern uint8_t key_state[2][ROW_COUNT]; // XXX
         uint8_t row;
         uart_putchar(startendbyte);
         for (row = 0; row < ROW_COUNT; ++row) {
-            uart_putchar(key_state[CTLR_SLAVE][row]);
+            uart_putchar(key_states[CTLR_SLAVE][row]);
         }
         uart_putchar(startendbyte);
     }
@@ -61,7 +61,7 @@ extern uint8_t key_state[2][ROW_COUNT]; // XXX
                 discard_uart();
                 return 2;
             }
-            key_state[CTLR_SLAVE][row] = rx_byte;
+            key_states[CTLR_SLAVE][row] = rx_byte;
         }
         rx_byte = uart_getchar();
         if (rx_byte != startendbyte) {

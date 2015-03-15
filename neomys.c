@@ -67,7 +67,7 @@ int main(void) {
         int rx_result = rx_keystates();
         if (rx_result == 0) {
             update_own_key_states();
-            process_key_states();
+            process_keystates();
         } else {
             warning(W_COMMUNICATION_FAILURE);
         }

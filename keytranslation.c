@@ -5,6 +5,8 @@
   This program is licenced under GPLv3.
 */
 
+#include <stddef.h>
+
 #include "teensy_codelib/usb_keyboard/usb_keyboard.h"
 
 #include "keytranslation.h"
@@ -74,33 +76,33 @@ static inline void affect_levellock(enum neo_level_modifiers_e mod, enum neo_lev
     }
 }
 
-KF(kf_level2mod_left) {
+KF(level2mod_left) {
     set_modifier_bit(LM2_L, event);
     affect_levellock(LM2_L, LM2_R, LEVEL2, event);
     kev_modifier(KEY_LEFT_SHIFT, event);
 }
 
-KF(kf_level2mod_right) {
+KF(level2mod_right) {
     set_modifier_bit(LM2_R, event);
     affect_levellock(LM2_R, LM2_L, LEVEL2, event);
     kev_modifier(KEY_RIGHT_SHIFT, event);
 }
 
-KF(kf_level3mod_left) {
+KF(level3mod_left) {
     set_modifier_bit(LM3_L, event);
     affect_levellock(LM3_L, LM3_R, LEVEL3, event);
     if (tl == TL_NEO)
         kev_virtual_modifier(KEY_CAPS_LOCK, event);
 }
 
-KF(kf_level3mod_right) {
+KF(level3mod_right) {
     set_modifier_bit(LM3_R, event);
     affect_levellock(LM3_R, LM3_L, LEVEL3, event);
     if (tl == TL_NEO)
         kev_virtual_modifier(KEY_BACKSLASH, event);
 }
 
-KF(kf_level4mod_left) {
+KF(level4mod_left) {
     set_modifier_bit(LM4_L, event);
     // if LM4_L is getting pressed while LM4_R is already pressed, lock LEVEL4_MOUSE
     affect_levellock(LM4_L, LM4_R, LEVEL4_MOUSE, event);
@@ -109,7 +111,7 @@ KF(kf_level4mod_left) {
     // TODO kev_virtual_modifier(KEY_<<ISO extra key>>, event);
 }
 
-KF(kf_level4mod_right) {
+KF(level4mod_right) {
     set_modifier_bit(LM4_R, event);
     // if LM4_R is getting pressed while LM4_L is already pressed, lock LEVEL4
     affect_levellock(LM4_R, LM4_L, LEVEL4, event);
@@ -119,28 +121,28 @@ KF(kf_level4mod_right) {
 
 // modifiers
 
-KF(kf_ctrl_left) {
+KF(ctrl_left) {
     switch (tl) {
     default:
         kev_modifier(KEY_LEFT_CTRL, event);
     }
 }
 
-KF(kf_ctrl_right) {
+KF(ctrl_right) {
     switch (tl) {
     default:
         kev_modifier(KEY_RIGHT_CTRL, event);
     }
 }
 
-KF(kf_alt_left) {
+KF(alt_left) {
     switch (tl) {
     default:
         kev_modifier(KEY_LEFT_ALT, event);
     }
 }
 
-KF(kf_alt_right) {
+KF(alt_right) {
     switch (tl) {
     case TL_NEO:
     case TL_DE:
@@ -154,14 +156,14 @@ KF(kf_alt_right) {
     }
 }
 
-KF(kf_gui_left) {
+KF(gui_left) {
     switch (tl) {
     default:
         kev_modifier(KEY_LEFT_GUI, event);
     }
 }
 
-KF(kf_gui_right) {
+KF(gui_right) {
     switch (tl) {
     default:
         kev_modifier(KEY_RIGHT_GUI, event);
@@ -1369,9 +1371,29 @@ KF(euro_currency) {
     }
 }
 
+KF(cent_currency) {
+    kev_TODO();
+}
+
+KF(pound_currency) {
+    kev_TODO();
+}
+
+KF(yen_currency) {
+    kev_TODO();
+}
+
+KF(currency_sign) {
+    kev_TODO();
+}
+
+KF(mdash) {
+    kev_TODO();
+}
+
 // esoteric punctuation characters (in order of appearance on the Neo layout from left to right, from top to bottom)
 
-KF(superscript_1) {
+KF(superscript1) {
     switch (tl) {
     case TL_NEO:
         kev_level3(KEY_1, event);
@@ -1381,7 +1403,7 @@ KF(superscript_1) {
     }
 }
 
-KF(superscript_2) {
+KF(superscript2) {
     switch (tl) {
     case TL_NEO:
         kev_level3(KEY_2, event);
@@ -1395,7 +1417,11 @@ KF(superscript_2) {
     }
 }
 
-KF(superscript_3) {
+KF(script_small_l) {
+    kev_TODO();
+}
+
+KF(superscript3) {
     switch (tl) {
     case TL_NEO:
         kev_level3(KEY_3, event);
@@ -1409,6 +1435,125 @@ KF(superscript_3) {
     }
 }
 
+KF(numero_sign) {
+    kev_TODO();
+}
+
+KF(guillemet_dbl_gt) {
+    kev_TODO();
+}
+
+KF(guillemet_sgl_gt) {
+    kev_TODO();
+}
+
+KF(guillemet_dbl_lt) {
+    kev_TODO();
+}
+
+KF(guillemet_sgl_lt) {
+    kev_TODO();
+}
+
+KF(low9quote_dbl) {
+    kev_TODO();
+}
+
+KF(low9quote_sgl) {
+    kev_TODO();
+}
+
+KF(6quote_dbl) {
+    kev_TODO();
+}
+
+KF(6quote_sgl) {
+    kev_TODO();
+}
+
+KF(9quote_dbl) {
+    kev_TODO();
+}
+
+KF(9quote_sgl) {
+    kev_TODO();
+}
+
+KF(ellipsis) {
+    kev_TODO();
+}
+
+KF(inverted_exclamation_mark) {
+    kev_TODO();
+}
+
+KF(long_s) {
+    kev_TODO();
+}
+
+KF(minus) {
+    kev_TODO();
+}
+
+KF(inverted_question_mark) {
+    kev_TODO();
+}
+
+KF(ndash) {
+    kev_TODO();
+}
+
+KF(bullet) {
+    kev_TODO();
+}
+
+
+
+// dead keys
+
+KF(dead_grave) {
+    kev_TODO();
+}
+
+KF(dead_cedilla) {
+    kev_TODO();
+}
+
+KF(dead_ring) {
+    kev_TODO();
+}
+
+KF(dead_umlaut) {
+    kev_TODO();
+}
+
+KF(dead_circumfex) {
+    kev_TODO();
+}
+
+KF(dead_caron) {
+    kev_TODO();
+}
+
+KF(dead_dot) {
+    kev_TODO();
+}
+
+KF(dead_acute) {
+    kev_TODO();
+}
+
+KF(dead_perispomene) {
+    kev_TODO();
+}
+
+KF(dead_bar) {
+    kev_TODO();
+}
+
+KF(dead_double_acute) {
+    kev_TODO();
+}
 
 
 // control and navigation keys
@@ -1612,12 +1757,81 @@ KF(numpad_minus) {
     }
 }
 
+KF(numpad_comma) {
+    switch (tl) {
+    case TL_NEO:
+    case TL_DE:
+    case TL_DE_NODEAD:
+        kev_w_shift(KEYPAD_PERIOD, event);
+        break;
+    default:
+        kev_allow_modifiers(KEY_COMMA, event);
+    }
+}
+
 KF(numpad_period) {
     switch (tl) {
+    case TL_NEO:
+    case TL_DE:
+    case TL_DE_NODEAD:
+        kev_w_shift(KEY_PERIOD, event);
+        break;
     default:
         kev_allow_modifiers(KEYPAD_PERIOD, event);
     }
 }
+
+// function keys
+
+KF(F1) {
+    kev_TODO();
+}
+
+KF(F2) {
+    kev_TODO();
+}
+
+KF(F3) {
+    kev_TODO();
+}
+
+KF(F4) {
+    kev_TODO();
+}
+
+KF(F5) {
+    kev_TODO();
+}
+
+KF(F6) {
+    kev_TODO();
+}
+
+KF(F7) {
+    kev_TODO();
+}
+
+KF(F8) {
+    kev_TODO();
+}
+
+KF(F9) {
+    kev_TODO();
+}
+
+KF(F10) {
+    kev_TODO();
+}
+
+KF(F11) {
+    kev_TODO();
+}
+
+KF(F12) {
+    kev_TODO();
+}
+
+
 
 // special keys
 
@@ -1666,12 +1880,12 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // 3
             {
                 .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_3, NULL, kf_superscript3, kf_numero_sign, kf_F3, },
+                .kf = { kf_3, kf_script_small_l, kf_superscript3, kf_numero_sign, kf_F3, },
             },
             // 4
             {
                 .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_4, kf_guillemet_dbl_gt, kf_guillemet_sgl_gt, NULL, kf_F4, },
+                .kf = { kf_4, kf_guillemet_dbl_gt, kf_guillemet_sgl_gt, kf_nop, kf_F4, },
             },
             // 5
             {
@@ -1709,7 +1923,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // -
             {
                 .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_dash, kf_mdash, NULL, kf_numpad_dash, kf_F11, },
+                .kf = { kf_dash, kf_mdash, kf_nop, kf_numpad_minus, kf_F11, },
             },
             // ò
             {
@@ -1719,7 +1933,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // ô
             {
                 .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_dead_circumfex, kf_dead_caron, NULL, kf_dead_dot, NULL, },
+                .kf = { kf_dead_circumfex, kf_dead_caron, kf_TODO, kf_dead_dot, kf_nop, },
             },
         }, // controller (left/right side)
     }, // row
@@ -1766,7 +1980,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // K
             {
                 .type = KT_PLAIN,
-                .kf = { kf_k, kf_K, kf_exclamation_mark, kf_inverted_exclamation_mark, kf_TODO, },
+                .kf = { kf_k, kf_K, kf_exclamation_mark, kf_inverted_exclamation_mark, kf_back, },
             },
             // H
             {
@@ -1786,7 +2000,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // Q
             {
                 .type = KT_PLAIN,
-                .kf = { kf_q, kf_Q, kf_ampersand, kf_numpad_plus, kf_TODO, },
+                .kf = { kf_q, kf_Q, kf_ampersand, kf_numpad_plus, kf_forward, },
             },
             // ß
             {
@@ -1961,7 +2175,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // switch target layout // TODO preliminary use of this key
             {
                 .type = KT_IGNORE_LEVEL,
-                .kf = { prev_target_layout },
+                .kf = { kf_prev_target_layout },
             },
             // unused
             {
@@ -1981,10 +2195,10 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
         }, // controller (left/right side)
         //ROW_SPACE right
         {
-            // left Alt
+            // right Alt
             {
                 .type = KT_IGNORE_LEVEL,
-                .kf = { kf_alt_left },
+                .kf = { kf_alt_right },
             },
             // level4 modifier
             {
@@ -1994,22 +2208,22 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // space, numpad-zero
             {
                 .type = KT_PLAIN,
-                .kf = { kf_space, kf_space, kf_space, kf_numpad_zero, kf_nop, },
+                .kf = { kf_space, kf_space, kf_space, kf_numpad_0, kf_nop, },
             },
             // switch target layout // TODO preliminary use of this key
             {
                 .type = KT_IGNORE_LEVEL,
-                .kf = { next_target_layout },
+                .kf = { kf_next_target_layout },
             },
-            // left GUI
+            // right GUI
             {
                 .type = KT_IGNORE_LEVEL,
-                .kf = { kf_gui_left },
+                .kf = { kf_gui_right },
             },
-            // left Ctrl
+            // right Ctrl
             {
                 .type = KT_IGNORE_LEVEL,
-                .kf = { kf_ctrl_left },
+                .kf = { kf_ctrl_right },
             },
         }, // controller (left/right side)
     }, // row
@@ -2018,5 +2232,5 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
 
 
 const keyrecord_t *get_keyrecord(uint8_t controller, uint8_t row, uint8_t col) {
-    return keymap[row][controller][col];
+    return &keymap[row][controller][col];
 }

@@ -44,5 +44,6 @@ typedef struct {
 
 const keyrecord_t *get_keyrecord(uint8_t controller, uint8_t row, uint8_t col);
 
+extern target_layout_t target_layout;
 
 #endif // _KEYMAPPINGS_H_

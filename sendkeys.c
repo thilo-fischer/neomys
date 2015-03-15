@@ -5,6 +5,8 @@
    This program is licenced under GPLv3.
 */
 
+#include <stddef.h>
+
 #include "sendkeys.h"
 
 #include "teensy_codelib/usb_keyboard/usb_keyboard.h"
@@ -22,7 +24,7 @@ uint8_t modifiers_current_in  = 0x00;
 struct keyseq_step_s {
     uint8_t key;
     uint8_t modifiers;
-    enum keystate_e change;
+    keystate_t change;
 };
 
 #define KEYSEQ_QUEUE_LENGTH 32
@@ -44,14 +46,16 @@ static void release_key(uint8_t key);
 
 static uint8_t *find_keyboard_key(uint8_t key);
 
-
-
+bool keyseq_queue_empty();
+bool keyseq_queue_full();
+static inline void keyseq_queue_enqueue(uint8_t key, keystate_t event, uint8_t modifiers);
+void keyseq_queue_dequeue();
 
 // implementation of public functions
 
 void keyseq_queue_progress() {
-    if (!key_seq_queue_empty()) {
-        const struct keyseq_step_s* next_step = &key_seq_queue[key_seq_queue_start];
+    if (!keyseq_queue_empty()) {
+        const struct keyseq_step_s* next_step = &keyseq_queue[keyseq_queue_start];
 #ifdef CHANGE_MODIFIERS_BEFORE_KEYEVENT
         if (keyboard_modifier_keys != next_step->modifiers) {
             keyboard_modifier_keys = next_step->modifiers;
@@ -64,14 +68,13 @@ void keyseq_queue_progress() {
         }
 #else
         keyboard_modifier_keys = next_step->modifiers;
-#end
-        }
+#endif
 
         if (next_step->key != KEY_NONE) {
             if (next_step->change == KS_PRESS) {
-                press_key(key);
+                press_key(next_step->key);
             } else {
-                release_key(key);
+                release_key(next_step->key);
             }
         }
     
@@ -160,14 +163,14 @@ static inline void keyseq_queue_enqueue(uint8_t key, keystate_t event, uint8_t m
     keyseq_queue[keyseq_queue_end].modifiers = modifiers;
     keyseq_queue[keyseq_queue_end].change = event;
     ++keyseq_queue_end;
-    if (keyseq_queue_end == KEY_SEQ_QUEUE_LENGTH) {
+    if (keyseq_queue_end == KEYSEQ_QUEUE_LENGTH) {
         keyseq_queue_end = 0;
     }
 }
 
 void keyseq_queue_dequeue() {
     ++keyseq_queue_start;
-    if (keyseq_queue_start == KEY_SEQ_QUEUE_LENGTH) {
+    if (keyseq_queue_start == KEYSEQ_QUEUE_LENGTH) {
         keyseq_queue_start = 0;
     }
 }

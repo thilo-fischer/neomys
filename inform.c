@@ -85,6 +85,7 @@ void update_warn_led() {
     }
 }
 
+#if 0
 // FIXME redundant to key_change_s
 struct keychange_byte_b {
     enum key_change_e kchange : 1;
@@ -107,4 +108,4 @@ char keychange_char(enum key_change_e kchange, uint8_t row, uint8_t controller, 
     struct keychange_byte_b var = keychange_byte(kchange, row, controller, col);
     return * (char *) &var;
 }
-
+#endif

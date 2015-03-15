@@ -10,12 +10,13 @@
 #include "getkeys.h"
 
 #include "keyhandling.h"
+#include "keytranslation.h"
 #include "io.h"
 #include "ctlrcomm.h"
 
 
 enum neo_levels_e locked_level = LEVEL1;
-enum uint8_t level_modifiers = 0x00;
+uint8_t level_modifiers = 0x00;
 
 struct keyevent_b {
     keystate_t event :1;
@@ -103,11 +104,11 @@ enum neo_levels_e get_level_il2l() {
 uint8_t key_states[2][ROW_COUNT] = {{0}, {0}};
 uint8_t prev_key_states[2][ROW_COUNT] = {{0}, {0}};
 
-enum keystate_e get_keystate(uint8_t controller, enum row_e row, uint8_t col) {
+keystate_t get_keystate(uint8_t controller, enum row_e row, uint8_t col) {
     return ((key_states[controller][row] & (1 << col)) > 0) ? KS_PRESS : KS_RELEASE;
 }
 
-void set_keystate(uint8_t controller, enum row_e row, uint8_t col, enum keystate_e state) {
+void set_keystate(uint8_t controller, enum row_e row, uint8_t col, keystate_t state) {
     if (state == KS_PRESS) {
         key_states[controller][row] |=  (1 << col);
     } else {
@@ -115,10 +116,14 @@ void set_keystate(uint8_t controller, enum row_e row, uint8_t col, enum keystate
     }
 }
 
+struct keychange_t {
+    const keyrecord_t *record;
+    keystate_t state;
+};
 
-#define KEYEVENTS_CNT_MAX 8
-struct keyevent_b keyevents[KEYEVENTS_CNT_MAX] /*= {{ 0 }}*/;
-uint8_t keyevents_cnt = 0;
+#define KEYCHANGE_CNT_MAX 8
+struct keychange_t keychange[KEYCHANGE_CNT_MAX] /*= {{ 0 }}*/;
+uint8_t keychange_cnt = 0;
 
 
 void update_own_key_states() {
@@ -137,28 +142,8 @@ void update_own_key_states() {
 
 // key changes
 
-#if 0
-void add_keyevent(uint8_t controller, uint8_t row, uint8_t col, enum keyevent_e event) {
-    if (keychange_cnt < CHANGED_KEYS_CNT_MAX) {
-        changed_keys[keychange_cnt].event = event;
-        changed_keys[keychange_cnt].controller = controller;
-        changed_keys[keychange_cnt].row = row;
-        changed_keys[keychange_cnt].col = col;
-        ++keychange_cnt;
-    } else {
-        warning(W_TOO_MANY_KEYS);
-    }
-}
-
-void clear_keyevents() {
-    //memset(keyevents, 0, sizeof(keyevents));
-    keyevents_cnt = 0;
-}
-#endif
-
-
-void enqueue_keychange(const keyrecord_t *record, enum keyevent_e state) {
-    if (keychange_cnt < CHANGED_KEYS_CNT_MAX) {
+void enqueue_keychange(const keyrecord_t *record, keystate_t state) {
+    if (keychange_cnt < KEYCHANGE_CNT_MAX) {
         keychange[keychange_cnt].record = record;
         keychange[keychange_cnt].state = state;
         ++keychange_cnt;
@@ -172,19 +157,23 @@ void clear_keychanges() {
     keychange_cnt = 0;
 }
 
-
-
 void process_keychange(uint8_t controller, uint8_t row, uint8_t col) {
     flash_led();
-    dbg_uarttx_byte(keychange_char(kchange, row, controller, col));
+    // todo: dbg_uarttx_byte(keychange_char(kchange, row, controller, col));
 
     const keyrecord_t *keyrecord = get_keyrecord(controller, row, col);
-    enum keystate_e keystate = get_keystate(controller, row, col);
+    keystate_t keystate = get_keystate(controller, row, col);
     
     switch (keyrecord->type) {
     case KT_LEVELMOD:
     case KT_IGNORE_LEVEL:
-        keyrecord->kf[0](keystate);
+        
+        if (keyrecord->kf[0] != NULL) {
+            keyrecord->kf[0](keystate, target_layout);
+        } else {
+            // todo: log PROGRAMMING ERROR
+        }
+        
         break;
     case KT_DUMB:
         // do nothing
@@ -197,7 +186,7 @@ void process_keychange(uint8_t controller, uint8_t row, uint8_t col) {
     }
 }
 
-void process_queued_keychange(const keychange_t *change) {
+void process_queued_keychange(const struct keychange_t *change) {
     const keyrecord_t *record = change->record;
     enum neo_levels_e level;
     
@@ -205,13 +194,27 @@ void process_queued_keychange(const keychange_t *change) {
     case KT_LEVELMOD:
     case KT_IGNORE_LEVEL:
         // FIXME: log PROGRAMMING ERROR
-        break;
-    case IGNORE_SHIFTLOCK:
+        return;
+    case KT_IGNORE_SHIFTLOCK:
         level = get_level_il2l();
     default:
         level = get_level();
     }
-    record->kf[level](change->state);
+    
+    if (record->kf[level] != NULL) {
+        record->kf[level](change->state, target_layout);
+    } else if (level == LEVEL4_MOUSE && record->kf[LEVEL4] != NULL) {
+        // fallback to LEVEL4 if no kf specified for LEVEL4_MOUSE
+        record->kf[LEVEL4](change->state, target_layout);
+    } else {
+        // todo: log warning message
+    }
+}
+
+void process_change_queue() {
+    for (uint8_t i = 0; i < keychange_cnt; ++i) {
+        process_queued_keychange(&keychange[i]);
+    }
 }
 
 void process_keystates() {
@@ -219,7 +222,7 @@ void process_keystates() {
 
     if (memcmp(prev_key_states, key_states, sizeof(key_states))) {
 
-        clear_keyevents();
+        clear_keychanges();
 
         uint8_t controller;
         for (controller = CTLR_MASTER; controller < CTLR_COUNT; ++controller) {
@@ -239,12 +242,6 @@ void process_keystates() {
         } // controller loop
 
         process_change_queue();
-
-        if (modifiers_changed == true) {
-            struct key_seq_step_s step = { .change = KC_PRESS, .key = 0, .modifier = modifiers};
-            key_seq_queue_enqueue(&step);
-            modifiers_changed = false;
-        }
 
         memcpy(prev_key_states, key_states, sizeof(key_states));
     } // memcmp

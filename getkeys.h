@@ -12,7 +12,7 @@
 
 
 void update_own_key_states();
-void process_key_states();
+void process_keystates();
 
 
 

@@ -51,6 +51,7 @@ SRC =	$(TARGET).c \
 	getkeys.c \
 	inform.c \
 	io.c \
+	sendkeys.c \
 	uart.c \
 	usb_keyboard.c \
 	teensy_codelib/usb_keyboard/usb_keyboard.c \
