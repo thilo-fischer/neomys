@@ -5,8 +5,6 @@
    This program is licenced under GPLv3.
 */
 
-#include <avr/pgmspace.h>
-
 #include "sendkeys.h"
 
 #include "keytranslation.h"
