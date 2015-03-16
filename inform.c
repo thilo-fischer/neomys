@@ -6,6 +6,7 @@
 */
 
 #include <avr/io.h>
+#include "teensy_codelib/uart/uart.h"
 
 #include "inform.h"
 
@@ -25,9 +26,9 @@ enum blink_pattern_e {
 };
 
 #define BLINK_CYCLE_MULTIPLIER 4
-#define BLINK_CNTDN_START = 8 * BLINK_CYCLE_MULTIPLIER;
+#define BLINK_CNTDN_START (8 * BLINK_CYCLE_MULTIPLIER)
 int blink_cntdn = -1;
-uint8_t blink_pattern = BP_OFF;
+enum blink_pattern_e blink_pattern = BP_OFF;
 
 
 void flash_led() {
@@ -46,10 +47,10 @@ void blink_led(enum blink_pattern_e pattern) {
 
 void progress_blink_pattern() {
     if (blink_cntdn > 0) {
-        switch_blink_led((((uint8_t) current_pattern) & (1<<(blink_cntdn/BLINK_CYCLE_MULTIPLIER))) > 0);
+        switch_onboard_led((((uint8_t) blink_pattern) & (1<<(blink_cntdn/BLINK_CYCLE_MULTIPLIER))) > 0);
         --blink_cntdn;
     } else if (blink_cntdn == 0) {
-        switch_blink_led(false);
+        switch_onboard_led(false);
         blink_cntdn = -1;
     }
 }
@@ -60,57 +61,50 @@ enum blink_pattern_e get_blink_pattern(enum status_code_e code) {
         return BP_LONG_BREAK;
     case SC_BOOT_SLAVE:
         return BP_SHORT_BREAK;
-    case SC_ERR_TOO_MANY_KEYS:
-        return BP_SHORT;
-    case SC_ERR_COMMUNICATION_FAIURE:
+    case SC_ERR_COMMUNICATION_FAILURE:
         return BP_MEDIUM;
     case SC_ERR_PROGRAMMING_ERROR:
+        return BP_CONSTANT;
+    case SC_WARN_TOO_MANY_KEYS:
+        return BP_SHORT;
+    case SC_WARN_NOT_YET_IMPLEMENTED:
+        return BP_CONSTANT;
+    case SC_WARN_KEY_NOT_YET_IMPLMTD:
+        return BP_SHORT;
+    case SC_INFO_SWITCH_TARGET_LAYOUT :
+        return BP_MEDIUM;
     default:
-        return WP_CONSTANT;
+        return BP_OFF;
     }
 }
 
 // how to spread information
 
+void inform_blink(enum status_code_e code) {
+    uint8_t pattern = get_blink_pattern(code);
+    if (pattern == BP_OFF)
+        inform_programming_error();
+    blink_led(pattern);
+}
+
+enum infolevel_e current_level = IL_OFF;
 
 void inform(enum infolevel_e il, enum status_code_e code) {
     if (il >= BLINK_INFOLEVEL) {
-        blink_led(get_pattern(code));
+        uint8_t pattern = get_blink_pattern(code);
+        if (pattern != BP_OFF)
+            blink_led(pattern);
     }
     if (il >= UART_INFOLEVEL) {
-        //uart_putchar(0xA0 | il);
         uart_putchar(code);
     }
+    current_level = il;
 }
 
-void info_add(enum infolevel_e il, uint8_t v) {
-    if (il >= UART_INFOLEVEL) {
+void info_add(uint8_t v) {
+    if (current_level >= UART_INFOLEVEL) {
         uart_putchar(v);
     }
 }
 
 
-#if 0
-// FIXME redundant to key_change_s
-struct keychange_byte_b {
-    enum key_change_e kchange : 1;
-    uint8_t controller : 1;
-    uint8_t row : 3;
-    uint8_t col : 3;
-};
-
-struct keychange_byte_b keychange_byte(enum key_change_e kchange, uint8_t row, uint8_t controller, uint8_t col) {
-    struct keychange_byte_b result = {
-        .kchange = kchange,
-        .controller = controller,
-        .row = row,
-        .col = col,
-    };
-    return result;
-}
-
-char keychange_char(enum key_change_e kchange, uint8_t row, uint8_t controller, uint8_t col) {
-    struct keychange_byte_b var = keychange_byte(kchange, row, controller, col);
-    return * (char *) &var;
-}
-#endif

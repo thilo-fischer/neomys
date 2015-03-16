@@ -157,6 +157,7 @@ CFLAGS += -funsigned-bitfields
 CFLAGS += -ffunction-sections
 CFLAGS += -fpack-struct
 CFLAGS += -fshort-enums
+CFLAGS += -Werror
 CFLAGS += -Wall
 #CFLAGS += -Wstrict-prototypes
 #CFLAGS += -mshort-calls

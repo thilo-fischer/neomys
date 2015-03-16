@@ -41,15 +41,15 @@ size_t keyseq_queue_end   = 0;
 static uint8_t mask_levelmod(uint8_t mod);
 
 static void press_key(uint8_t key);
-
 static void release_key(uint8_t key);
-
 static uint8_t *find_keyboard_key(uint8_t key);
 
-bool keyseq_queue_empty();
-bool keyseq_queue_full();
+static bool keyseq_queue_empty();
+static bool keyseq_queue_full();
 static inline void keyseq_queue_enqueue(uint8_t key, keystate_t event, uint8_t modifiers);
-void keyseq_queue_dequeue();
+static void keyseq_queue_dequeue();
+
+static void inform_usb_keys();
 
 // implementation of public functions
 
@@ -59,10 +59,10 @@ void keyseq_queue_progress() {
 #ifdef CHANGE_MODIFIERS_BEFORE_KEYEVENT
         if (keyboard_modifier_keys != next_step->modifiers) {
             keyboard_modifier_keys = next_step->modifiers;
-            usb_keyboard_send();
             if (next_step->key == KEY_NONE) {
                 keyseq_queue_dequeue();
             }
+            inform_usb_keys();
             usb_keyboard_send();
             return;
         }
@@ -79,7 +79,8 @@ void keyseq_queue_progress() {
         }
     
         keyseq_queue_dequeue();
- 
+
+        inform_usb_keys();
         usb_keyboard_send();
     }
 }
@@ -156,7 +157,7 @@ bool keyseq_queue_full() {
 
 static inline void keyseq_queue_enqueue(uint8_t key, keystate_t event, uint8_t modifiers) {
     if (keyseq_queue_full()) {
-        warning(W_TOO_MANY_KEYS);
+        inform(IL_WARN, SC_WARN_TOO_MANY_KEYS);
         return;
     }
     keyseq_queue[keyseq_queue_end].key = key;
@@ -211,3 +212,12 @@ static uint8_t *find_keyboard_key(uint8_t key) {
     return NULL;
 }
 
+static void inform_usb_keys() {
+    if (info_uart(IL_DBG)) {
+        inform(IL_DBG, SC_DBG_USB_KEYS);
+        info_add(keyboard_modifier_keys);
+        for (int i = 0; i < 6; ++i) {
+            info_add(keyboard_keys[i]);
+        }
+    }
+}

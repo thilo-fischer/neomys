@@ -29,7 +29,7 @@ target_layout_t target_layout = TL_NEO;
 KF(nop) {}
 
 KF(TODO) {
-    // todo: log to uart, light up warning LED
+    inform(IL_WARN, SC_WARN_KEY_NOT_YET_IMPLMTD);
 }
 
 KF(next_target_layout) {
@@ -37,7 +37,8 @@ KF(next_target_layout) {
     if (target_layout == TL_COUNT) {
         target_layout = TL_NEO;
     }
-    // todo: log(LL_INFO, LS_TARGET_LAYOUT, target_layout);
+    inform(IL_INFO, SC_INFO_SWITCH_TARGET_LAYOUT);
+    info_add(target_layout);
 }
 
 KF(prev_target_layout) {
@@ -45,7 +46,8 @@ KF(prev_target_layout) {
         target_layout = TL_COUNT;
     }
     --target_layout;
-    // todo: log(LL_INFO, LS_TARGET_LAYOUT, target_layout);
+    inform(IL_INFO, SC_INFO_SWITCH_TARGET_LAYOUT);
+    info_add(target_layout);
 }
 
 // level modifiers
@@ -2083,6 +2085,11 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
                 .type = KT_PLAIN,
                 .kf = { kf_y, kf_Y, kf_at, kf_numpad_period, kf_TODO, },
             },
+            // level3 modifier
+            {
+                .type = KT_LEVELMOD,
+                .kf = { kf_level3mod_right },
+            },
         }, // controller (left/right side)
     }, // row
 
@@ -2136,12 +2143,12 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             },
             // ,
             {
-                .type = KT_PLAIN,
+                .type = KT_IGNORE_SHIFTLOCK,
                 .kf = { kf_comma, kf_ndash, kf_straight_dbl_quote, kf_numpad_2, kf_paste, },
             },
             // .
             {
-                .type = KT_PLAIN,
+                .type = KT_IGNORE_SHIFTLOCK,
                 .kf = { kf_period, kf_bullet, kf_apostrophe, kf_numpad_3, kf_cut, },
             },
             // J

@@ -32,7 +32,7 @@ extern uint8_t key_states[2][ROW_COUNT]; // XXX
     void discard_uart() {
         uint8_t available;
         do {
-            // FIXME: need 3ms delay at 4800 bauds becase transmission of 1 byte takes about 2ms
+            // XXX -- need 3ms delay at 4800 bauds becase transmission of 1 byte takes about 2ms
             //_delay_ms(1);
             _delay_ms(3);
             available = uart_available();

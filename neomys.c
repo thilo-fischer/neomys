@@ -39,19 +39,17 @@ static inline void init() {
 
     init_io();
 
-    init_warn_led();
-
     // blink LED to destinct master from slave controller
 #if (CONTROLLER == CTLR_MASTER)
     init_usb_keyboard();
-    warning(W_MASTER); // FIXME function and symbol names
+    inform_blink(SC_BOOT_MASTER);
 #else
-    warning(W_SLAVE);  // FIXME function and symbol names
+    inform_blink(SC_BOOT_SLAVE);
 #endif
 
     uint8_t i;
     for (i = 0; i < 8; ++i) {
-        update_warn_led();
+        progress_blink_pattern();
         _delay_ms(cycle_delay);        
     }
 
@@ -69,7 +67,7 @@ int main(void) {
             update_own_key_states();
             process_keystates();
         } else {
-            warning(W_COMMUNICATION_FAILURE);
+            inform(IL_ERR, SC_ERR_COMMUNICATION_FAILURE);
         }
 
         keyseq_queue_progress();

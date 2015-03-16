@@ -125,13 +125,13 @@ struct keychange_t {
 struct keychange_t keychange[KEYCHANGE_CNT_MAX] /*= {{ 0 }}*/;
 uint8_t keychange_cnt = 0;
 
-// xxxxxxxxxxxxxxxxxx
-static inline void dbg_uarttx_usb_keys() {
-    inform(IL_DBG, SC_DBG_KEYSTATES);
-    uart_putchar(keyboard_modifier_keys);
-    int i;
-    for (i = 0; i < 6; ++i) {
-        uart_putchar(keyboard_keys[i]);
+static inline void inform_keystates() {
+    if (info_uart(IL_DBG)) {
+        inform(IL_DBG, SC_DBG_KEYSTATES);
+        uint8_t row;
+        for (row = 0; row < ROW_COUNT; ++row) {
+            info_add(key_states[CONTROLLER][row]);
+        }
     }
 }
 
@@ -146,7 +146,7 @@ void update_own_key_states() {
         }
         deactivate_row(row);
     }
-    dbg_uarttx_usb_keys(); // xxxxxxxxxxxxxxxxxx
+    inform_keystates();
 }
 
 
@@ -158,7 +158,7 @@ void enqueue_keychange(const keyrecord_t *record, keystate_t state) {
         keychange[keychange_cnt].state = state;
         ++keychange_cnt;
     } else {
-        warning(W_TOO_MANY_KEYS);
+        inform(IL_WARN, SC_WARN_TOO_MANY_KEYS);
     }
 }
 
@@ -167,13 +167,33 @@ void clear_keychanges() {
     keychange_cnt = 0;
 }
 
-void process_keychange(uint8_t controller, uint8_t row, uint8_t col) {
-    flash_led();
-    // todo: dbg_uarttx_byte(keychange_char(kchange, row, controller, col));
+struct kchange_info_byte {
+    keystate_t keystate : 1;
+    uint8_t controller  : 1;
+    uint8_t row         : 3;
+    uint8_t col         : 3;
+};
 
+static inline void inform_kchange(keystate_t keystate, uint8_t controller, uint8_t row, uint8_t col) {
+    if (info_uart(IL_INFO)) {
+        struct kchange_info_byte chbyte = {
+            .keystate = keystate,
+            .controller = controller,
+            .row = row,
+            .col = col,
+        };
+        inform(IL_INFO, SC_INFO_KEYCHANGE);
+        info_add(*(uint8_t*)&chbyte);
+    }
+}
+
+void process_keychange(uint8_t controller, uint8_t row, uint8_t col) {
     const keyrecord_t *keyrecord = get_keyrecord(controller, row, col);
     keystate_t keystate = get_keystate(controller, row, col);
     
+    flash_led();
+    inform_kchange(keystate, controller, row, col);
+
     switch (keyrecord->type) {
     case KT_LEVELMOD:
     case KT_IGNORE_LEVEL:
@@ -181,7 +201,8 @@ void process_keychange(uint8_t controller, uint8_t row, uint8_t col) {
         if (keyrecord->kf[0] != NULL) {
             keyrecord->kf[0](keystate, target_layout);
         } else {
-            // todo: log PROGRAMMING ERROR
+            // Does not make sense to have this pointer set to NULL, should be KT_DUMB instead of KT_LEVELMOD/KT_IGNORE_LEVEL then.
+            inform_programming_error();
         }
         
         break;
@@ -203,7 +224,8 @@ void process_queued_keychange(const struct keychange_t *change) {
     switch (record->type) {
     case KT_LEVELMOD:
     case KT_IGNORE_LEVEL:
-        // FIXME: log PROGRAMMING ERROR
+        // These keys shall be handled directly without being enqueued.
+        inform_programming_error();
         return;
     case KT_IGNORE_SHIFTLOCK:
         level = get_level_il2l();
@@ -217,7 +239,7 @@ void process_queued_keychange(const struct keychange_t *change) {
         // fallback to LEVEL4 if no kf specified for LEVEL4_MOUSE
         record->kf[LEVEL4](change->state, target_layout);
     } else {
-        // todo: log warning message
+        inform(IL_WARN, SC_WARN_KEY_NOT_YET_IMPLMTD);
     }
 }
 
