@@ -52,8 +52,8 @@ enum status_code_e {
 
 static inline bool is_code_disabled(enum status_code_e code) {
     switch (code) {
-    case SC_DBG_KEYSTATES:
-        return true;
+//  case SC_DBG_KEYSTATES:
+//      return true;
     default:
         return false;
     }

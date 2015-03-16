@@ -42,8 +42,6 @@ void init_usb_keyboard() {
 
 
 void press_key(uint8_t key) {
-    inform(IL_TRACE, SC_TRC_MARK_1);
-
     uint8_t *pos = find_keyboard_key(key);
     if (pos != NULL) {
         inform(IL_ERR, SC_PROGERR_ALREADY_PRESSED);
@@ -55,20 +53,15 @@ void press_key(uint8_t key) {
         return;
     }
     *pos = key;
-
-    inform(IL_TRACE, SC_TRC_MARK_2);
 }
 
 void release_key(uint8_t key) {
-    inform(IL_TRACE, SC_TRC_MARK_3);
-
     uint8_t *pos = find_keyboard_key(key);
     if (pos == NULL) {
         inform(IL_ERR, SC_PROGERR_NOT_PRESSED);
         return;
     }
     *pos = KEY_NONE;
-    inform(IL_TRACE, SC_TRC_MARK_4);
 }
 
 static inline uint8_t *find_keyboard_key(uint8_t key) {

@@ -50,8 +50,8 @@ void init_col_io(uint8_t col) {
 }
 
 char test_col(uint8_t col) {
-    // return 0 when the pin is high (pull up resistor), 1 when the pin is low (shut to ground by key switch)
-    return (*COL_PORT_PIN[col] &  (1 << COL_PORT_BIT[col])) ? 0 : 1 ;
+    // return 0 when the pin is high (pull up resistor => key not pressed), 1 when the pin is low (shut to ground => key pressed)
+    return (*COL_PORT_PIN[col] & (1 << COL_PORT_BIT[col])) ? 0 : 1 ;
 }
 
 void init_onboard_led() {

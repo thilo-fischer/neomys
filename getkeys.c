@@ -131,10 +131,12 @@ void update_own_key_states() {
     uint8_t row;
     for (row = 0; row < ROW_COUNT; ++row) {
         activate_row(row);
-        key_states[CONTROLLER][row] = 0;
+        // set all switches of that row to KS_RELEASE (KS_RELEASE == 0x00)
+        key_states[CONTROLLER][row] = 0x00;
         uint8_t col;
         for (col = 0; col < COL_COUNT; ++col) {
-            set_keystate(CONTROLLER, row, col, test_col(col) ? KS_PRESS : KS_RELEASE);
+            if (test_col(col) == 1)
+                set_keystate(CONTROLLER, row, col, KS_PRESS);
         }
         deactivate_row(row);
     }
@@ -224,10 +226,6 @@ void process_queued_keychange(const struct keychange_t *change) {
     }
     
     if (record->kf[level] != NULL) {
-        inform(IL_TRACE, SC_TRC_MARK_A);
-        info_add(level);
-        info_add(change->state);
-        info_add(change->record - &keymap[0][0][0]);
         record->kf[level](target_layout, change->state);
     } else if (level == LEVEL4_MOUSE && record->kf[LEVEL4] != NULL) {
         // fallback to LEVEL4 if no kf specified for LEVEL4_MOUSE

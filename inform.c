@@ -16,12 +16,14 @@
 // fixme: move to header file
 const enum infolevel_e UART_INFOLEVEL =
 #if (CONTROLLER == CTLR_MASTER)
-    //IL_INFO
+    IL_INFO
     //IL_DBG
-    IL_TRACE
+    //IL_TRACE
     // #error this is MASTER
 #else
-    IL_OFF
+    IL_FATAL
+    //IL_DBG
+    //IL_TRACE
     // #error this is SLAVE
 #endif
     ;

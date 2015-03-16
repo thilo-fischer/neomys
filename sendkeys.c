@@ -73,18 +73,10 @@ void keyseq_queue_progress() {
 
 void kev_plain(uint8_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, MODIFIERS_NONE | mask_levelmod(modifiers_current_in));
-    inform(IL_TRACE, SC_TRC_MARK_8);
-    info_add(key);
-    info_add(event);
-    info_add(MODIFIERS_NONE | mask_levelmod(modifiers_current_in));
 }
 
 void kev_w_shift(uint8_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, KEY_SHIFT      | mask_levelmod(modifiers_current_in));
-    inform(IL_TRACE, SC_TRC_MARK_9);
-    info_add(key);
-    info_add(event);
-    info_add(KEY_SHIFT | mask_levelmod(modifiers_current_in));
 }
 
 void kev_w_altgr(uint8_t key, keystate_t event) {
