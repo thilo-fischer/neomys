@@ -60,7 +60,7 @@ static inline bool is_code_disabled(enum status_code_e code) {
 }
 
 enum infolevel_e {
-    IL_DISABLE = 0x00,
+    IL_DISABLE = 0x00,  ///< informs of this level will never be issued
     IL_TRACE   = 0x01,
     IL_DBG     = 0x02,
     IL_INFO    = 0x03,

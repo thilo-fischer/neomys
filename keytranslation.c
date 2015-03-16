@@ -62,8 +62,13 @@ static inline void set_modifier_bit(enum neo_level_modifiers_e mod, keystate_t e
 
 // Currently no support to lock levels 5 and 6.
 static inline void toggle_levellock(enum neo_levels_e level) {
-    // LEVEL4 = 0x04, LEVEL4_MOUSE = 0x14 => test only 4 least significant bits
-    if ((locked_level & 0x0F) == (level & 0x0F)) {
+    if (
+        locked_level == level
+        ||
+        (locked_level == LEVEL4       && level == LEVEL4_MOUSE)
+        ||
+        (locked_level == LEVEL4_MOUSE && level == LEVEL4      )
+        ) {
         locked_level = LEVEL1;
     } else {
         locked_level = level;

@@ -18,14 +18,6 @@
 enum neo_levels_e locked_level = LEVEL1;
 uint8_t level_modifiers = 0x00;
 
-struct keyevent_b {
-    keystate_t event :1;
-    uint8_t controller :1;
-    uint8_t row :3;
-    uint8_t col :3;
-};
-
-
 enum neo_levels_e get_level_from_modifiers(uint8_t mods) {
     
     switch (mods) {
@@ -162,8 +154,7 @@ void enqueue_keychange(const keyrecord_t *record, keystate_t state) {
     }
 }
 
-void clear_keychanges() {
-    //memset(keyevents, 0, sizeof(keyevents));
+static inline void clear_keychanges() {
     keychange_cnt = 0;
 }
 
@@ -210,12 +201,11 @@ void process_keychange(uint8_t controller, uint8_t row, uint8_t col) {
         // do nothing
         break;
     default:
-#if 0
-        add_keyevent(controller, row, col, keystate);
-#endif
         enqueue_keychange(keyrecord, keystate);
     }
 }
+
+extern keyrecord_t keymap[ROW_COUNT][2][COL_COUNT]; // FIXME only for debugging output
 
 void process_queued_keychange(const struct keychange_t *change) {
     const keyrecord_t *record = change->record;
@@ -234,6 +224,10 @@ void process_queued_keychange(const struct keychange_t *change) {
     }
     
     if (record->kf[level] != NULL) {
+        inform(IL_TRACE, SC_TRC_MARK_A);
+        info_add(level);
+        info_add(change->state);
+        info_add(change->record - &keymap[0][0][0]);
         record->kf[level](change->state, target_layout);
     } else if (level == LEVEL4_MOUSE && record->kf[LEVEL4] != NULL) {
         // fallback to LEVEL4 if no kf specified for LEVEL4_MOUSE

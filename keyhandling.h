@@ -26,13 +26,14 @@ typedef enum {
 
 
 enum neo_levels_e {
-    LEVEL1         = 0x01,
-    LEVEL2         = 0x02,
-    LEVEL3         = 0x03,
-    LEVEL4         = 0x04,
-    LEVEL4_MOUSE   = 0x14,
-    LEVEL5         = 0x05,
-    LEVEL6         = 0x06,
+    // As we use level values as array indices, LEVEL1 must have value 0x00. (Using value 0x01 for LEVEL1 would make reading binary data during debugging somewhat more intuitive, but makes using values for array indexing more error prone.)
+    LEVEL1 = 0x00,
+    LEVEL2,
+    LEVEL3,
+    LEVEL4,
+    LEVEL4_MOUSE,
+    LEVEL5,
+    LEVEL6,
     LEVEL_COUNT
 };
 

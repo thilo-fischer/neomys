@@ -13,7 +13,7 @@
 #include "getkeys.h"
 #include "io.h"
 
-
+// fixme: move to header file
 const enum infolevel_e UART_INFOLEVEL =
 #if (CONTROLLER == CTLR_MASTER)
     //IL_INFO
@@ -106,6 +106,7 @@ enum infolevel_e current_level = IL_DISABLE;
 
 void inform(enum infolevel_e il, enum status_code_e code) {
     if (is_code_disabled(code)) {
+        current_level = IL_DISABLE;
         return;
     }
     if (il >= BLINK_INFOLEVEL) {

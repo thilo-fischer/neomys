@@ -81,7 +81,7 @@ static inline uint8_t *find_keyboard_key(uint8_t key) {
 }
 
 void send_keys_usb() {
-    //inform_usb_keys();
+    inform_usb_keys();
     usb_keyboard_send();
 }
 
