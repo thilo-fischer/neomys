@@ -1869,9 +1869,9 @@ KF(back) {
 
 
 keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
-    // ROW_NUM
+    // ROW_NUM (0x00-0x0F)
     {
-        //ROW_NUM left
+        //ROW_NUM left (0x00-0x07)
         {
             // in contrast to neo layout, the key for the circumfex accent has been moved from the top left to the top right corner of the keyboard
             // 1
@@ -1905,7 +1905,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
                 .kf = { kf_6, kf_dollar, kf_cent_currency, kf_pound_currency, kf_F6, },
             },
         }, // controller (left/right side)
-        //ROW_NUM right
+        //ROW_NUM right (0x08-0x0F)
         {
             // 7
             {
@@ -1946,9 +1946,9 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
     }, // row
 
     
-    // ROW_TOP
+    // ROW_TOP (0x10-0x1F)
     {
-        //ROW_TOP left
+        //ROW_TOP left (0x10-0x17)
         {
             // in contrast to neo layout, the left level4 modifier key has been moved from right of the left level2 mod key to ontop of the level3 mod ked
             // level4 modifier
@@ -1982,7 +1982,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
                 .kf = { kf_w, kf_W, kf_caret, kf_page_down, NULL, },
             },
         }, // controller (left/right side)
-        //ROW_TOP right
+        //ROW_TOP right (0x18-0x1F)
         {
             // K
             {

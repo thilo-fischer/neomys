@@ -190,7 +190,7 @@ void process_keychange(uint8_t controller, uint8_t row, uint8_t col) {
     case KT_IGNORE_LEVEL:
         
         if (keyrecord->kf[0] != NULL) {
-            keyrecord->kf[0](keystate, target_layout);
+            keyrecord->kf[0](target_layout, keystate);
         } else {
             // Does not make sense to have this pointer set to NULL, should be KT_DUMB instead of KT_LEVELMOD/KT_IGNORE_LEVEL then.
             inform_programming_error();
@@ -228,10 +228,10 @@ void process_queued_keychange(const struct keychange_t *change) {
         info_add(level);
         info_add(change->state);
         info_add(change->record - &keymap[0][0][0]);
-        record->kf[level](change->state, target_layout);
+        record->kf[level](target_layout, change->state);
     } else if (level == LEVEL4_MOUSE && record->kf[LEVEL4] != NULL) {
         // fallback to LEVEL4 if no kf specified for LEVEL4_MOUSE
-        record->kf[LEVEL4](change->state, target_layout);
+        record->kf[LEVEL4](target_layout, change->state);
     } else {
         inform(IL_WARN, SC_WARN_KEY_NOT_YET_IMPLMTD);
     }
