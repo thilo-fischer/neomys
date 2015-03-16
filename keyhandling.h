@@ -20,8 +20,8 @@ typedef enum {
 
 
 typedef enum {
-    KS_PRESS,
-    KS_RELEASE,
+    KS_PRESS   = 0x01,
+    KS_RELEASE = 0x00,
 } keystate_t;
 
 

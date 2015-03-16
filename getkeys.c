@@ -142,7 +142,7 @@ void update_own_key_states() {
         key_states[CONTROLLER][row] = 0;
         uint8_t col;
         for (col = 0; col < COL_COUNT; ++col) {
-            set_keystate(CONTROLLER, row, col, test_col(col));
+            set_keystate(CONTROLLER, row, col, test_col(col) ? KS_PRESS : KS_RELEASE);
         }
         deactivate_row(row);
     }

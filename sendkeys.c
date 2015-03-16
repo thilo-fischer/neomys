@@ -9,15 +9,11 @@
 
 #include "sendkeys.h"
 
-#include "teensy_codelib/usb_keyboard/usb_keyboard.h"
+#include "usb_keyboard.h"
 
-
-
+#include "teensy_codelib/usb_keyboard/usb_keyboard.h" // FIXME: move all code dependent on this file to usb_keyboard.c
 
 // internal symbols
-
-#define MODIFIERS_NONE 0x00
-#define KEY_NONE       0x00
 
 uint8_t modifiers_current_in  = 0x00;
 
@@ -33,23 +29,15 @@ size_t keyseq_queue_start = 0;
 size_t keyseq_queue_end   = 0;
 
 
-
-
 // declaration of internal helper functions
 
 // mask modifier keys that will affect the level of the target layout
 static uint8_t mask_levelmod(uint8_t mod);
 
-static void press_key(uint8_t key);
-static void release_key(uint8_t key);
-static uint8_t *find_keyboard_key(uint8_t key);
-
 static bool keyseq_queue_empty();
 static bool keyseq_queue_full();
 static inline void keyseq_queue_enqueue(uint8_t key, keystate_t event, uint8_t modifiers);
 static void keyseq_queue_dequeue();
-
-static void inform_usb_keys();
 
 // implementation of public functions
 
@@ -62,8 +50,7 @@ void keyseq_queue_progress() {
             if (next_step->key == KEY_NONE) {
                 keyseq_queue_dequeue();
             }
-            inform_usb_keys();
-            usb_keyboard_send();
+            send_keys_usb();
             return;
         }
 #else
@@ -80,13 +67,16 @@ void keyseq_queue_progress() {
     
         keyseq_queue_dequeue();
 
-        inform_usb_keys();
-        usb_keyboard_send();
+        send_keys_usb();
     }
 }
 
 void kev_plain(uint8_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, MODIFIERS_NONE | mask_levelmod(modifiers_current_in));
+    inform(IL_TRACE, SC_TRC_MARK_8);
+    info_add(key);
+    info_add(event);
+    info_add(MODIFIERS_NONE | mask_levelmod(modifiers_current_in));
 }
 
 void kev_w_shift(uint8_t key, keystate_t event) {
@@ -160,9 +150,9 @@ static inline void keyseq_queue_enqueue(uint8_t key, keystate_t event, uint8_t m
         inform(IL_WARN, SC_WARN_TOO_MANY_KEYS);
         return;
     }
-    keyseq_queue[keyseq_queue_end].key = key;
+    keyseq_queue[keyseq_queue_end].key       = key;
     keyseq_queue[keyseq_queue_end].modifiers = modifiers;
-    keyseq_queue[keyseq_queue_end].change = event;
+    keyseq_queue[keyseq_queue_end].change    = event;
     ++keyseq_queue_end;
     if (keyseq_queue_end == KEYSEQ_QUEUE_LENGTH) {
         keyseq_queue_end = 0;
@@ -177,47 +167,3 @@ void keyseq_queue_dequeue() {
 }
 
 
-
-
-static void press_key(uint8_t key) {
-    uint8_t *pos = find_keyboard_key(key);
-    if (pos != NULL) {
-        // todo: warn invalid state, key already pressed
-        return;
-    }
-    pos = find_keyboard_key(KEY_NONE);
-    if (pos == NULL) {
-        // todo: warn too many keys
-        return;
-    }
-    *pos = key;
-}
-
-static void release_key(uint8_t key) {
-    uint8_t *pos = find_keyboard_key(key);
-    if (pos == NULL) {
-        // todo: warn invalid key state
-        return;
-    }
-    *pos = KEY_NONE;
-}
-
-static uint8_t *find_keyboard_key(uint8_t key) {
-    uint8_t i;
-    for (i = 0; i < 6; ++i) {
-        if (keyboard_keys[i] == key) {
-            return &keyboard_keys[i];
-        }
-    }
-    return NULL;
-}
-
-static void inform_usb_keys() {
-    if (info_uart(IL_DBG)) {
-        inform(IL_DBG, SC_DBG_USB_KEYS);
-        info_add(keyboard_modifier_keys);
-        for (int i = 0; i < 6; ++i) {
-            info_add(keyboard_keys[i]);
-        }
-    }
-}

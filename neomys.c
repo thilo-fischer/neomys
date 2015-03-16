@@ -54,14 +54,15 @@ static inline void init() {
     }
 
     // Initialize UART only after blinking LED. The delay before UART initialization will reduce the chance of latch up effects (at least if both controllers get powered simultaneously).
-	init_uart();
+    init_uart();
 }
 
 int main(void) {
     init();
     while (true) {
-        progress_blink_pattern();
+        
 #if (CONTROLLER == CTLR_MASTER)
+        
         int rx_result = rx_keystates();
         if (rx_result == 0) {
             update_own_key_states();
@@ -70,12 +71,16 @@ int main(void) {
             inform(IL_ERR, SC_ERR_COMMUNICATION_FAILURE);
         }
 
+        progress_blink_pattern();
         keyseq_queue_progress();
+
 #else // ! (CONTROLLER == CTLR_MASTER)
+        
         update_own_key_states();
         tx_keystates();
         // Slave induces the delay between loop iterations, master waits for slave in rx_keystates.
         _delay_ms(cycle_delay);
+        
 #endif // CONTROLLER == CTLR_MASTER
 
     }

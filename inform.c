@@ -13,6 +13,21 @@
 #include "getkeys.h"
 #include "io.h"
 
+
+const enum infolevel_e UART_INFOLEVEL =
+#if (CONTROLLER == CTLR_MASTER)
+    //IL_INFO
+    //IL_DBG
+    IL_TRACE
+    // #error this is MASTER
+#else
+    IL_OFF
+    // #error this is SLAVE
+#endif
+    ;
+const enum infolevel_e BLINK_INFOLEVEL = IL_WARN;
+
+
 // status LED
 
 enum blink_pattern_e {
@@ -87,9 +102,12 @@ void inform_blink(enum status_code_e code) {
     blink_led(pattern);
 }
 
-enum infolevel_e current_level = IL_OFF;
+enum infolevel_e current_level = IL_DISABLE;
 
 void inform(enum infolevel_e il, enum status_code_e code) {
+    if (is_code_disabled(code)) {
+        return;
+    }
     if (il >= BLINK_INFOLEVEL) {
         uint8_t pattern = get_blink_pattern(code);
         if (pattern != BP_OFF)

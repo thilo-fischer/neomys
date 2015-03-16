@@ -10,12 +10,17 @@
 
 #include <stdbool.h>
 
+#include "neomys.h"
+
+
 enum status_code_e {
     SC_BOOT_MASTER               = 0x00,
     SC_BOOT_SLAVE                = 0x01,
     
     SC_ERR_COMMUNICATION_FAILURE = 0x20,
     SC_ERR_PROGRAMMING_ERROR     = 0x30,
+    SC_PROGERR_ALREADY_PRESSED   = 0x31,
+    SC_PROGERR_NOT_PRESSED       = 0x32,
     
     SC_WARN_TOO_MANY_KEYS        = 0x10,
     SC_WARN_NOT_YET_IMPLEMENTED  = 0x80,
@@ -26,25 +31,46 @@ enum status_code_e {
 
     SC_DBG_KEYSTATES             = 0xE1,
     SC_DBG_USB_KEYS              = 0xE2,
+
+    SC_TRC_MARK_0                = 0xF0,
+    SC_TRC_MARK_1                = 0xF1,
+    SC_TRC_MARK_2                = 0xF2,
+    SC_TRC_MARK_3                = 0xF3,
+    SC_TRC_MARK_4                = 0xF4,
+    SC_TRC_MARK_5                = 0xF5,
+    SC_TRC_MARK_6                = 0xF6,
+    SC_TRC_MARK_7                = 0xF7,
+    SC_TRC_MARK_8                = 0xF8,
+    SC_TRC_MARK_9                = 0xF9,
+    SC_TRC_MARK_A                = 0xFA,
+    SC_TRC_MARK_B                = 0xFB,
+    SC_TRC_MARK_C                = 0xFC,
+    SC_TRC_MARK_D                = 0xFD,
+    SC_TRC_MARK_E                = 0xFE,
+    SC_TRC_MARK_F                = 0xFF,
 };
+
+static inline bool is_code_disabled(enum status_code_e code) {
+    switch (code) {
+    case SC_DBG_KEYSTATES:
+        return true;
+    default:
+        return false;
+    }
+}
 
 enum infolevel_e {
-    IL_DBG   = 0x00,
-    IL_INFO  = 0x01,
-    IL_WARN  = 0x02,
-    IL_ERR   = 0x03,
-    IL_FATAL = 0x04,
-    IL_OFF   = 0x05
+    IL_DISABLE = 0x00,
+    IL_TRACE   = 0x01,
+    IL_DBG     = 0x02,
+    IL_INFO    = 0x03,
+    IL_WARN    = 0x04,
+    IL_ERR     = 0x05,
+    IL_FATAL   = 0x06,
 };
 
-#if (CONTROLLER == CTLR_MASTER)
-//#  define UART_INFOLEVEL IL_INFO
-#  define UART_INFOLEVEL IL_DBG
-#else
-#  define UART_INFOLEVEL IL_OFF
-#endif
-
-#define BLINK_INFOLEVEL IL_WARN
+extern const enum infolevel_e UART_INFOLEVEL;
+extern const enum infolevel_e BLINK_INFOLEVEL;
 
 
 #define inform_programming_error() {                     \
