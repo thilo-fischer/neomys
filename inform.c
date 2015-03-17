@@ -16,8 +16,8 @@
 // fixme: move to header file
 const enum infolevel_e UART_INFOLEVEL =
 #if (CONTROLLER == CTLR_MASTER)
-    IL_INFO
-    //IL_DBG
+    //IL_INFO
+    IL_DBG
     //IL_TRACE
     // #error this is MASTER
 #else
@@ -28,6 +28,18 @@ const enum infolevel_e UART_INFOLEVEL =
 #endif
     ;
 const enum infolevel_e BLINK_INFOLEVEL = IL_WARN;
+
+
+static inline bool is_code_disabled(enum status_code_e code) {
+    switch (code) {
+#if 1
+    case SC_DBG_KEYSTATES:
+        return true;
+#endif
+    default:
+        return false;
+    }
+}
 
 
 // status LED

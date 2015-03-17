@@ -50,15 +50,6 @@ enum status_code_e {
     SC_TRC_MARK_F                = 0xFF,
 };
 
-static inline bool is_code_disabled(enum status_code_e code) {
-    switch (code) {
-//  case SC_DBG_KEYSTATES:
-//      return true;
-    default:
-        return false;
-    }
-}
-
 enum infolevel_e {
     IL_DISABLE = 0x00,  ///< informs of this level will never be issued
     IL_TRACE   = 0x01,

@@ -32,6 +32,7 @@ typedef enum {
     KT_DUMB,             ///< key does not have any effect, key is *really* dead
     KT_PLAIN,            ///< vanilla key
     KT_IGNORE_SHIFTLOCK, ///< key will not be affected by level2 lock (e.g. number keys, period, comma, deadkeys)
+    KT_IGNORE_ALLLOCK,   ///< key will not be affected by any level lock (e.g. target layout switch key and any other keys to change settings of the neomys firmware)
     KT_IGNORE_LEVEL,     ///< ignore level modifiers at all (e.g. Ctrl, Alt, Gui)
     KT_LEVELMOD,         ///< key is a modifier key which affects the current level
 } keytype_t;

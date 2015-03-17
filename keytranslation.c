@@ -11,6 +11,7 @@
 
 #include "keytranslation.h"
 
+#include "usb_keyboard.h"
 #include "sendkeys.h"
 
 
@@ -1051,10 +1052,10 @@ KF(comma) {
     }
 }
 
-KF(dash) {
+KF(dash_neo_lvl1) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_L, event);
+        kev_plain(KEY_MINUS, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1062,6 +1063,16 @@ KF(dash) {
         break;
     default:
         kev_plain(KEY_MINUS, event);
+    }
+}
+
+KF(dash_neo_lvl3) {
+    switch (tl) {
+    case TL_NEO:
+        kev_level3(KEY_L, event);
+        break;
+    default:
+        kf_dash_neo_lvl1(tl, event);
     }
 }
 
@@ -1122,7 +1133,7 @@ KF(chevron_left) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kev_TODO();
+        kev_plain(KEY_ISO_EXTRA, event);
         break;
     default:
         kev_w_shift(KEY_COMMA, event);
@@ -1150,7 +1161,7 @@ KF(chevron_right) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kev_TODO();
+        kev_w_shift(KEY_ISO_EXTRA, event);
         break;
     default:
         kev_w_shift(KEY_PERIOD, event);
@@ -1298,7 +1309,7 @@ KF(pipe) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-        kev_TODO();
+        kev_w_altgr(KEY_ISO_EXTRA, event);
         break;
     default:
         kev_w_shift(KEY_BACKSLASH, event);
@@ -1736,14 +1747,14 @@ KF(numpad_0) {
     }
 }
 
-KF(numpad_slash) {
+KF(numpad_divide) {
     switch (tl) {
     default:
         kev_allow_modifiers(KEYPAD_SLASH, event);
     }
 }
 
-KF(numpad_asterisk) {
+KF(numpad_multiply) {
     switch (tl) {
     default:
         kev_allow_modifiers(KEYPAD_ASTERIX, event);
@@ -1764,6 +1775,7 @@ KF(numpad_minus) {
     }
 }
 
+// XXX also try with SDL_SCANCODE_DECIMALSEPARATOR
 KF(numpad_comma) {
     switch (tl) {
     case TL_NEO:
@@ -1776,6 +1788,7 @@ KF(numpad_comma) {
     }
 }
 
+// XXX also try with SDL_SCANCODE_DECIMALSEPARATOR
 KF(numpad_period) {
     switch (tl) {
     case TL_NEO:
@@ -1839,30 +1852,61 @@ KF(F12) {
 }
 
 
+// more from function key row and similar
+
+KF(printscreen) {
+    kev_allow_modifiers(KEY_PRINTSCREEN, event);
+}
+
+KF(pause) {
+    kev_allow_modifiers(KEY_PAUSE, event);
+}
+
+KF(app) {
+    kev_allow_modifiers(KEY_APP, event);
+}
 
 // special keys
 
+KF(redo) {
+    kev_allow_modifiers(KEY_REDO, event);
+}
+
 KF(undo) {
-    kev_TODO();
+    kev_allow_modifiers(KEY_UNDO, event);
 }
 
 KF(copy) {
-    kev_TODO();
+    kev_allow_modifiers(KEY_COPY, event);
 }
 
 KF(paste) {
-    kev_TODO();
+    kev_allow_modifiers(KEY_PASTE, event);
 }
 
 KF(cut) {
+    kev_allow_modifiers(KEY_CUT, event);
+}
+
+KF(find) {
+    kev_allow_modifiers(KEY_FIND, event);
+}
+
+KF(search) {
+// TODO: scancode values > 255
+    //kev_allow_modifiers(KEY_SEARCH, event);
     kev_TODO();
 }
 
 KF(forward) {
+// TODO: scancode values > 255
+    //kev_allow_modifiers(KEY_FORWARD, event);
     kev_TODO();
 }
 
 KF(back) {
+// TODO: scancode values > 255
+    //kev_allow_modifiers(KEY_BACK, event);
     kev_TODO();
 }
 
@@ -1920,17 +1964,17 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // 9
             {
                 .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_9, kf_6quote_dbl, kf_6quote_sgl, kf_numpad_slash, kf_F9, },
+                .kf = { kf_9, kf_6quote_dbl, kf_6quote_sgl, kf_numpad_divide, kf_F9, },
             },
             // 0
             {
                 .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_0, kf_9quote_dbl, kf_9quote_sgl, kf_numpad_asterisk, kf_F10, },
+                .kf = { kf_0, kf_9quote_dbl, kf_9quote_sgl, kf_numpad_multiply, kf_F10, },
             },
             // -
             {
                 .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_dash, kf_mdash, kf_nop, kf_numpad_minus, kf_F11, },
+                .kf = { kf_dash_neo_lvl1, kf_mdash, kf_nop, kf_numpad_minus, kf_F11, },
             },
             // ò
             {
@@ -1940,7 +1984,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // ô
             {
                 .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_dead_circumfex, kf_dead_caron, kf_TODO, kf_dead_dot, kf_nop, },
+                .kf = { kf_dead_circumfex, kf_dead_caron, kf_TODO, kf_dead_dot, kf_printscreen, },
             },
         }, // controller (left/right side)
     }, // row
@@ -2012,20 +2056,20 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // ß
             {
                 .type = KT_PLAIN,
-                .kf = { kf_eszett, kf_ESZETT, kf_long_s, kf_minus, kf_TODO, },
+                .kf = { kf_eszett, kf_ESZETT, kf_long_s, kf_minus, kf_search, },
             },
             // ó
             {
                 .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_dead_acute, kf_dead_perispomene, kf_dead_bar, kf_dead_double_acute, kf_TODO, },
+                .kf = { kf_dead_acute, kf_dead_perispomene, kf_dead_bar, kf_dead_double_acute, kf_pause, },
             },
         }, // controller (left/right side)
     }, // row
 
     
-    // ROW_HOME
+    // ROW_HOME (0x20-0x2F)
     {
-        //ROW_HOME left
+        //ROW_HOME left (0x20-0x27)
         {
             // level3 modifier
             {
@@ -2058,12 +2102,12 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
                 .kf = { kf_o, kf_O, kf_asterisk, kf_end, },
             },
         }, // controller (left/right side)
-        //ROW_HOME right
+        //ROW_HOME right (0x28-0x2F)
         {
             // S
             {
                 .type = KT_PLAIN,
-                .kf = { kf_s, kf_S, kf_question_mark, kf_inverted_question_mark, kf_TODO, },
+                .kf = { kf_s, kf_S, kf_question_mark, kf_inverted_question_mark, kf_TODO /*click 8*/, },
             },
             // N
             {
@@ -2078,17 +2122,17 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // T
             {
                 .type = KT_PLAIN,
-                .kf = { kf_t, kf_T, kf_dash, kf_numpad_6, kf_TODO /*right click*/, },
+                .kf = { kf_t, kf_T, kf_dash_neo_lvl3, kf_numpad_6, kf_TODO /*right click*/, },
             },
             // D
             {
                 .type = KT_PLAIN,
-                .kf = { kf_d, kf_D, kf_colon, kf_numpad_comma, kf_TODO, },
+                .kf = { kf_d, kf_D, kf_colon, kf_numpad_comma, kf_TODO /*click 9*/, },
             },
             // Y
             {
                 .type = KT_PLAIN,
-                .kf = { kf_y, kf_Y, kf_at, kf_numpad_period, kf_TODO, },
+                .kf = { kf_y, kf_Y, kf_at, kf_numpad_period, kf_find, },
             },
             // level3 modifier
             {
@@ -2099,9 +2143,9 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
     }, // row
 
     
-    // ROW_BTM
+    // ROW_BTM (0x30-0x3F)
     {
-        //ROW_BTM left
+        //ROW_BTM left (0x30-0x37)
         {
             // level2 modifier
             {
@@ -2134,12 +2178,12 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
                 .kf = { kf_z, kf_Z, kf_backtick, kf_undo, },
             },
         }, // controller (left/right side)
-        //ROW_BTM right
+        //ROW_BTM right (0x38-0x3F)
         {
             // B
             {
                 .type = KT_PLAIN,
-                .kf = { kf_b, kf_B, kf_plus, kf_colon, kf_TODO, },
+                .kf = { kf_b, kf_B, kf_plus, kf_colon, kf_undo, },
             },
             // M
             {
@@ -2159,7 +2203,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // J
             {
                 .type = KT_PLAIN,
-                .kf = { kf_j, kf_J, kf_semicolon, kf_semicolon, kf_TODO, },
+                .kf = { kf_j, kf_J, kf_semicolon, kf_semicolon, kf_redo, },
             },
             // level2 modifier
             {
@@ -2170,9 +2214,9 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
     }, // row
 
     
-    // ROW_SPACE
+    // ROW_SPACE (0x40-0x4F)
     {
-        //ROW_SPACE left
+        //ROW_SPACE left (0x40-0x47)
         {
             // left Ctrl
             {
@@ -2186,8 +2230,8 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             },
             // switch target layout // TODO preliminary use of this key
             {
-                .type = KT_IGNORE_LEVEL,
-                .kf = { kf_prev_target_layout },
+                .type = KT_IGNORE_ALLLOCK,
+                .kf = { kf_next_target_layout, kf_prev_target_layout },
             },
             // unused
             {
@@ -2205,7 +2249,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
                 .kf = { kf_alt_left },
             },
         }, // controller (left/right side)
-        //ROW_SPACE right
+        //ROW_SPACE right (0x48-0x4F)
         {
             // right Alt
             {
@@ -2225,7 +2269,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // switch target layout // TODO preliminary use of this key
             {
                 .type = KT_IGNORE_LEVEL,
-                .kf = { kf_next_target_layout },
+                .kf = { kf_app },
             },
             // right GUI
             {

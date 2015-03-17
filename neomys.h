@@ -5,6 +5,18 @@
    This program is licenced under GPLv3.
 */
 
+/**
+  Central TODO list. Other TODO issues can be found scattered over the source code marked with "FIXME" for important issues, "TODO" for normal issues, "XXX" for minor issiues. (eclipse IDE TODO comment style.)
+
+  @TODO TODO add hardware switches to change target layout
+  @TODO XXX provide a way to send numlock/capslock/scrolllock key events (e.g. higher level of other extra hardware switches)
+  @TODO XXX provide a way to send numpad_enter key event (e.g. return on LEVEL4_MOUSE+V, numpad_enter on LEVEL4+V)
+  @TODO FIXME provide LED to indicate current level
+  @TODO TODO display current target layout selection (extra hardware ?)
+
+
+ */
+
 #ifndef _NEOMYS_H_
 #define _NEOMYS_H_
 
