@@ -257,7 +257,7 @@ KF(0) {
 KF(A) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_D, event);
+        kev_allow_modifiers(KEY_D, event);
         break;
     default:
         kev_w_shift(KEY_A, event);
@@ -267,7 +267,7 @@ KF(A) {
 KF(B) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_N, event);
+        kev_allow_modifiers(KEY_N, event);
         break;
     default:
         kev_w_shift(KEY_B, event);
@@ -277,7 +277,7 @@ KF(B) {
 KF(C) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_R, event);
+        kev_allow_modifiers(KEY_R, event);
         break;
     default:
         kev_w_shift(KEY_C, event);
@@ -287,7 +287,7 @@ KF(C) {
 KF(D) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_SEMICOLON, event);
+        kev_allow_modifiers(KEY_SEMICOLON, event);
         break;
     default:
         kev_w_shift(KEY_D, event);
@@ -297,7 +297,7 @@ KF(D) {
 KF(E) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_F, event);
+        kev_allow_modifiers(KEY_F, event);
         break;
     default:
         kev_w_shift(KEY_E, event);
@@ -307,7 +307,7 @@ KF(E) {
 KF(F) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_O, event);
+        kev_allow_modifiers(KEY_O, event);
         break;
     default:
         kev_w_shift(KEY_F, event);
@@ -317,7 +317,7 @@ KF(F) {
 KF(G) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_I, event);
+        kev_allow_modifiers(KEY_I, event);
         break;
     default:
         kev_w_shift(KEY_G, event);
@@ -327,7 +327,7 @@ KF(G) {
 KF(H) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_U, event);
+        kev_allow_modifiers(KEY_U, event);
         break;
     default:
         kev_w_shift(KEY_H, event);
@@ -337,7 +337,7 @@ KF(H) {
 KF(I) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_S, event);
+        kev_allow_modifiers(KEY_S, event);
         break;
     default:
         kev_w_shift(KEY_I, event);
@@ -347,7 +347,7 @@ KF(I) {
 KF(J) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_SLASH, event);
+        kev_allow_modifiers(KEY_SLASH, event);
         break;
     default:
         kev_w_shift(KEY_J, event);
@@ -357,7 +357,7 @@ KF(J) {
 KF(K) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_Y, event);
+        kev_allow_modifiers(KEY_Y, event);
         break;
     default:
         kev_w_shift(KEY_K, event);
@@ -367,7 +367,7 @@ KF(K) {
 KF(L) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_E, event);
+        kev_allow_modifiers(KEY_E, event);
         break;
     default:
         kev_w_shift(KEY_L, event);
@@ -377,7 +377,7 @@ KF(L) {
 KF(M) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_M, event);
+        kev_allow_modifiers(KEY_M, event);
         break;
     default:
         kev_w_shift(KEY_M, event);
@@ -387,7 +387,7 @@ KF(M) {
 KF(N) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_J, event);
+        kev_allow_modifiers(KEY_J, event);
         break;
     default:
         kev_w_shift(KEY_N, event);
@@ -397,7 +397,7 @@ KF(N) {
 KF(O) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_G, event);
+        kev_allow_modifiers(KEY_G, event);
         break;
     default:
         kev_w_shift(KEY_O, event);
@@ -407,7 +407,7 @@ KF(O) {
 KF(P) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_V, event);
+        kev_allow_modifiers(KEY_V, event);
         break;
     default:
         kev_w_shift(KEY_P, event);
@@ -417,7 +417,7 @@ KF(P) {
 KF(Q) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_P, event);
+        kev_allow_modifiers(KEY_P, event);
         break;
     default:
         kev_w_shift(KEY_Q, event);
@@ -427,7 +427,7 @@ KF(Q) {
 KF(R) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_K, event);
+        kev_allow_modifiers(KEY_K, event);
         break;
     default:
         kev_w_shift(KEY_R, event);
@@ -437,7 +437,7 @@ KF(R) {
 KF(S) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_H, event);
+        kev_allow_modifiers(KEY_H, event);
         break;
     default:
         kev_w_shift(KEY_S, event);
@@ -447,7 +447,7 @@ KF(S) {
 KF(T) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_L, event);
+        kev_allow_modifiers(KEY_L, event);
         break;
     default:
         kev_w_shift(KEY_T, event);
@@ -457,7 +457,7 @@ KF(T) {
 KF(U) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_A, event);
+        kev_allow_modifiers(KEY_A, event);
         break;
     default:
         kev_w_shift(KEY_U, event);
@@ -467,7 +467,7 @@ KF(U) {
 KF(V) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_W, event);
+        kev_allow_modifiers(KEY_W, event);
         break;
     default:
         kev_w_shift(KEY_V, event);
@@ -477,7 +477,7 @@ KF(V) {
 KF(W) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_T, event);
+        kev_allow_modifiers(KEY_T, event);
         break;
     default:
         kev_w_shift(KEY_W, event);
@@ -487,7 +487,7 @@ KF(W) {
 KF(X) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_Q, event);
+        kev_allow_modifiers(KEY_Q, event);
         break;
     default:
         kev_w_shift(KEY_X, event);
@@ -497,7 +497,7 @@ KF(X) {
 KF(Y) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_QUOTE, event);
+        kev_allow_modifiers(KEY_QUOTE, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -511,7 +511,7 @@ KF(Y) {
 KF(Z) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_B, event);
+        kev_allow_modifiers(KEY_B, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -525,7 +525,7 @@ KF(Z) {
 KF(AUML) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_C, event);
+        kev_allow_modifiers(KEY_C, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -539,7 +539,7 @@ KF(AUML) {
 KF(OUML) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_X, event);
+        kev_allow_modifiers(KEY_X, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -553,7 +553,7 @@ KF(OUML) {
 KF(UUML) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_Z, event);
+        kev_allow_modifiers(KEY_Z, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -567,7 +567,7 @@ KF(UUML) {
 KF(ESZETT) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_LEFT_BRACE, event);
+        kev_allow_modifiers(KEY_LEFT_BRACE, event);
         break;
     default:
         kev_TODO();
@@ -580,7 +580,7 @@ KF(ESZETT) {
 KF(a) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_D, event);
+        kev_allow_modifiers(KEY_D, event);
         break;
     default:
         kev_plain(KEY_A, event);
@@ -590,7 +590,7 @@ KF(a) {
 KF(b) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_N, event);
+        kev_allow_modifiers(KEY_N, event);
         break;
     default:
         kev_plain(KEY_B, event);
@@ -600,7 +600,7 @@ KF(b) {
 KF(c) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_R, event);
+        kev_allow_modifiers(KEY_R, event);
         break;
     default:
         kev_plain(KEY_C, event);
@@ -610,7 +610,7 @@ KF(c) {
 KF(d) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_SEMICOLON, event);
+        kev_allow_modifiers(KEY_SEMICOLON, event);
         break;
     default:
         kev_plain(KEY_D, event);
@@ -620,7 +620,7 @@ KF(d) {
 KF(e) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_F, event);
+        kev_allow_modifiers(KEY_F, event);
         break;
     default:
         kev_plain(KEY_E, event);
@@ -630,7 +630,7 @@ KF(e) {
 KF(f) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_O, event);
+        kev_allow_modifiers(KEY_O, event);
         break;
     default:
         kev_plain(KEY_F, event);
@@ -640,7 +640,7 @@ KF(f) {
 KF(g) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_I, event);
+        kev_allow_modifiers(KEY_I, event);
         break;
     default:
         kev_plain(KEY_G, event);
@@ -650,7 +650,7 @@ KF(g) {
 KF(h) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_U, event);
+        kev_allow_modifiers(KEY_U, event);
         break;
     default:
         kev_plain(KEY_H, event);
@@ -660,7 +660,7 @@ KF(h) {
 KF(i) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_S, event);
+        kev_allow_modifiers(KEY_S, event);
         break;
     default:
         kev_plain(KEY_I, event);
@@ -670,7 +670,7 @@ KF(i) {
 KF(j) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_SLASH, event);
+        kev_allow_modifiers(KEY_SLASH, event);
         break;
     default:
         kev_plain(KEY_J, event);
@@ -680,7 +680,7 @@ KF(j) {
 KF(k) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_Y, event);
+        kev_allow_modifiers(KEY_Y, event);
         break;
     default:
         kev_plain(KEY_K, event);
@@ -690,7 +690,7 @@ KF(k) {
 KF(l) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_E, event);
+        kev_allow_modifiers(KEY_E, event);
         break;
     default:
         kev_plain(KEY_L, event);
@@ -700,7 +700,7 @@ KF(l) {
 KF(m) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_M, event);
+        kev_allow_modifiers(KEY_M, event);
         break;
     default:
         kev_plain(KEY_M, event);
@@ -710,7 +710,7 @@ KF(m) {
 KF(n) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_J, event);
+        kev_allow_modifiers(KEY_J, event);
         break;
     default:
         kev_plain(KEY_N, event);
@@ -720,7 +720,7 @@ KF(n) {
 KF(o) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_G, event);
+        kev_allow_modifiers(KEY_G, event);
         break;
     default:
         kev_plain(KEY_O, event);
@@ -730,7 +730,7 @@ KF(o) {
 KF(p) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_V, event);
+        kev_allow_modifiers(KEY_V, event);
         break;
     default:
         kev_plain(KEY_P, event);
@@ -740,7 +740,7 @@ KF(p) {
 KF(q) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_P, event);
+        kev_allow_modifiers(KEY_P, event);
         break;
     default:
         kev_plain(KEY_Q, event);
@@ -750,7 +750,7 @@ KF(q) {
 KF(r) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_K, event);
+        kev_allow_modifiers(KEY_K, event);
         break;
     default:
         kev_plain(KEY_R, event);
@@ -760,7 +760,7 @@ KF(r) {
 KF(s) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_H, event);
+        kev_allow_modifiers(KEY_H, event);
         break;
     default:
         kev_plain(KEY_S, event);
@@ -770,7 +770,7 @@ KF(s) {
 KF(t) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_L, event);
+        kev_allow_modifiers(KEY_L, event);
         break;
     default:
         kev_plain(KEY_T, event);
@@ -780,7 +780,7 @@ KF(t) {
 KF(u) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_A, event);
+        kev_allow_modifiers(KEY_A, event);
         break;
     default:
         kev_plain(KEY_U, event);
@@ -790,7 +790,7 @@ KF(u) {
 KF(v) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_W, event);
+        kev_allow_modifiers(KEY_W, event);
         break;
     default:
         kev_plain(KEY_V, event);
@@ -800,7 +800,7 @@ KF(v) {
 KF(w) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_T, event);
+        kev_allow_modifiers(KEY_T, event);
         break;
     default:
         kev_plain(KEY_W, event);
@@ -810,7 +810,7 @@ KF(w) {
 KF(x) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_Q, event);
+        kev_allow_modifiers(KEY_Q, event);
         break;
     default:
         kev_plain(KEY_X, event);
@@ -820,7 +820,7 @@ KF(x) {
 KF(y) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_QUOTE, event);
+        kev_allow_modifiers(KEY_QUOTE, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -834,7 +834,7 @@ KF(y) {
 KF(z) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_B, event);
+        kev_allow_modifiers(KEY_B, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -848,7 +848,7 @@ KF(z) {
 KF(auml) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_C, event);
+        kev_allow_modifiers(KEY_C, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -862,7 +862,7 @@ KF(auml) {
 KF(ouml) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_X, event);
+        kev_allow_modifiers(KEY_X, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -876,7 +876,7 @@ KF(ouml) {
 KF(uuml) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_Z, event);
+        kev_allow_modifiers(KEY_Z, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -890,7 +890,7 @@ KF(uuml) {
 KF(eszett) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_LEFT_BRACE, event);
+        kev_allow_modifiers(KEY_LEFT_BRACE, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -910,7 +910,7 @@ KF(space) {
 KF(exclamation_mark) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_H, event);
+        kev_allow_modifiers(KEY_H, event);
         break;
     default:
         kev_w_shift(KEY_1, event);
@@ -920,7 +920,7 @@ KF(exclamation_mark) {
 KF(straight_dbl_quote) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_COMMA, event);
+        kev_allow_modifiers(KEY_COMMA, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -934,7 +934,7 @@ KF(straight_dbl_quote) {
 KF(hash) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_Z, event);
+        kev_allow_modifiers(KEY_Z, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -948,7 +948,7 @@ KF(hash) {
 KF(dollar) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_X, event);
+        kev_allow_modifiers(KEY_X, event);
         break;
     default:
         kev_w_shift(KEY_4, event);
@@ -958,7 +958,7 @@ KF(dollar) {
 KF(percent) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_M, event);
+        kev_allow_modifiers(KEY_M, event);
         break;
     default:
         kev_w_shift(KEY_5, event);
@@ -968,7 +968,7 @@ KF(percent) {
 KF(ampersand) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_P, event);
+        kev_allow_modifiers(KEY_P, event);
         break;
     default:
         kev_w_shift(KEY_6, event);
@@ -978,7 +978,7 @@ KF(ampersand) {
 KF(apostrophe) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_PERIOD, event);
+        kev_allow_modifiers(KEY_PERIOD, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -992,7 +992,7 @@ KF(apostrophe) {
 KF(parentheses_left) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_J, event);
+        kev_allow_modifiers(KEY_J, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1006,7 +1006,7 @@ KF(parentheses_left) {
 KF(parentheses_right) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_K, event);
+        kev_allow_modifiers(KEY_K, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1020,7 +1020,7 @@ KF(parentheses_right) {
 KF(asterisk) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_G, event);
+        kev_allow_modifiers(KEY_G, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1034,7 +1034,7 @@ KF(asterisk) {
 KF(plus) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_N, event);
+        kev_allow_modifiers(KEY_N, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1055,7 +1055,7 @@ KF(comma) {
 KF(dash_neo_lvl1) {
     switch (tl) {
     case TL_NEO:
-        kev_plain(KEY_MINUS, event);
+        kev_allow_modifiers(KEY_MINUS, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1069,7 +1069,7 @@ KF(dash_neo_lvl1) {
 KF(dash_neo_lvl3) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_L, event);
+        kev_allow_modifiers(KEY_L, event);
         break;
     default:
         kf_dash_neo_lvl1(tl, event);
@@ -1086,7 +1086,7 @@ KF(period) {
 KF(slash) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_S, event);
+        kev_allow_modifiers(KEY_S, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1101,7 +1101,7 @@ KF(slash) {
 KF(colon) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_SEMICOLON, event);
+        kev_allow_modifiers(KEY_SEMICOLON, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1115,7 +1115,7 @@ KF(colon) {
 KF(semicolon) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_SLASH, event);
+        kev_allow_modifiers(KEY_SLASH, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1129,7 +1129,7 @@ KF(semicolon) {
 KF(chevron_left) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_U, event);
+        kev_allow_modifiers(KEY_U, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1143,7 +1143,7 @@ KF(chevron_left) {
 KF(equals) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_O, event);
+        kev_allow_modifiers(KEY_O, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1157,7 +1157,7 @@ KF(equals) {
 KF(chevron_right) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_I, event);
+        kev_allow_modifiers(KEY_I, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1171,7 +1171,7 @@ KF(chevron_right) {
 KF(question_mark) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_H, event);
+        kev_allow_modifiers(KEY_H, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1185,7 +1185,7 @@ KF(question_mark) {
 KF(at) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_QUOTE, event);
+        kev_allow_modifiers(KEY_QUOTE, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1200,7 +1200,7 @@ KF(at) {
 KF(bracket_left) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_E, event);
+        kev_allow_modifiers(KEY_E, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1214,7 +1214,7 @@ KF(bracket_left) {
 KF(backslash) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_A, event);
+        kev_allow_modifiers(KEY_A, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1228,7 +1228,7 @@ KF(backslash) {
 KF(bracket_right) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_R, event);
+        kev_allow_modifiers(KEY_R, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1242,7 +1242,7 @@ KF(bracket_right) {
 KF(caret) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_T, event);
+        kev_allow_modifiers(KEY_T, event);
         break;
     case TL_DE:
         kev_plain(KEY_TILDE, event);
@@ -1259,7 +1259,7 @@ KF(caret) {
 KF(underscore) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_W, event);
+        kev_allow_modifiers(KEY_W, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1273,7 +1273,7 @@ KF(underscore) {
 KF(backtick) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_B, event);
+        kev_allow_modifiers(KEY_B, event);
         break;
     case TL_DE:
         kev_w_shift(KEY_EQUAL, event);
@@ -1291,7 +1291,7 @@ KF(backtick) {
 KF(brace_left) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_D, event);
+        kev_allow_modifiers(KEY_D, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1305,7 +1305,7 @@ KF(brace_left) {
 KF(pipe) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_C, event);
+        kev_allow_modifiers(KEY_C, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1319,7 +1319,7 @@ KF(pipe) {
 KF(brace_right) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_F, event);
+        kev_allow_modifiers(KEY_F, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1333,7 +1333,7 @@ KF(brace_right) {
 KF(tilde) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_V, event);
+        kev_allow_modifiers(KEY_V, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1350,7 +1350,7 @@ KF(tilde) {
 KF(degree) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_1, event);
+        kev_allow_modifiers(KEY_1, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1364,7 +1364,7 @@ KF(degree) {
 KF(sectionsign) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_2, event);
+        kev_allow_modifiers(KEY_2, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1378,7 +1378,7 @@ KF(sectionsign) {
 KF(euro_currency) {
     switch (tl) {
     case TL_NEO:
-        kev_level2(KEY_7, event);
+        kev_allow_modifiers(KEY_7, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1414,7 +1414,7 @@ KF(mdash) {
 KF(superscript1) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_1, event);
+        kev_allow_modifiers(KEY_1, event);
         break;
     default:
         kev_TODO();
@@ -1424,7 +1424,7 @@ KF(superscript1) {
 KF(superscript2) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_2, event);
+        kev_allow_modifiers(KEY_2, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -1442,7 +1442,7 @@ KF(script_small_l) {
 KF(superscript3) {
     switch (tl) {
     case TL_NEO:
-        kev_level3(KEY_3, event);
+        kev_allow_modifiers(KEY_3, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
