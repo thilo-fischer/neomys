@@ -257,7 +257,7 @@ KF(0) {
 KF(A) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_D, event);
+        kev_level2(KEY_D, event);
         break;
     default:
         kev_w_shift(KEY_A, event);
@@ -267,7 +267,7 @@ KF(A) {
 KF(B) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_N, event);
+        kev_level2(KEY_N, event);
         break;
     default:
         kev_w_shift(KEY_B, event);
@@ -277,7 +277,7 @@ KF(B) {
 KF(C) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_R, event);
+        kev_level2(KEY_R, event);
         break;
     default:
         kev_w_shift(KEY_C, event);
@@ -287,7 +287,7 @@ KF(C) {
 KF(D) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_SEMICOLON, event);
+        kev_level2(KEY_SEMICOLON, event);
         break;
     default:
         kev_w_shift(KEY_D, event);
@@ -297,7 +297,7 @@ KF(D) {
 KF(E) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_F, event);
+        kev_level2(KEY_F, event);
         break;
     default:
         kev_w_shift(KEY_E, event);
@@ -307,7 +307,7 @@ KF(E) {
 KF(F) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_O, event);
+        kev_level2(KEY_O, event);
         break;
     default:
         kev_w_shift(KEY_F, event);
@@ -317,7 +317,7 @@ KF(F) {
 KF(G) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_I, event);
+        kev_level2(KEY_I, event);
         break;
     default:
         kev_w_shift(KEY_G, event);
@@ -327,7 +327,7 @@ KF(G) {
 KF(H) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_U, event);
+        kev_level2(KEY_U, event);
         break;
     default:
         kev_w_shift(KEY_H, event);
@@ -337,7 +337,7 @@ KF(H) {
 KF(I) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_S, event);
+        kev_level2(KEY_S, event);
         break;
     default:
         kev_w_shift(KEY_I, event);
@@ -347,7 +347,7 @@ KF(I) {
 KF(J) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_SLASH, event);
+        kev_level2(KEY_SLASH, event);
         break;
     default:
         kev_w_shift(KEY_J, event);
@@ -357,7 +357,7 @@ KF(J) {
 KF(K) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_Y, event);
+        kev_level2(KEY_Y, event);
         break;
     default:
         kev_w_shift(KEY_K, event);
@@ -367,7 +367,7 @@ KF(K) {
 KF(L) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_E, event);
+        kev_level2(KEY_E, event);
         break;
     default:
         kev_w_shift(KEY_L, event);
@@ -377,7 +377,7 @@ KF(L) {
 KF(M) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_M, event);
+        kev_level2(KEY_M, event);
         break;
     default:
         kev_w_shift(KEY_M, event);
@@ -387,7 +387,7 @@ KF(M) {
 KF(N) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_J, event);
+        kev_level2(KEY_J, event);
         break;
     default:
         kev_w_shift(KEY_N, event);
@@ -397,7 +397,7 @@ KF(N) {
 KF(O) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_G, event);
+        kev_level2(KEY_G, event);
         break;
     default:
         kev_w_shift(KEY_O, event);
@@ -407,7 +407,7 @@ KF(O) {
 KF(P) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_V, event);
+        kev_level2(KEY_V, event);
         break;
     default:
         kev_w_shift(KEY_P, event);
@@ -417,7 +417,7 @@ KF(P) {
 KF(Q) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_P, event);
+        kev_level2(KEY_P, event);
         break;
     default:
         kev_w_shift(KEY_Q, event);
@@ -427,7 +427,7 @@ KF(Q) {
 KF(R) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_K, event);
+        kev_level2(KEY_K, event);
         break;
     default:
         kev_w_shift(KEY_R, event);
@@ -437,7 +437,7 @@ KF(R) {
 KF(S) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_H, event);
+        kev_level2(KEY_H, event);
         break;
     default:
         kev_w_shift(KEY_S, event);
@@ -447,7 +447,7 @@ KF(S) {
 KF(T) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_L, event);
+        kev_level2(KEY_L, event);
         break;
     default:
         kev_w_shift(KEY_T, event);
@@ -457,7 +457,7 @@ KF(T) {
 KF(U) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_A, event);
+        kev_level2(KEY_A, event);
         break;
     default:
         kev_w_shift(KEY_U, event);
@@ -467,7 +467,7 @@ KF(U) {
 KF(V) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_W, event);
+        kev_level2(KEY_W, event);
         break;
     default:
         kev_w_shift(KEY_V, event);
@@ -477,7 +477,7 @@ KF(V) {
 KF(W) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_T, event);
+        kev_level2(KEY_T, event);
         break;
     default:
         kev_w_shift(KEY_W, event);
@@ -487,7 +487,7 @@ KF(W) {
 KF(X) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_Q, event);
+        kev_level2(KEY_Q, event);
         break;
     default:
         kev_w_shift(KEY_X, event);
@@ -497,7 +497,7 @@ KF(X) {
 KF(Y) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_QUOTE, event);
+        kev_level2(KEY_QUOTE, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -511,7 +511,7 @@ KF(Y) {
 KF(Z) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_B, event);
+        kev_level2(KEY_B, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -525,7 +525,7 @@ KF(Z) {
 KF(AUML) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_C, event);
+        kev_level2(KEY_C, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -539,7 +539,7 @@ KF(AUML) {
 KF(OUML) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_X, event);
+        kev_level2(KEY_X, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -553,7 +553,7 @@ KF(OUML) {
 KF(UUML) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_Z, event);
+        kev_level2(KEY_Z, event);
         break;
     case TL_DE:
     case TL_DE_NODEAD:
@@ -567,7 +567,7 @@ KF(UUML) {
 KF(ESZETT) {
     switch (tl) {
     case TL_NEO:
-        kev_w_shift(KEY_LEFT_BRACE, event);
+        kev_level2(KEY_LEFT_BRACE, event);
         break;
     default:
         kev_TODO();
