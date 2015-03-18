@@ -34,21 +34,25 @@ KF(TODO) {
 }
 
 KF(next_target_layout) {
-    ++target_layout;
-    if (target_layout == TL_COUNT) {
-        target_layout = TL_NEO;
+    if (event == KS_PRESS) {
+        ++target_layout;
+        if (target_layout == TL_COUNT) {
+            target_layout = TL_NEO;
+        }
+        inform(IL_INFO, SC_INFO_SWITCH_TARGET_LAYOUT);
+        info_add(target_layout);
     }
-    inform(IL_INFO, SC_INFO_SWITCH_TARGET_LAYOUT);
-    info_add(target_layout);
 }
 
 KF(prev_target_layout) {
-    if (target_layout == TL_NEO) {
-        target_layout = TL_COUNT;
+    if (event == KS_PRESS) {
+        if (target_layout == TL_NEO) {
+            target_layout = TL_COUNT;
+        }
+        --target_layout;
+        inform(IL_INFO, SC_INFO_SWITCH_TARGET_LAYOUT);
+        info_add(target_layout);
     }
-    --target_layout;
-    inform(IL_INFO, SC_INFO_SWITCH_TARGET_LAYOUT);
-    info_add(target_layout);
 }
 
 // level modifiers
