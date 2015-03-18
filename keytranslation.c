@@ -910,7 +910,7 @@ KF(space) {
 KF(exclamation_mark) {
     switch (tl) {
     case TL_NEO:
-        kev_allow_modifiers(KEY_H, event);
+        kev_allow_modifiers(KEY_Y, event);
         break;
     default:
         kev_w_shift(KEY_1, event);
