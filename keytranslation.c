@@ -1167,7 +1167,7 @@ KF(chevron_left) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TL_DE_APPLE: // FIXME: not working properly on Macbook ...
         kev_plain(KEY_ISO_EXTRA, event);
         break;
     default:
@@ -1197,7 +1197,7 @@ KF(chevron_right) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TL_DE_APPLE: // FIXME: not working properly on Macbook ...
         kev_w_shift(KEY_ISO_EXTRA, event);
         break;
     default:
@@ -1330,7 +1330,7 @@ KF(backtick) {
         kev_level3(KEY_B, event);
         break;
     case TL_DE:
-    case TL_DE_APPLE:
+    case TL_DE_APPLE: // FIXME: not working properly on Macbook ...
         kev_w_shift(KEY_EQUAL, event);
         kev_plain  (KEY_SPACE, event);
         break;
