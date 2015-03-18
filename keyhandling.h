@@ -9,11 +9,11 @@
 #define _KEYHANDLING_H_
 
 typedef enum {
-   TL_NEO,       ///< Neo2 (http://www.neo-layout.org/)
-   TL_DE,        ///< DIN 2137:2012-06 T1 (with dead keys)
-   TL_DE_NODEAD,
-   //TL_DE_APPLE,
-   TL_US,        ///< ANSI-INCITS 154-1988
+   TL_NEO       = 0x00,  ///< Neo2 (http://www.neo-layout.org/)
+   TL_DE        = 0x01,  ///< DIN 2137:2012-06 T1 (with dead keys)
+   TL_DE_NODEAD = 0x02,
+   TL_DE_APPLE  = 0x03,
+   TL_US        = 0x04,  ///< ANSI-INCITS 154-1988
    //TL_US_APPLE,
    TL_COUNT
 } target_layout_t;

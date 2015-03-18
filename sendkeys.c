@@ -89,13 +89,15 @@ void keyseq_queue_progress() {
 }
 
 enum targetlevel_e {
-    TLVL_PLAIN_L1,
-    TLVL_SHIFT_L2,
-    TLVL_ALTGR_L3,
-    TLVL_NEO_L3,
-    TLVL_NEO_L4,
-    TLVL_NEO_L5,
-    TLVL_NEO_L6,
+    TLVL_PLAIN_L1,     ///> level1 of any layout
+    TLVL_SHIFT_L2,     ///> level2 of basically all layouts
+    TLVL_ALTGR_L3,     ///> level3 of TL_DE and similar
+    TLVL_ALT_L3,       ///> level3 of TL_APPLE and similar
+    TLVL_SHIFT_ALT_L4, ///> level4 of TL_APPLE and similar
+    TLVL_NEO_L3,       ///> level3 of TL_NEO
+    TLVL_NEO_L4,       ///> level4 of TL_NEO
+    TLVL_NEO_L5,       ///> level5 of TL_NEO
+    TLVL_NEO_L6,       ///> level6 of TL_NEO
 };
 
 #if 0 // unused
@@ -113,6 +115,7 @@ static inline bool has_level(uint8_t modifs, enum targetlevel_e lvl) {
 }
 #endif
 
+// todo: take care of left alt key for apple target layouts
 static inline uint8_t modifiers_with_level(uint8_t modifs, enum targetlevel_e lvl) {
     switch (lvl) {
     case TLVL_PLAIN_L1:
@@ -126,6 +129,13 @@ static inline uint8_t modifiers_with_level(uint8_t modifs, enum targetlevel_e lv
     case TLVL_ALTGR_L3:
         modifs &= ~(KEY_SHIFT | KEY_LEFT_SHIFT | KEY_RIGHT_SHIFT);
         modifs |= KEY_RIGHT_ALT;
+        return modifs;
+    case TLVL_ALT_L3:
+        modifs &= ~(KEY_SHIFT | KEY_LEFT_SHIFT | KEY_RIGHT_SHIFT);
+        modifs |= KEY_RIGHT_ALT;
+        return modifs;
+    case TLVL_SHIFT_ALT_L4:
+        modifs |= KEY_SHIFT | KEY_RIGHT_ALT;
         return modifs;
     default:
         inform(IL_WARN, SC_WARN_KEY_NOT_YET_IMPLMTD);
@@ -141,14 +151,27 @@ void kev_w_shift(uint8_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_SHIFT_L2));
 }
 
+// for TL_DE and similar
 void kev_w_altgr(uint8_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_ALTGR_L3));
 }
 
+// for TL_APPLE and similar
+void kev_w_alt(uint8_t key, keystate_t event) {
+    keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_ALT_L3));
+}
+
+// for TL_APPLE and similar
+void kev_w_shift_alt(uint8_t key, keystate_t event) {
+    keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_SHIFT_ALT_L4));
+}
+
+// for TL_NEO
 void kev_level2(uint8_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_SHIFT_L2));
 }
 
+// for TL_NEO
 void kev_level3(uint8_t key, keystate_t event) {
     uint8_t modifiers = modifiers_with_level(modifiers_current_in, TLVL_PLAIN_L1);
     // TODO: make sure the other modifier key is not currently pressed ...
@@ -161,6 +184,7 @@ void kev_level3(uint8_t key, keystate_t event) {
     }
 }
 
+// for TL_NEO
 void kev_level4(uint8_t key, keystate_t event) {
     uint8_t modifiers = modifiers_with_level(modifiers_current_in, TLVL_PLAIN_L1);
     if (event == KS_PRESS) {
