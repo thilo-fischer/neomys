@@ -68,7 +68,7 @@ void flash_led() {
 }
 
 void blink_led(enum blink_pattern_e pattern) {
-    if (blink_cntdn == -1) {
+    if (blink_cntdn < 1) {
         blink_pattern = pattern;
         blink_cntdn = BLINK_CNTDN_START - 1;
     }
