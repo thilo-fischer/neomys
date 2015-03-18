@@ -123,8 +123,10 @@ KF(level4mod_right) {
     set_modifier_bit(LM4_R, event);
     // if LM4_R is getting pressed while LM4_L is already pressed, lock LEVEL4
     affect_levellock(LM4_R, LM4_L, LEVEL4, event);
+#if 0
     if (tl == TL_NEO)
         kev_modifier(KEY_RIGHT_ALT, event);
+#endif
 }
 
 // modifiers
