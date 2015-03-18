@@ -22,9 +22,6 @@ void kev_allow_modifiers(uint8_t key, keystate_t event);
 void kev_modifier(uint8_t key, keystate_t event);
 void kev_TODO();
 
-// an alias for kev_allow_modifiers
-#define kev_virtual_modifier(k, e) kev_allow_modifiers(k, e)
-
-
+// note: kev_virtual_modifier is just an alias for kev_allow_modifiers defined in keytranslation.h
 
 #endif /* SENDKEYS_H_ */

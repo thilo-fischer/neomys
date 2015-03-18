@@ -84,44 +84,59 @@ static inline void affect_levellock(enum neo_level_modifiers_e mod, enum neo_lev
     }
 }
 
+// An alias for kev_allow_modifiers. We will use this to send notice about neo level modifier events that are not located on regular modifier keys (KEY_CAPS_LOCK, KEY_BACKSLASH, KEY_ISO_EXTRA) to hosts that use the NEO layout. This is actually sending just the regular key event.
+static inline void kev_virtual_modifier(uint8_t key, keystate_t event) {
+    kev_allow_modifiers(key, event);
+}
+
+
 KF(level2mod_left) {
     set_modifier_bit(LM2_L, event);
     affect_levellock(LM2_L, LM2_R, LEVEL2, event);
+    // Inform the host about the shift modifier event -- user might want to use shift+mouseclick or shift+return.
     kev_modifier(KEY_LEFT_SHIFT, event);
 }
 
 KF(level2mod_right) {
     set_modifier_bit(LM2_R, event);
     affect_levellock(LM2_R, LM2_L, LEVEL2, event);
+    // Inform the host about the shift modifier event -- user might want to use shift+mouseclick or shift+return.
     kev_modifier(KEY_RIGHT_SHIFT, event);
 }
 
 KF(level3mod_left) {
     set_modifier_bit(LM3_L, event);
-    affect_levellock(LM3_L, LM3_R, LEVEL3, event);
     if (tl == TL_NEO)
+        // Inform the host about the modifier event only if it uses the NEO layout and thus knows how to handle the modifier correctly. It is very unlikely the user wants to use modifier+mouseclick or modifier+return, esp. if the host uses another layout than the NEO layout.
         kev_virtual_modifier(KEY_CAPS_LOCK, event);
+    else
+        // If the host does not use the NEO layout, we will take care of level locking here in the neomys firmware.
+        affect_levellock(LM3_L, LM3_R, LEVEL3, event);
 }
 
 KF(level3mod_right) {
     set_modifier_bit(LM3_R, event);
-    affect_levellock(LM3_R, LM3_L, LEVEL3, event);
     if (tl == TL_NEO)
+        // Inform the host about the modifier event only if it uses the NEO layout and thus knows how to handle the modifier correctly. It is very unlikely the user wants to use modifier+mouseclick or modifier+return, esp. if the host uses another layout than the NEO layout.
         kev_virtual_modifier(KEY_BACKSLASH, event);
+    else
+        // If the host does not use the NEO layout, we will take care of level locking here in the neomys firmware.
+        affect_levellock(LM3_R, LM3_L, LEVEL3, event);
 }
 
 KF(level4mod_left) {
     set_modifier_bit(LM4_L, event);
-    // if LM4_L is getting pressed while LM4_R is already pressed, lock LEVEL4_MOUSE
+    // If LM4_L is getting pressed while LM4_R is already pressed, lock LEVEL4_MOUSE.
+    // As no host, not even hosts using the NEO layout, knows about the neomys extra level LEVEL4_MOUSE, we will take care of level locking here in the neomys firmware.
     affect_levellock(LM4_L, LM4_R, LEVEL4_MOUSE, event);
-    if (tl == TL_NEO)
-        kev_modifier(KEY_RIGHT_ALT, event);
-    // TODO kev_virtual_modifier(KEY_<<ISO extra key>>, event);
+    if (tl == TL_NEO && locked_level != LEVEL4_MOUSE)
+        kev_virtual_modifier(KEY_ISO_EXTRA, event);
 }
 
 KF(level4mod_right) {
     set_modifier_bit(LM4_R, event);
     // if LM4_R is getting pressed while LM4_L is already pressed, lock LEVEL4
+    // If LM4_R is getting pressed while LM4_L is already pressed, lock LEVEL4.
     affect_levellock(LM4_R, LM4_L, LEVEL4, event);
 #if 0
     if (tl == TL_NEO)
