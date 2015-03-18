@@ -17,6 +17,14 @@
 
 uint8_t modifiers_current_in  = 0x00;
 
+enum virtual_modifiers_e {
+    VMOD_INVALID   =  0x00 ,
+    VMOD_CAPS_LOCK = 1 << 0,
+    VMOD_BACKSLASH = 1 << 1,
+    VMOD_ISO_EXTRA = 1 << 2,
+};
+uint8_t virtual_modifiers_current_in  = 0x00;
+
 struct keyseq_step_s {
     uint8_t key;
     uint8_t modifiers;
@@ -175,6 +183,97 @@ void kev_modifier(uint8_t key, keystate_t event) {
         modifiers_current_in &= ~key;
     }
     keyseq_queue_enqueue(KEY_NONE, event, modifiers_current_in);
+}
+
+enum virtual_modifiers_e get_virtmod_of_vmkey(uint8_t key) {
+    switch (key) {
+    case KEY_CAPS_LOCK:
+        return VMOD_CAPS_LOCK;
+    case KEY_BACKSLASH:
+        return VMOD_BACKSLASH;
+    case KEY_ISO_EXTRA:
+        return VMOD_ISO_EXTRA;
+    default:
+        inform(IL_WARN, SC_WARN_KEY_NOT_YET_IMPLMTD);
+        return VMOD_INVALID;
+    }
+}
+
+enum targetlevel_e get_level_of_virtmod(enum virtual_modifiers_e vmod) {
+    switch (vmod) {
+    case VMOD_CAPS_LOCK:
+    case VMOD_BACKSLASH:
+        return TLVL_NEO_L3;
+    case VMOD_ISO_EXTRA:
+        return TLVL_NEO_L4;
+    default:
+        inform(IL_WARN, SC_WARN_KEY_NOT_YET_IMPLMTD);
+        return TLVL_PLAIN_L1;
+    }
+}
+
+enum targetlevel_e get_level_of_vmkey(uint8_t key) {
+    return get_level_of_virtmod( get_virtmod_of_vmkey(key));
+}
+
+bool is_vmodlevel_active(enum targetlevel_e tlvl) {
+    enum virtual_modifiers_e modL, modR;
+    switch (tlvl) {
+    case TLVL_NEO_L3:
+        modL = VMOD_CAPS_LOCK;
+        modR = VMOD_BACKSLASH;
+        break;
+    case TLVL_NEO_L4:
+        modL = VMOD_ISO_EXTRA;
+        modR = VMOD_INVALID;
+        break;
+    default:
+        inform(IL_WARN, SC_WARN_KEY_NOT_YET_IMPLMTD);
+        return;
+     
+    };
+    return (virtual_modifiers_current_in & (modA | modB)) > 0;
+}
+
+// neo level modifier events that are not located on regular modifier keys (KEY_CAPS_LOCK, KEY_BACKSLASH, KEY_ISO_EXTRA)
+void kev_virtual_modifier(uint8_t key, keystate_t event) {
+    if (is_vmodlevel_active(get_level_of_vmkey(key)) {
+    }
+
+    
+    enum virtual_modifiers_e mod, mod_also;
+    switch (key) {
+    case KEY_CAPS_LOCK:
+        mod      = VMOD_CAPS_LOCK;
+        mod_also = VMOD_BACKSLASH;
+        break;
+    case KEY_BACKSLASH:
+        mod      = VMOD_BACKSLASH;
+        mod_also = VMOD_CAPS_LOCK;
+        break;
+    case KEY_ISO_EXTRA:
+        mod      = VMOD_ISO_EXTRA;
+        mod_also = VMOD_INVALID;
+        break;
+    default:
+        inform_programming_error();
+        return;
+    };
+    if (event == KS_PRESS) {
+        if ((virtual_modifiers_current_in & mod_also) == 0) {
+            keyseq_queue_enqueue(key, event, modifiers_current_in);
+            virtual_modifiers_current_in |=  mod;
+        } else {
+            // TODO inform(INFO, "ignore keypress");
+        }
+    } else {
+        if ((virtual_modifiers_current_in & mod) > 0) {
+            keyseq_queue_enqueue(key, event, modifiers_current_in);
+            virtual_modifiers_current_in &= ~mod;
+        } else {
+            // TODO inform(INFO, "ignore keyrelease");
+        }
+    }
 }
 
 

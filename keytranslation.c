@@ -84,10 +84,6 @@ static inline void affect_levellock(enum neo_level_modifiers_e mod, enum neo_lev
     }
 }
 
-// An alias for kev_allow_modifiers. We will use this to send notice about neo level modifier events that are not located on regular modifier keys (KEY_CAPS_LOCK, KEY_BACKSLASH, KEY_ISO_EXTRA) to hosts that use the NEO layout. This is actually sending just the regular key event.
-static inline void kev_virtual_modifier(uint8_t key, keystate_t event) {
-    kev_allow_modifiers(key, event);
-}
 
 /**
    @return true if the modifier event may be communicated to the host without causing any trouble (because we have a non-Neo host which would not understand Neo-specific level modifier keys or because it would cause level-locking on a Neo host), false otherwise.
