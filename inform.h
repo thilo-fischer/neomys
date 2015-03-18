@@ -31,10 +31,6 @@ enum status_code_e {
 
     SC_DBG_KEYSTATES             = 0xE1,
     SC_DBG_USB_KEYS              = 0xE2,
-    SC_DBG_KEYSEQ_ENQUEUE        = 0xE4,
-    SC_DBG_USB_MOD_PRESS         = 0xE8,
-    SC_DBG_USB_MOD_RELEASE       = 0xE9,
-    SC_DBG_USB_MOD_AUTOCHANGE    = 0xEA,
 
     SC_TRC_MARK_0                = 0xF0,
     SC_TRC_MARK_1                = 0xF1,
