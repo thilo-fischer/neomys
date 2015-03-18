@@ -138,25 +138,30 @@ void kev_w_altgr(uint8_t key, keystate_t event) {
 }
 
 void kev_level2(uint8_t key, keystate_t event) {
-#if 0
-    keyseq_queue_enqueue(key, event, KEY_SHIFT      | mask_levelmod(modifiers_current_in));
-#else
-    keyseq_queue_enqueue(key, event, modifiers_current_in); // fixme: same as kev_allow_modifiers
-#endif
+    keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_SHIFT_L2));
 }
 
 void kev_level3(uint8_t key, keystate_t event) {
-#if 0
+    uint8_t modifiers = modifiers_with_level(modifiers_current_in, TLVL_PLAIN_L1);
+    // TODO: make sure the other modifier key is not currently pressed ...
     if (event == KS_PRESS) {
-        keyseq_queue_enqueue(KEY_CAPS_LOCK, KS_PRESS  , modifiers_current_in);
-        keyseq_queue_enqueue(key          , KS_PRESS  , modifiers_current_in);
+        keyseq_queue_enqueue(KEY_CAPS_LOCK, KS_PRESS  , modifiers);
+        keyseq_queue_enqueue(key          , KS_PRESS  , modifiers);
     } else {
-        keyseq_queue_enqueue(key          , KS_RELEASE, modifiers_current_in);
-        keyseq_queue_enqueue(KEY_CAPS_LOCK, KS_RELEASE, modifiers_current_in);
+        keyseq_queue_enqueue(key          , KS_RELEASE, modifiers);
+        keyseq_queue_enqueue(KEY_CAPS_LOCK, KS_RELEASE, modifiers);
     }
-#else
-    keyseq_queue_enqueue(key, event, modifiers_current_in); // fixme: same as kev_allow_modifiers
-#endif
+}
+
+void kev_level4(uint8_t key, keystate_t event) {
+    uint8_t modifiers = modifiers_with_level(modifiers_current_in, TLVL_PLAIN_L1);
+    if (event == KS_PRESS) {
+        keyseq_queue_enqueue(KEY_ISO_EXTRA, KS_PRESS  , modifiers);
+        keyseq_queue_enqueue(key          , KS_PRESS  , modifiers);
+    } else {
+        keyseq_queue_enqueue(key          , KS_RELEASE, modifiers);
+        keyseq_queue_enqueue(KEY_ISO_EXTRA, KS_RELEASE, modifiers);
+    }
 }
 
 void kev_allow_modifiers(uint8_t key, keystate_t event) {
