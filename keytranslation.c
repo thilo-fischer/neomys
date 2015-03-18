@@ -509,6 +509,7 @@ KF(Y) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_Z, event);
         break;
     default:
@@ -523,6 +524,7 @@ KF(Z) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_Y, event);
         break;
     default:
@@ -537,6 +539,7 @@ KF(AUML) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_QUOTE, event);
         break;
     default:
@@ -551,6 +554,7 @@ KF(OUML) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_SEMICOLON, event);
         break;
     default:
@@ -565,6 +569,7 @@ KF(UUML) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_LEFT_BRACE, event);
         break;
     default:
@@ -832,6 +837,7 @@ KF(y) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_plain(KEY_Z, event);
         break;
     default:
@@ -846,6 +852,7 @@ KF(z) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_plain(KEY_Y, event);
         break;
     default:
@@ -860,6 +867,7 @@ KF(auml) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_plain(KEY_QUOTE, event);
         break;
     default:
@@ -874,6 +882,7 @@ KF(ouml) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_plain(KEY_SEMICOLON, event);
         break;
     default:
@@ -888,6 +897,7 @@ KF(uuml) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_plain(KEY_LEFT_BRACE, event);
         break;
     default:
@@ -902,6 +912,7 @@ KF(eszett) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_plain(KEY_MINUS, event);
         break;
     default:
@@ -932,6 +943,7 @@ KF(straight_dbl_quote) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_2, event);
         break;
     default:
@@ -946,6 +958,7 @@ KF(hash) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_plain(KEY_BACKSLASH, event);
         break;
     default:
@@ -990,6 +1003,7 @@ KF(apostrophe) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_BACKSLASH, event);
         break;
     default:
@@ -1004,6 +1018,7 @@ KF(parentheses_left) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_8, event);
         break;
     default:
@@ -1018,6 +1033,7 @@ KF(parentheses_right) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_9, event);
         break;
     default:
@@ -1032,6 +1048,7 @@ KF(asterisk) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_RIGHT_BRACE, event);
         break;
     default:
@@ -1046,6 +1063,7 @@ KF(plus) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_plain(KEY_RIGHT_BRACE, event);
         break;
     default:
@@ -1067,6 +1085,7 @@ KF(dash_neo_lvl1) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_plain(KEY_SLASH, event);
         break;
     default:
@@ -1098,6 +1117,7 @@ KF(slash) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_7, event);
         break;
     default:
@@ -1113,6 +1133,7 @@ KF(colon) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_PERIOD, event);
         break;
     default:
@@ -1127,6 +1148,7 @@ KF(semicolon) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_COMMA, event);
         break;
     default:
@@ -1141,6 +1163,7 @@ KF(chevron_left) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_plain(KEY_ISO_EXTRA, event);
         break;
     default:
@@ -1155,6 +1178,7 @@ KF(equals) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_0, event);
         break;
     default:
@@ -1169,6 +1193,7 @@ KF(chevron_right) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_ISO_EXTRA, event);
         break;
     default:
@@ -1183,6 +1208,7 @@ KF(question_mark) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_MINUS, event);
         break;
     default:
@@ -1199,6 +1225,9 @@ KF(at) {
     case TL_DE_NODEAD:
         kev_w_altgr(KEY_Q, event);
         break;
+    case TL_DE_APPLE:
+        kev_w_alt(KEY_L, event);
+        break;
     default:
         kev_w_shift(KEY_2, event);
     }
@@ -1214,6 +1243,9 @@ KF(bracket_left) {
     case TL_DE_NODEAD:
         kev_w_altgr(KEY_8, event);
         break;
+    case TL_DE_APPLE:
+        kev_w_alt(KEY_5, event);
+        break;
     default:
         kev_plain(KEY_LEFT_BRACE, event);
     }
@@ -1228,6 +1260,9 @@ KF(backslash) {
     case TL_DE_NODEAD:
         kev_w_altgr(KEY_MINUS, event);
         break;
+    case TL_DE_APPLE:
+        kev_w_shift_alt(KEY_7, event);
+        break;
     default:
         kev_plain(KEY_BACKSLASH, event);
     }
@@ -1241,6 +1276,9 @@ KF(bracket_right) {
     case TL_DE:
     case TL_DE_NODEAD:
         kev_w_altgr(KEY_9, event);
+        break;
+    case TL_DE_APPLE:
+        kev_w_alt(KEY_6, event);
         break;
     default:
         kev_plain(KEY_RIGHT_BRACE, event);
@@ -1259,6 +1297,9 @@ KF(caret) {
     case TL_DE_NODEAD:
         kev_plain(KEY_TILDE, event);
         break;
+    case TL_DE_APPLE:
+        kev_w_shift_alt(KEY_K, event);
+        break;
     default:
         kev_w_shift(KEY_6, event);
     }
@@ -1271,6 +1312,7 @@ KF(underscore) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_SLASH, event);
         break;
     default:
@@ -1284,6 +1326,7 @@ KF(backtick) {
         kev_level3(KEY_B, event);
         break;
     case TL_DE:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_EQUAL, event);
         kev_plain  (KEY_SPACE, event);
         break;
@@ -1305,6 +1348,9 @@ KF(brace_left) {
     case TL_DE_NODEAD:
         kev_w_altgr(KEY_7, event);
         break;
+    case TL_DE_APPLE:
+        kev_w_alt(KEY_8, event);
+        break;
     default:
         kev_w_shift(KEY_LEFT_BRACE, event);
     }
@@ -1318,6 +1364,9 @@ KF(pipe) {
     case TL_DE:
     case TL_DE_NODEAD:
         kev_w_altgr(KEY_ISO_EXTRA, event);
+        break;
+    case TL_DE_APPLE:
+        kev_w_alt(KEY_7, event);
         break;
     default:
         kev_w_shift(KEY_BACKSLASH, event);
@@ -1333,6 +1382,9 @@ KF(brace_right) {
     case TL_DE_NODEAD:
         kev_w_altgr(KEY_0, event);
         break;
+    case TL_DE_APPLE:
+        kev_w_alt(KEY_9, event);
+        break;
     default:
         kev_w_shift(KEY_RIGHT_BRACE, event);
     }
@@ -1346,6 +1398,9 @@ KF(tilde) {
     case TL_DE:
     case TL_DE_NODEAD:
         kev_w_altgr(KEY_RIGHT_BRACE, event);
+        break;
+    case TL_DE_APPLE:
+        kev_w_shift_alt(KEY_8, event);
         break;
     default:
         kev_w_shift(KEY_TILDE, event);
@@ -1362,6 +1417,7 @@ KF(degree) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_TILDE, event);
         break;
     default:
@@ -1376,6 +1432,7 @@ KF(sectionsign) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
+    case TL_DE_APPLE:
         kev_w_shift(KEY_3, event);
         break;
     default:
@@ -1391,6 +1448,9 @@ KF(euro_currency) {
     case TL_DE:
     case TL_DE_NODEAD:
         kev_w_altgr(KEY_E, event);
+        break;
+    case TL_DE_APPLE:
+        kev_w_alt(KEY_E, event);
         break;
     default:
         kev_TODO();
@@ -1789,10 +1849,11 @@ KF(numpad_comma) {
     case TL_NEO:
     case TL_DE:
     case TL_DE_NODEAD:
-        kev_w_shift(KEYPAD_PERIOD, event);
+    case TL_DE_APPLE:
+        kev_allow_modifiers(KEYPAD_PERIOD, event);
         break;
     default:
-        kev_allow_modifiers(KEY_COMMA, event);
+        kev_plain(KEY_COMMA, event);
     }
 }
 
@@ -1802,7 +1863,8 @@ KF(numpad_period) {
     case TL_NEO:
     case TL_DE:
     case TL_DE_NODEAD:
-        kev_w_shift(KEY_PERIOD, event);
+    case TL_DE_APPLE:
+        kev_plain(KEY_PERIOD, event);
         break;
     default:
         kev_allow_modifiers(KEYPAD_PERIOD, event);

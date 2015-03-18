@@ -16,6 +16,8 @@ void keyseq_queue_progress();
 void kev_plain(uint8_t key, keystate_t event);
 void kev_w_shift(uint8_t key, keystate_t event);
 void kev_w_altgr(uint8_t key, keystate_t event);
+void kev_w_alt(uint8_t key, keystate_t event);
+void kev_w_shift_alt(uint8_t key, keystate_t event);
 void kev_level2(uint8_t key, keystate_t event);
 void kev_level3(uint8_t key, keystate_t event);
 void kev_allow_modifiers(uint8_t key, keystate_t event);
