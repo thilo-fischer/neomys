@@ -1458,23 +1458,38 @@ KF(euro_currency) {
 }
 
 KF(cent_currency) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(pound_currency) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(yen_currency) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(currency_sign) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(mdash) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 // esoteric punctuation characters (in order of appearance on the Neo layout from left to right, from top to bottom)
@@ -1504,7 +1519,10 @@ KF(superscript2) {
 }
 
 KF(script_small_l) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(superscript3) {
@@ -1522,75 +1540,129 @@ KF(superscript3) {
 }
 
 KF(numero_sign) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(guillemet_dbl_gt) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(guillemet_sgl_gt) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(guillemet_dbl_lt) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(guillemet_sgl_lt) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(low9quote_dbl) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(low9quote_sgl) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(6quote_dbl) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(6quote_sgl) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(9quote_dbl) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(9quote_sgl) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(ellipsis) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(inverted_exclamation_mark) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(long_s) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(minus) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(inverted_question_mark) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(ndash) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(bullet) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 
@@ -1598,47 +1670,80 @@ KF(bullet) {
 // dead keys
 
 KF(dead_grave) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(dead_cedilla) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(dead_ring) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(dead_umlaut) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(dead_circumfex) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(dead_caron) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(dead_dot) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(dead_acute) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(dead_perispomene) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(dead_bar) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 KF(dead_double_acute) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_TODO();
+    }
 }
 
 
@@ -1874,51 +1979,87 @@ KF(numpad_period) {
 // function keys
 
 KF(F1) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_allow_modifiers(KEY_F1, event);
+    }
 }
 
 KF(F2) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_allow_modifiers(KEY_F2, event);
+    }
 }
 
 KF(F3) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_allow_modifiers(KEY_F3, event);
+    }
 }
 
 KF(F4) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_allow_modifiers(KEY_F4, event);
+    }
 }
 
 KF(F5) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_allow_modifiers(KEY_F5, event);
+    }
 }
 
 KF(F6) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_allow_modifiers(KEY_F6, event);
+    }
 }
 
 KF(F7) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_allow_modifiers(KEY_F7, event);
+    }
 }
 
 KF(F8) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_allow_modifiers(KEY_F8, event);
+    }
 }
 
 KF(F9) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_allow_modifiers(KEY_F9, event);
+    }
 }
 
 KF(F10) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_allow_modifiers(KEY_F10, event);
+    }
 }
 
 KF(F11) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_allow_modifiers(KEY_F11, event);
+    }
 }
 
 KF(F12) {
-    kev_TODO();
+    switch (tl) {
+    default:
+        kev_allow_modifiers(KEY_F12, event);
+    }
 }
 
 
