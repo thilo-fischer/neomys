@@ -39,11 +39,6 @@ size_t keyseq_queue_end   = 0;
 
 // declaration of internal helper functions
 
-#if 0 // unused
-// mask modifier keys that will affect the level of the target layout
-static uint8_t mask_levelmod(uint8_t mod);
-#endif
-
 static bool keyseq_queue_empty();
 static bool keyseq_queue_full();
 static inline void keyseq_queue_enqueue(uint8_t key, keystate_t event, uint8_t modifiers);
@@ -99,21 +94,6 @@ enum targetlevel_e {
     TLVL_NEO_L5,       ///> level5 of TL_NEO
     TLVL_NEO_L6,       ///> level6 of TL_NEO
 };
-
-#if 0 // unused
-static inline bool has_level(uint8_t modifs, enum targetlevel_e lvl) {
-    switch (lvl) {
-    case TLVL_PLAIN_L1:
-        return modifs & (KEY_SHIFT | KEY_LEFT_SHIFT | KEY_RIGHT_SHIFT | KEY_RIGHT_ALT) == 0;
-    case TLVL_SHIFT_L2:
-        return modifs & (KEY_SHIFT | KEY_LEFT_SHIFT | KEY_RIGHT_SHIFT) > 0 && modifs & (KEY_RIGHT_ALT) == 0;
-    case TLVL_ALTGR_L3:
-        return modifs & (KEY_RIGHT_ALT) > 0 && modifs & (KEY_SHIFT | KEY_LEFT_SHIFT | KEY_RIGHT_SHIFT) == 0;
-    default:
-        inform(IL_WARN, SC_WARN_KEY_NOT_YET_IMPLMTD);
-    }
-}
-#endif
 
 // todo: take care of left alt key for apple target layouts
 static inline uint8_t modifiers_with_level(uint8_t modifs, enum targetlevel_e lvl) {
@@ -174,13 +154,12 @@ void kev_level2(uint8_t key, keystate_t event) {
 // for TL_NEO
 void kev_level3(uint8_t key, keystate_t event) {
     uint8_t modifiers = modifiers_with_level(modifiers_current_in, TLVL_PLAIN_L1);
-    // TODO: make sure the other modifier key is not currently pressed ...
     if (event == KS_PRESS) {
-        keyseq_queue_enqueue(KEY_CAPS_LOCK, KS_PRESS  , modifiers);
+        kev_virtual_modifier(KEY_CAPS_LOCK, KS_PRESS);
         keyseq_queue_enqueue(key          , KS_PRESS  , modifiers);
     } else {
         keyseq_queue_enqueue(key          , KS_RELEASE, modifiers);
-        keyseq_queue_enqueue(KEY_CAPS_LOCK, KS_RELEASE, modifiers);
+        kev_virtual_modifier(KEY_CAPS_LOCK, KS_RELEASE);
     }
 }
 
@@ -188,11 +167,11 @@ void kev_level3(uint8_t key, keystate_t event) {
 void kev_level4(uint8_t key, keystate_t event) {
     uint8_t modifiers = modifiers_with_level(modifiers_current_in, TLVL_PLAIN_L1);
     if (event == KS_PRESS) {
-        keyseq_queue_enqueue(KEY_ISO_EXTRA, KS_PRESS  , modifiers);
+        kev_virtual_modifier(KEY_ISO_EXTRA, KS_PRESS);
         keyseq_queue_enqueue(key          , KS_PRESS  , modifiers);
     } else {
         keyseq_queue_enqueue(key          , KS_RELEASE, modifiers);
-        keyseq_queue_enqueue(KEY_ISO_EXTRA, KS_RELEASE, modifiers);
+        kev_virtual_modifier(KEY_ISO_EXTRA, KS_RELEASE);
     }
 }
 
@@ -223,6 +202,22 @@ enum virtual_modifiers_e get_virtmod_of_vmkey(uint8_t key) {
     }
 }
 
+#if 0 // unused
+uint8_t get_vmkey_of_virtmod(enum virtual_modifiers_e mod) {
+    switch (mod) {
+    case VMOD_CAPS_LOCK:
+        return KEY_CAPS_LOCK;
+    case VMOD_BACKSLASH:
+        return KEY_BACKSLASH;
+    case VMOD_ISO_EXTRA:
+        return KEY_ISO_EXTRA;
+    default:
+        inform(IL_WARN, SC_WARN_KEY_NOT_YET_IMPLMTD);
+        return KEY_NONE;
+    }
+}
+#endif
+
 enum targetlevel_e get_level_of_virtmod(enum virtual_modifiers_e vmod) {
     switch (vmod) {
     case VMOD_CAPS_LOCK:
@@ -236,8 +231,34 @@ enum targetlevel_e get_level_of_virtmod(enum virtual_modifiers_e vmod) {
     }
 }
 
+#if 0 // unused
 enum targetlevel_e get_level_of_vmkey(uint8_t key) {
     return get_level_of_virtmod( get_virtmod_of_vmkey(key));
+}
+
+void activate_virtmod(enum virtual_modifiers_e vmod) {
+    keyseq_queue_enqueue(key, KS_PRESS, modifiers_current_in);
+    virtual_modifiers_current_in |=  mod;
+}
+
+void deactivate_virtmod(enum virtual_modifiers_e vmod) {
+    keyseq_queue_enqueue(key, KS_RELEASE, modifiers_current_in);
+    virtual_modifiers_current_in &= ~mod;
+}
+#endif
+
+void press_vmkey(uint8_t key, enum virtual_modifiers_e vmod) {
+    keyseq_queue_enqueue(key, KS_PRESS, modifiers_current_in);
+    virtual_modifiers_current_in |=  vmod;
+}
+
+void release_vmkey(uint8_t key, enum virtual_modifiers_e vmod) {
+    keyseq_queue_enqueue(key, KS_RELEASE, modifiers_current_in);
+    virtual_modifiers_current_in &= ~vmod;
+}
+
+keystate_t vmkey_state(enum virtual_modifiers_e vmod) {
+    return (virtual_modifiers_current_in & vmod) > 0 ? KS_PRESS : KS_RELEASE;
 }
 
 bool is_vmodlevel_active(enum targetlevel_e tlvl) {
@@ -253,50 +274,28 @@ bool is_vmodlevel_active(enum targetlevel_e tlvl) {
         break;
     default:
         inform(IL_WARN, SC_WARN_KEY_NOT_YET_IMPLMTD);
-        return;
+        return false;
      
     };
-    return (virtual_modifiers_current_in & (modA | modB)) > 0;
+    return (virtual_modifiers_current_in & (modL | modR)) > 0;
 }
 
 // neo level modifier events that are not located on regular modifier keys (KEY_CAPS_LOCK, KEY_BACKSLASH, KEY_ISO_EXTRA)
 void kev_virtual_modifier(uint8_t key, keystate_t event) {
-    if (is_vmodlevel_active(get_level_of_vmkey(key)) {
-    }
-
-    
-    enum virtual_modifiers_e mod, mod_also;
-    switch (key) {
-    case KEY_CAPS_LOCK:
-        mod      = VMOD_CAPS_LOCK;
-        mod_also = VMOD_BACKSLASH;
-        break;
-    case KEY_BACKSLASH:
-        mod      = VMOD_BACKSLASH;
-        mod_also = VMOD_CAPS_LOCK;
-        break;
-    case KEY_ISO_EXTRA:
-        mod      = VMOD_ISO_EXTRA;
-        mod_also = VMOD_INVALID;
-        break;
-    default:
-        inform_programming_error();
-        return;
-    };
+    enum virtual_modifiers_e vmod = get_virtmod_of_vmkey(key);
+    enum targetlevel_e vmlvl = get_level_of_virtmod(vmod);
     if (event == KS_PRESS) {
-        if ((virtual_modifiers_current_in & mod_also) == 0) {
-            keyseq_queue_enqueue(key, event, modifiers_current_in);
-            virtual_modifiers_current_in |=  mod;
-        } else {
+        if (is_vmodlevel_active(vmlvl)) {
             // TODO inform(INFO, "ignore keypress");
+        } else {
+            press_vmkey(key, vmod);
         }
     } else {
-        if ((virtual_modifiers_current_in & mod) > 0) {
-            keyseq_queue_enqueue(key, event, modifiers_current_in);
-            virtual_modifiers_current_in &= ~mod;
+        if (vmkey_state(vmod) == KS_PRESS) {
+            release_vmkey(key, vmod);
         } else {
             // TODO inform(INFO, "ignore keyrelease");
-        }
+        }        
     }
 }
 
