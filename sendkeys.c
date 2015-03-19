@@ -202,22 +202,6 @@ enum virtual_modifiers_e get_virtmod_of_vmkey(uint8_t key) {
     }
 }
 
-#if 0 // unused
-uint8_t get_vmkey_of_virtmod(enum virtual_modifiers_e mod) {
-    switch (mod) {
-    case VMOD_CAPS_LOCK:
-        return KEY_CAPS_LOCK;
-    case VMOD_BACKSLASH:
-        return KEY_BACKSLASH;
-    case VMOD_ISO_EXTRA:
-        return KEY_ISO_EXTRA;
-    default:
-        inform(IL_WARN, SC_WARN_KEY_NOT_YET_IMPLMTD);
-        return KEY_NONE;
-    }
-}
-#endif
-
 enum targetlevel_e get_level_of_virtmod(enum virtual_modifiers_e vmod) {
     switch (vmod) {
     case VMOD_CAPS_LOCK:
@@ -230,22 +214,6 @@ enum targetlevel_e get_level_of_virtmod(enum virtual_modifiers_e vmod) {
         return TLVL_PLAIN_L1;
     }
 }
-
-#if 0 // unused
-enum targetlevel_e get_level_of_vmkey(uint8_t key) {
-    return get_level_of_virtmod( get_virtmod_of_vmkey(key));
-}
-
-void activate_virtmod(enum virtual_modifiers_e vmod) {
-    keyseq_queue_enqueue(key, KS_PRESS, modifiers_current_in);
-    virtual_modifiers_current_in |=  mod;
-}
-
-void deactivate_virtmod(enum virtual_modifiers_e vmod) {
-    keyseq_queue_enqueue(key, KS_RELEASE, modifiers_current_in);
-    virtual_modifiers_current_in &= ~mod;
-}
-#endif
 
 void press_vmkey(uint8_t key, enum virtual_modifiers_e vmod) {
     keyseq_queue_enqueue(key, KS_PRESS, modifiers_current_in);
@@ -310,14 +278,6 @@ void kev_TODO() {
 
 
 // implementation of internal helper functions
-
-#if 0 // unused
-static uint8_t mask_levelmod(uint8_t mod) {
-    return mod & ~(KEY_SHIFT | KEY_LEFT_SHIFT | KEY_RIGHT_SHIFT | KEY_RIGHT_ALT);
-}
-#endif
-
-
 
 
 bool keyseq_queue_empty() {
