@@ -1459,6 +1459,9 @@ KF(euro_currency) {
 
 KF(cent_currency) {
     switch (tl) {
+    case TL_NEO:
+        kev_level3(KEY_6, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1466,6 +1469,9 @@ KF(cent_currency) {
 
 KF(pound_currency) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_6, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1473,6 +1479,9 @@ KF(pound_currency) {
 
 KF(yen_currency) {
     switch (tl) {
+    case TL_NEO:
+        kev_level3(KEY_7, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1480,13 +1489,9 @@ KF(yen_currency) {
 
 KF(currency_sign) {
     switch (tl) {
-    default:
-        kev_TODO();
-    }
-}
-
-KF(mdash) {
-    switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_7, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1520,6 +1525,9 @@ KF(superscript2) {
 
 KF(script_small_l) {
     switch (tl) {
+    case TL_NEO:
+        kev_level2(KEY_3, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1541,6 +1549,9 @@ KF(superscript3) {
 
 KF(numero_sign) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_3, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1548,6 +1559,9 @@ KF(numero_sign) {
 
 KF(guillemet_dbl_gt) {
     switch (tl) {
+    case TL_NEO:
+        kev_level2(KEY_4, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1555,6 +1569,9 @@ KF(guillemet_dbl_gt) {
 
 KF(guillemet_sgl_gt) {
     switch (tl) {
+    case TL_NEO:
+        kev_level3(KEY_4, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1562,6 +1579,9 @@ KF(guillemet_sgl_gt) {
 
 KF(guillemet_dbl_lt) {
     switch (tl) {
+    case TL_NEO:
+        kev_level2(KEY_5, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1569,6 +1589,9 @@ KF(guillemet_dbl_lt) {
 
 KF(guillemet_sgl_lt) {
     switch (tl) {
+    case TL_NEO:
+        kev_level3(KEY_5, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1576,6 +1599,9 @@ KF(guillemet_sgl_lt) {
 
 KF(low9quote_dbl) {
     switch (tl) {
+    case TL_NEO:
+        kev_level2(KEY_8, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1583,6 +1609,9 @@ KF(low9quote_dbl) {
 
 KF(low9quote_sgl) {
     switch (tl) {
+    case TL_NEO:
+        kev_level3(KEY_8, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1590,6 +1619,9 @@ KF(low9quote_sgl) {
 
 KF(6quote_dbl) {
     switch (tl) {
+    case TL_NEO:
+        kev_level2(KEY_9, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1597,6 +1629,9 @@ KF(6quote_dbl) {
 
 KF(6quote_sgl) {
     switch (tl) {
+    case TL_NEO:
+        kev_level3(KEY_9, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1604,6 +1639,9 @@ KF(6quote_sgl) {
 
 KF(9quote_dbl) {
     switch (tl) {
+    case TL_NEO:
+        kev_level2(KEY_0, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1611,6 +1649,20 @@ KF(9quote_dbl) {
 
 KF(9quote_sgl) {
     switch (tl) {
+    case TL_NEO:
+        kev_level3(KEY_0, event);
+        break;
+    default:
+        kev_TODO();
+    }
+}
+
+// Geviertstrich
+KF(mdash) {
+    switch (tl) {
+    case TL_NEO:
+        kev_level2(KEY_MINUS, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1618,6 +1670,9 @@ KF(9quote_sgl) {
 
 KF(ellipsis) {
     switch (tl) {
+    case TL_NEO:
+        kev_level3(KEY_Q, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1625,6 +1680,9 @@ KF(ellipsis) {
 
 KF(inverted_exclamation_mark) {
     switch (tl) {
+    case TL_NEO:
+        kev_level3(KEY_Y, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1632,6 +1690,9 @@ KF(inverted_exclamation_mark) {
 
 KF(long_s) {
     switch (tl) {
+    case TL_NEO:
+        kev_level3(KEY_LEFT_BRACE, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1639,6 +1700,9 @@ KF(long_s) {
 
 KF(minus) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_LEFT_BRACE, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1646,13 +1710,20 @@ KF(minus) {
 
 KF(inverted_question_mark) {
     switch (tl) {
+    case TL_NEO:
+        kev_level3(KEY_H, event);
+        break;
     default:
         kev_TODO();
     }
 }
 
+// Halbgeviertstrich
 KF(ndash) {
     switch (tl) {
+    case TL_NEO:
+        kev_level2(KEY_COMMA, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1660,6 +1731,9 @@ KF(ndash) {
 
 KF(bullet) {
     switch (tl) {
+    case TL_NEO:
+        kev_level2(KEY_PERIOD, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1671,6 +1745,9 @@ KF(bullet) {
 
 KF(dead_grave) {
     switch (tl) {
+    case TL_NEO:
+        kev_plain(KEY_EQUAL, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1678,6 +1755,9 @@ KF(dead_grave) {
 
 KF(dead_cedilla) {
     switch (tl) {
+    case TL_NEO:
+        kev_level2(KEY_EQUAL, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1685,6 +1765,9 @@ KF(dead_cedilla) {
 
 KF(dead_ring) {
     switch (tl) {
+    case TL_NEO:
+        kev_level3(KEY_EQUAL, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1692,6 +1775,9 @@ KF(dead_ring) {
 
 KF(dead_umlaut) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_EQUAL, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1699,6 +1785,9 @@ KF(dead_umlaut) {
 
 KF(dead_circumfex) {
     switch (tl) {
+    case TL_NEO:
+        kev_plain(KEY_TILDE, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1706,6 +1795,9 @@ KF(dead_circumfex) {
 
 KF(dead_caron) {
     switch (tl) {
+    case TL_NEO:
+        kev_level2(KEY_TILDE, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1713,6 +1805,9 @@ KF(dead_caron) {
 
 KF(dead_dot) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_TILDE, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1720,6 +1815,9 @@ KF(dead_dot) {
 
 KF(dead_acute) {
     switch (tl) {
+    case TL_NEO:
+        kev_plain(KEY_RIGHT_BRACE, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1727,6 +1825,9 @@ KF(dead_acute) {
 
 KF(dead_perispomene) {
     switch (tl) {
+    case TL_NEO:
+        kev_level2(KEY_RIGHT_BRACE, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1734,6 +1835,9 @@ KF(dead_perispomene) {
 
 KF(dead_bar) {
     switch (tl) {
+    case TL_NEO:
+        kev_level3(KEY_RIGHT_BRACE, event);
+        break;
     default:
         kev_TODO();
     }
@@ -1741,6 +1845,9 @@ KF(dead_bar) {
 
 KF(dead_double_acute) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_RIGHT_BRACE, event);
+        break;
     default:
         kev_TODO();
     }
