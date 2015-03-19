@@ -2303,38 +2303,38 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
                 .type = KT_IGNORE_ALLLOCK,
                 .kf = { kf_next_target_layout, kf_prev_target_layout },
             },
-            // unused
-            {
-                .type = KT_DUMB,
-                .kf = { NULL },
-            },
-            // space
-            {
-                .type = KT_IGNORE_LEVEL,
-                .kf = { kf_space },
-            },
             // left Alt
             {
                 .type = KT_IGNORE_LEVEL,
                 .kf = { kf_alt_left },
             },
+            // space
+            {
+                .type = KT_IGNORE_LEVEL,
+                .kf = { kf_space, kf_space, kf_space, kf_space, kf_return },
+            },
+            // unused
+            {
+                .type = KT_DUMB,
+                .kf = { NULL },
+            },
         }, // controller (left/right side)
         //ROW_SPACE right (0x48-0x4F)
         {
-            // right Alt
+            // space, numpad-zero
             {
-                .type = KT_IGNORE_LEVEL,
-                .kf = { kf_alt_right },
+                .type = KT_PLAIN,
+                .kf = { kf_space, kf_space, kf_space, kf_numpad_0, kf_next_target_layout, },
             },
             // level4 modifier
             {
                 .type = KT_LEVELMOD,
                 .kf = { kf_level4mod_right },
             },
-            // space, numpad-zero
+            // right Alt
             {
-                .type = KT_PLAIN,
-                .kf = { kf_space, kf_space, kf_space, kf_numpad_0, kf_nop, },
+                .type = KT_IGNORE_LEVEL,
+                .kf = { kf_alt_right },
             },
             // switch target layout // TODO preliminary use of this key
             {
