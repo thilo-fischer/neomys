@@ -2320,27 +2320,27 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             },
             // X
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_x, kf_X, kf_ellipsis, kf_page_up, NULL, },
             },
             // V
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_v, kf_V, kf_underscore, kf_backspace, NULL, },
             },
             // L
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_l, kf_L, kf_bracket_left, kf_up, NULL, },
             },
             // C
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_c, kf_C, kf_bracket_right, kf_delete, NULL, },
             },
             // W
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_w, kf_W, kf_caret, kf_page_down, NULL, },
             },
         }, // controller (left/right side)
@@ -2348,32 +2348,32 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
         {
             // K
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_k, kf_K, kf_exclamation_mark, kf_inverted_exclamation_mark, kf_back, },
             },
             // H
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_h, kf_H, kf_chevron_left, kf_numpad_7, kf_TODO /*left dblclick*/, },
             },
             // G
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_g, kf_G, kf_chevron_right, kf_numpad_8, kf_TODO /*mid dblclick*/, },
             },
             // F
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_f, kf_F, kf_equals, kf_numpad_9, kf_TODO /*right dblclick*/, },
             },
             // Q
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_q, kf_Q, kf_ampersand, kf_numpad_plus, kf_forward, },
             },
             // ß
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_eszett, kf_ESZETT, kf_long_s, kf_minus, kf_search, },
             },
             // ó
@@ -2396,27 +2396,27 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             },
             // U
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_u, kf_U, kf_backslash, kf_home, },
             },
             // I
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_i, kf_I, kf_slash, kf_left, },
             },
             // A
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_a, kf_A, kf_brace_left, kf_down, },
             },
             // E
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_e, kf_E, kf_brace_right, kf_right, },
             },
             // O
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_o, kf_O, kf_asterisk, kf_end, },
             },
         }, // controller (left/right side)
@@ -2424,32 +2424,32 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
         {
             // S
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_s, kf_S, kf_question_mark, kf_inverted_question_mark, kf_TODO /*click 8*/, },
             },
             // N
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_n, kf_N, kf_parentheses_left, kf_numpad_4, kf_TODO /*left click*/, },
             },
             // R
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_r, kf_R, kf_parentheses_right, kf_numpad_5, kf_TODO /*mid click*/, },
             },
             // T
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_t, kf_T, kf_dash_neo_lvl3, kf_numpad_6, kf_TODO /*right click*/, },
             },
             // D
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_d, kf_D, kf_colon, kf_numpad_comma, kf_TODO /*click 9*/, },
             },
             // Y
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_y, kf_Y, kf_at, kf_numpad_period, kf_find, },
             },
             // level3 modifier
@@ -2472,27 +2472,27 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             },
             // Ü
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_uuml, kf_UUML, kf_hash, kf_escape, },
             },
             // Ö
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_ouml, kf_OUML, kf_dollar, kf_tab, },
             },
             // Ä
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_auml, kf_AUML, kf_pipe, kf_insert, },
             },
             // P
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_p, kf_P, kf_tilde, kf_return, },
             },
             // Z
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_z, kf_Z, kf_backtick, kf_undo, },
             },
         }, // controller (left/right side)
@@ -2500,12 +2500,12 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
         {
             // B
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_b, kf_B, kf_plus, kf_colon, kf_undo, },
             },
             // M
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_m, kf_M, kf_percent, kf_numpad_1, kf_copy, },
             },
             // ,
@@ -2520,7 +2520,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             },
             // J
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_j, kf_J, kf_semicolon, kf_semicolon, kf_redo, },
             },
             // level2 modifier
@@ -2558,7 +2558,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             },
             // space
             {
-                .type = KT_IGNORE_LEVEL,
+                .type = KT_REGULAR,
                 .kf = { kf_space, kf_space, kf_space, kf_space, kf_return },
             },
             // unused
@@ -2571,7 +2571,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
         {
             // space, numpad-zero
             {
-                .type = KT_PLAIN,
+                .type = KT_REGULAR,
                 .kf = { kf_space, kf_space, kf_space, kf_numpad_0, kf_next_target_layout, },
             },
             // level4 modifier
