@@ -1,0 +1,29 @@
+neomys is an ergonomic keyboard designed to be used with the Neo2 ergonomic keyboard layout.
+
+These objectives have been taken into account in the neomys design:
+
+* Split keyboard
+neomys has not only a split key field (as e.g. the Microsoft Natural Ergonomic Keyboard), it is split into two separate parts which you can arrange in whatever position feels most comfortable for your hands (similar as with the ErgoDox.)
+
+* Ergonomic key arrangement
+neomys arranges the keys in a way that they are easy to reach with the according fingers when 10-finger touch typing: All keys associated with one finger are in one line (as also done with the TypeMatrix keyboard), and the keys to operate with the middle finger is located higher than the keys to operate with the much shorten pinky (similar as with the TECK, the ErgoDox and the Key64 Keyboard).
+
+* Neo2 based
+neomys is based on the Neo2 ergonomic keyboard layout. Neo2 is an ergonomic keyboard layout like the Dvorak, but optimized for the German language and modern computer keyboard usage. This brings several benefits over other (mostly QWERTY/Z-based) ergonomic keyboards.
+
+** Fewer leaving the typing position
+The Neo2 layout offers basically all keys you need regularly (Return, arrow keys, Home/End, Backspace/Delete, ...) easily reachable from the 10-finger touch typing position. This way, you can operate your computer with much less need to leave the typing position.
+You will even need to use the top row (with all the numbers on it) only rarely, so every finger has to operate only very few keys regularly.
+
+** Less keys
+The neomys leaves out all keys you would have to leave the typing position for to reach and provides (basically) all keys of a regular 105-key ISO keyboard on less than 63 keys. (Similar as does the Key64 Keyboard, but with even less keys :) .) 
+
+** "Portable" layout
+As Neo2 drivers are available to use the Neo2 layout on all common operating systems (Windows, Linux/Unix, Mac, and there is something for Android as well[fn:1]) you can easily use a keyboard layout very close to the one you get used to when using the neomys on basically any other keyboard/computer you need to work with. The position of the keys is kept very close to their positions on regular keyboards (esp. with the space, Ctrl/Strg, Win/Apple, Alt and these keys) as long as that position is not too bad for ergonomics, so switching from the neomys back to a regualr keyboard with Neo2 layout should be fairly easy.
+
+** Emulate Neo2 on other layouts
+The neomys firmware is pretty smart: It allows you to emulate the Neo2 layout on a number of other keyboard layouts. If you connect the neomys to a PC that only knows the QWERTZ layout, the neomys firmware will hide all modifier keys used to select the Neo2 levels (except for Shift) from the computer it is connected to and will translate any keypress on the neomys keyboard from the Neo2 layout to the keypress that has the desired effect on the computer. E.g.: The Y key of the QWERTY layout is the Z key in a QWERTZ layout and is the K key in the Neo2 layout. When in the Neo layout pressed together with the Mod3 key, it will cheate the '!' character. When you connect the neomys to a computer using the Neo2 layout, and press Mod3+K, neomys will tell the computer you pressed Mod3+K. (Sounds reasonable, huh? But now comes the funny part:) When you connect the neomys to a computer using the QWERTY or QWERTZ layout, and press Mod3+K, neomys will tell the computer you pressed Shift+1. The E key of the QWERTY/Z layout is the L key in the Neo2 layout. When in the Neo layout pressed together with the Mod3 key, it will cheate the '!' character. When you connect the neomys to a computer using the Neo2 layout, and press Mod3+K, neomys will tell the computer you pressed Mod3+K. (Sounds reasonable, huh? But now comes the funny part:) When you connect the neomys to a computer using the QWERTY or QWERTZ layout, and press Mod3+K, neomys will tell the computer you pressed Shift+1. 
+
+
+
+[fn:1] github.com/thilo-fischer/neo2_on_android/blob/master/ABOUT
