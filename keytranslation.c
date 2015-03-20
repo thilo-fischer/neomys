@@ -2210,12 +2210,6 @@ KF(find) {
     kev_allow_modifiers(KEY_FIND, event);
 }
 
-KF(search) {
-// TODO: scancode values > 255
-    //kev_allow_modifiers(KEY_SEARCH, event);
-    kev_TODO();
-}
-
 KF(forward) {
 // TODO: scancode values > 255
     //kev_allow_modifiers(KEY_FORWARD, event);
@@ -2235,7 +2229,11 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
     {
         //ROW_NUM left (0x00-0x07)
         {
-            // in contrast to neo layout, the key for the circumfex accent has been moved from the top left to the top right corner of the keyboard
+            // ô
+            {
+                .type = KT_IGNORE_SHIFTLOCK,
+                .kf = { kf_dead_circumfex, kf_dead_caron, kf_TODO, kf_dead_dot, },
+            },
             // 1
             {
                 .type = KT_IGNORE_SHIFTLOCK,
@@ -2261,14 +2259,15 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
                 .type = KT_IGNORE_SHIFTLOCK,
                 .kf = { kf_5, kf_guillemet_dbl_lt, kf_guillemet_sgl_lt, kf_TODO, kf_F5, },
             },
+        }, // controller (left/right side)
+        //ROW_NUM right (0x08-0x0F)
+        {
+            // Key for number 6 is located at the right hand side of the keyboard. This is uncommon wrt regular keyboards with divided key fields (Microsoft Natural Ergonomic Keyboard and alike), but common for all keyboarys that have been designed with ergonomics in mind (e.g. ErgoDox, TECK, TypeMatrix, Kinesis Contoured Keyboard).
             // 6
             {
                 .type = KT_IGNORE_SHIFTLOCK,
                 .kf = { kf_6, kf_dollar, kf_cent_currency, kf_pound_currency, kf_F6, },
             },
-        }, // controller (left/right side)
-        //ROW_NUM right (0x08-0x0F)
-        {
             // 7
             {
                 .type = KT_IGNORE_SHIFTLOCK,
@@ -2298,11 +2297,6 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             {
                 .type = KT_IGNORE_SHIFTLOCK,
                 .kf = { kf_dead_grave, kf_dead_cedilla, kf_dead_ring, kf_dead_umlaut, kf_F12, },
-            },
-            // ô
-            {
-                .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_dead_circumfex, kf_dead_caron, kf_TODO, kf_dead_dot, kf_printscreen, },
             },
         }, // controller (left/right side)
     }, // row
@@ -2374,12 +2368,12 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // ß
             {
                 .type = KT_REGULAR,
-                .kf = { kf_eszett, kf_ESZETT, kf_long_s, kf_minus, kf_search, },
+                .kf = { kf_eszett, kf_ESZETT, kf_long_s, kf_minus, kf_pause, },
             },
             // ó
             {
                 .type = KT_IGNORE_SHIFTLOCK,
-                .kf = { kf_dead_acute, kf_dead_perispomene, kf_dead_bar, kf_dead_double_acute, kf_pause, },
+                .kf = { kf_dead_acute, kf_dead_perispomene, kf_dead_bar, kf_dead_double_acute, kf_printscreen },
             },
         }, // controller (left/right side)
     }, // row
