@@ -11,7 +11,7 @@
 #include "neomys.h"
 #include "keyhandling.h"
 
-void keyseq_queue_progress();
+void progress_keyseq_queue();
 
 void kev_plain(uint8_t key, keystate_t event);
 void kev_w_shift(uint8_t key, keystate_t event);

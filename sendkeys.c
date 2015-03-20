@@ -48,7 +48,7 @@ static void keyseq_queue_dequeue();
 
 #define CHANGE_MODIFIERS_BEFORE_KEYEVENT
 
-void keyseq_queue_progress() {
+void progress_keyseq_queue() {
     if (!keyseq_queue_empty()) {
         const struct keyseq_step_s* next_step = &keyseq_queue[keyseq_queue_start];
 

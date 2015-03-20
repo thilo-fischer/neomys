@@ -72,7 +72,7 @@ int main(void) {
         }
 
         progress_blink_pattern();
-        keyseq_queue_progress();
+        progress_keyseq_queue();
 
 #else // ! (CONTROLLER == CTLR_MASTER)
         
