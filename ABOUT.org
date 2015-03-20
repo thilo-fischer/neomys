@@ -37,8 +37,10 @@ As most of the Neo2 stuff and many of the keyboard projects I got inspired by, a
 * Planned Features
 
 ** Operate the mouse from typing position
-This is a feature planned for the next version of the neomys keyboard: The right Mod3 key shall be combined with a pointing stick[fn:2] mouse device. The neomys one keyboard layer in addition to those from the Neo2 layout. The lefthand side of that layer is very similar to Neo2 layer 4 (but provides function keys (F1--F5) on the number row), the righthand side is unrelated to Neo2 and specific to neomys and offers some additional keys to have substitutes for all keys from a full 105-key keyboard (F6-F12, Print Screen/Druck, Pause, ...) and for some other handy keys (Cut/Copy/Paste, Redo/Undo, ...) and shall offer keys to trigger mouse clicks.
+This is a feature planned for the next version of the neomys keyboard: The right Mod3 key shall be combined with a pointing stick[fn:2] mouse device, some keys can be used to do mouse clicks[fn:A]. The planned mouse integration is why I chose the name 'neomys' :) .
 
+
+[fn:A] The neomys has one keyboard layer in addition to those from the Neo2 layout. The lefthand side of that layer is very similar to Neo2 layer 4 (but provides function keys (F1--F5) on the number row), the righthand side is unrelated to Neo2 and specific to neomys and offers some additional keys to have substitutes for all keys from a full 105-key keyboard (F6-F12, Print Screen/Druck, Pause, ...) and for some other handy keys (Cut/Copy/Paste, Redo/Undo, ...) and shall offer keys to trigger mouse clicks.
 
 [fn:1] http://github.com/thilo-fischer/neo2_on_android/blob/master/ABOUT
 [fn:2] http://en.wikipedia.org/wiki/Pointing_stick
