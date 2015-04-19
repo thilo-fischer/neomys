@@ -1982,6 +1982,9 @@ KF(return) {
 
 KF(numpad_1) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_M, event);
+        break;
     default:
         kev_allow_modifiers(KEYPAD_1, event);
     }
@@ -1989,6 +1992,9 @@ KF(numpad_1) {
 
 KF(numpad_2) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_COMMA, event);
+        break;
     default:
         kev_allow_modifiers(KEYPAD_2, event);
     }
@@ -1996,6 +2002,9 @@ KF(numpad_2) {
 
 KF(numpad_3) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_PERIOD, event);
+        break;
     default:
         kev_allow_modifiers(KEYPAD_3, event);
     }
@@ -2003,6 +2012,9 @@ KF(numpad_3) {
 
 KF(numpad_4) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_J, event);
+        break;
     default:
         kev_allow_modifiers(KEYPAD_4, event);
     }
@@ -2010,6 +2022,9 @@ KF(numpad_4) {
 
 KF(numpad_5) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_K, event);
+        break;
     default:
         kev_allow_modifiers(KEYPAD_5, event);
     }
@@ -2017,6 +2032,9 @@ KF(numpad_5) {
 
 KF(numpad_6) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_L, event);
+        break;
     default:
         kev_allow_modifiers(KEYPAD_6, event);
     }
@@ -2024,6 +2042,9 @@ KF(numpad_6) {
 
 KF(numpad_7) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_U, event);
+        break;
     default:
         kev_allow_modifiers(KEYPAD_7, event);
     }
@@ -2031,6 +2052,9 @@ KF(numpad_7) {
 
 KF(numpad_8) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_I, event);
+        break;
     default:
         kev_allow_modifiers(KEYPAD_8, event);
     }
@@ -2038,6 +2062,9 @@ KF(numpad_8) {
 
 KF(numpad_9) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_O, event);
+        break;
     default:
         kev_allow_modifiers(KEYPAD_9, event);
     }
@@ -2045,6 +2072,9 @@ KF(numpad_9) {
 
 KF(numpad_0) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_SPACE, event);
+        break;
     default:
         kev_allow_modifiers(KEYPAD_0, event);
     }
@@ -2052,6 +2082,9 @@ KF(numpad_0) {
 
 KF(numpad_divide) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_9, event);
+        break;
     default:
         kev_allow_modifiers(KEYPAD_SLASH, event);
     }
@@ -2059,6 +2092,9 @@ KF(numpad_divide) {
 
 KF(numpad_multiply) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_0, event);
+        break;
     default:
         kev_allow_modifiers(KEYPAD_ASTERIX, event);
     }
@@ -2066,6 +2102,9 @@ KF(numpad_multiply) {
 
 KF(numpad_plus) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_P, event);
+        break;
     default:
         kev_allow_modifiers(KEYPAD_PLUS, event);
     }
@@ -2073,12 +2112,16 @@ KF(numpad_plus) {
 
 KF(numpad_minus) {
     switch (tl) {
+    case TL_NEO:
+        kev_level4(KEY_LEFT_BRACE, event);
+        break;
     default:
         kev_allow_modifiers(KEYPAD_MINUS, event);
     }
 }
 
 // XXX also try with SDL_SCANCODE_DECIMALSEPARATOR
+// XXX not 100% in accordance with http://wiki.neo-layout.org/browser/A-REFERENZ-A/neo20.txt?format=raw
 KF(numpad_comma) {
     switch (tl) {
     case TL_NEO:
@@ -2093,6 +2136,7 @@ KF(numpad_comma) {
 }
 
 // XXX also try with SDL_SCANCODE_DECIMALSEPARATOR
+// XXX not 100% in accordance with http://wiki.neo-layout.org/browser/A-REFERENZ-A/neo20.txt?format=raw
 KF(numpad_period) {
     switch (tl) {
     case TL_NEO:

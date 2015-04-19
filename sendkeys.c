@@ -17,6 +17,7 @@
 
 uint8_t modifiers_current_in  = 0x00;
 
+// keys which are regular keys in a regular keyboard layout but act as level modifier keys in Neo layout
 enum virtual_modifiers_e {
     VMOD_INVALID   =  0x00 ,
     VMOD_CAPS_LOCK = 1 << 0,
@@ -117,10 +118,10 @@ static inline uint8_t modifiers_with_level(uint8_t modifs, enum targetlevel_e lv
         return modifs;
     case TLVL_ALT_L3:
         modifs &= ~(KEY_SHIFT | KEY_LEFT_SHIFT | KEY_RIGHT_SHIFT);
-        modifs |= KEY_RIGHT_ALT;
+        modifs |= KEY_RIGHT_ALT; // use the RIGHT alt key to asure this will have the desired effect also in virtual machines in Parallels
         return modifs;
     case TLVL_SHIFT_ALT_L4:
-        modifs |= KEY_SHIFT | KEY_RIGHT_ALT;
+        modifs |= KEY_SHIFT | KEY_RIGHT_ALT; // use the RIGHT alt key to asure this will have the desired effect also in virtual machines in Parallels
         return modifs;
     default:
         inform(IL_WARN, SC_WARN_KEY_NOT_YET_IMPLMTD);
