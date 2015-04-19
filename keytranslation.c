@@ -5,6 +5,12 @@
   This program is licenced under GPLv3.
 */
 
+/**
+ * @file
+ * Bind the keys from the neomys keyboard layout to the functions the keys at the according positions shall fulfill. Translate the functions the keys shall fulfill to the key presses or key press sequences that must be done at the target layout to achive the desired function.
+ * @todo Split these two responsibilities to separate files.
+ */
+
 #include <stddef.h>
 
 #include "teensy_codelib/usb_keyboard/usb_keyboard.h"

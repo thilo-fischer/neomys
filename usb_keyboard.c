@@ -3,9 +3,12 @@
 
    Copyright (c) 2015 Thilo Fischer
    This program is licenced under GPLv3.
-
-   usb_keyboard.c - USB HID keyboard support
 */
+
+/**
+ * @file
+ * Send key events to host using the USB HID protocol.
+ */
 
 #include <stddef.h>
 

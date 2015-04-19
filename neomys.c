@@ -5,6 +5,10 @@
    This program is licenced under GPLv3.
 */
 
+/**
+ * @file
+ * Implements initialisation sequence and main loop of the neomys firmware.
+ */
 
 
 #include <avr/pgmspace.h>

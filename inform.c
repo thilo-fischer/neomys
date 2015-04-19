@@ -5,6 +5,11 @@
    This program is licenced under GPLv3.
 */
 
+/**
+ * @file
+ * Mechanisms to send information on the current state of the firmware program to the outside world, i.e. trigger LED blinking, send debug information via UART, etc.
+ */
+
 #include <avr/io.h>
 #include "teensy_codelib/uart/uart.h"
 

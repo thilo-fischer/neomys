@@ -5,6 +5,11 @@
    This program is licenced under GPLv3.
 */
 
+/**
+ * @file
+ * Track and process the sequence of key events to send to the host.
+ */
+
 #include <stddef.h>
 
 #include "sendkeys.h"

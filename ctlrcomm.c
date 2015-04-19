@@ -3,9 +3,13 @@
 
    Copyright (c) 2015 Thilo Fischer
    This program is licenced under GPLv3.
-
-   ctlrcomm.c - communication among teensy devices (master and slave keyboard controller)
 */
+
+/**
+ * @file
+ * Communication among the two teensy controllers (master and slave keyboard controller).
+ * @todo Abstraction from UART interface.
+ */
 
 #include "delay_wrapper.h"
 

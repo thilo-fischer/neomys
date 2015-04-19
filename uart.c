@@ -5,6 +5,12 @@
    This program is licenced under GPLv3.
 */
 
+/**
+ * @file
+ * UART-specific implementation for communication among the two teensy controllers.
+ * @todo Move all UART-specific stuff from ctlrcomm.c to here.
+ */
+
 #include "teensy_codelib/uart/uart.h"
 
 // UART

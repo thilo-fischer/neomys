@@ -5,6 +5,12 @@
    This program is licenced under GPLv3.
 */
 
+/**
+ * @file
+ * Read key states from hardware, detect key state changes, determine current level to apply to the key state changes of regular (i.e. non-modifier etc.) keys, invoke function associated with pressed keys at current level (from keytranslation.c).
+ * @todo To much distinct functionality in this one file. Split it to several files with more specific purposes.
+ */
+
 #include <string.h>
 
 #include "getkeys.h"

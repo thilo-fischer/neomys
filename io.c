@@ -5,6 +5,11 @@
    This program is licenced under GPLv3.
 */
 
+/**
+ * @file
+ * Drive and query the GPIO pins of the teensy boards.
+ */
+
 #include <avr/io.h>
 
 #include "io.h"
