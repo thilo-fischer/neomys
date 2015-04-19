@@ -64,6 +64,12 @@ void release_key(uint8_t key) {
     *pos = KEY_NONE;
 }
 
+void clear_all_keys() {
+    for (uint8_t i = 0; i < KEYBOARD_KEYS_CNT; ++i) {
+        keyboard_keys[i] = 0;
+    }    
+}
+
 static inline uint8_t *find_keyboard_key(uint8_t key) {
     for (uint8_t i = 0; i < KEYBOARD_KEYS_CNT; ++i) {
         if (keyboard_keys[i] == key) {

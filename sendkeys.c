@@ -57,6 +57,11 @@ void progress_keyseq_queue() {
             inform(IL_DBG, next_step->change == KS_PRESS ? SC_DBG_USB_MOD_PRESS : SC_DBG_USB_MOD_RELEASE);
             info_add(keyboard_modifier_keys ^ next_step->modifiers);
             keyboard_modifier_keys = next_step->modifiers;
+
+            // fixme: temporary solution to handle situation where mod key is being released while other keys stay pressed => "mute" pressed keys
+            if (next_step->change == KS_RELEASE) {
+                clear_all_keys();
+            }
             
         } else {
         
