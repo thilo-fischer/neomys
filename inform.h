@@ -12,46 +12,47 @@
 
 #include "neomys.h"
 
+// event: KS_PRESS == 1 or KS_RELEASE == 0
 
 enum status_code_e {
-    SC_BOOT_MASTER               = 0x00,
-    SC_BOOT_SLAVE                = 0x01,
-    
-    SC_ERR_COMMUNICATION_FAILURE = 0x20,
-    SC_ERR_PROGRAMMING_ERROR     = 0x30,
-    SC_PROGERR_ALREADY_PRESSED   = 0x31,
-    SC_PROGERR_NOT_PRESSED       = 0x32,
-    
-    SC_WARN_TOO_MANY_KEYS        = 0x10,
-    SC_WARN_NOT_YET_IMPLEMENTED  = 0x80,
-    SC_WARN_KEY_NOT_YET_IMPLMTD  = 0x81,
+    SC_BOOT_MASTER               = 0x00, // =>   0 | nil
+    SC_BOOT_SLAVE                = 0x01, // =>   1 | nil
 
-    SC_INFO_KEYCHANGE            = 0xC1,
-    SC_INFO_SWITCH_TARGET_LAYOUT = 0xC5,
+    SC_ERR_COMMUNICATION_FAILURE = 0x20, // =>  32 | 
+    SC_ERR_PROGRAMMING_ERROR     = 0x30, // =>  48 | 
+    SC_PROGERR_ALREADY_PRESSED   = 0x31, // =>  49 | 
+    SC_PROGERR_NOT_PRESSED       = 0x32, // =>  50 | 
 
-    SC_DBG_KEYSTATES             = 0xE1,
-    SC_DBG_USB_KEYS              = 0xE2,
-    SC_DBG_KEYSEQ_ENQUEUE        = 0xE4,
-    SC_DBG_USB_MOD_PRESS         = 0xE8,
-    SC_DBG_USB_MOD_RELEASE       = 0xE9,
-    SC_DBG_USB_MOD_AUTOCHANGE    = 0xEA,
+    SC_WARN_TOO_MANY_KEYS        = 0x10, // =>  16 | 
+    SC_WARN_NOT_YET_IMPLEMENTED  = 0x80, // => 128 | 
+    SC_WARN_KEY_NOT_YET_IMPLMTD  = 0x81, // => 129 | 
 
-    SC_TRC_MARK_0                = 0xF0,
-    SC_TRC_MARK_1                = 0xF1,
-    SC_TRC_MARK_2                = 0xF2,
-    SC_TRC_MARK_3                = 0xF3,
-    SC_TRC_MARK_4                = 0xF4,
-    SC_TRC_MARK_5                = 0xF5,
-    SC_TRC_MARK_6                = 0xF6,
-    SC_TRC_MARK_7                = 0xF7,
-    SC_TRC_MARK_8                = 0xF8,
-    SC_TRC_MARK_9                = 0xF9,
-    SC_TRC_MARK_A                = 0xFA,
-    SC_TRC_MARK_B                = 0xFB,
-    SC_TRC_MARK_C                = 0xFC,
-    SC_TRC_MARK_D                = 0xFD,
-    SC_TRC_MARK_E                = 0xFE,
-    SC_TRC_MARK_F                = 0xFF,
+    SC_INFO_KEYCHANGE            = 0xC1, // => 193 | event:1 ctlr:1 row:3 col:3
+    SC_INFO_SWITCH_TARGET_LAYOUT = 0xC5, // => 197 | 
+
+    SC_DBG_KEYSTATES             = 0xE1, // => 225 | 
+    SC_DBG_USB_KEYS              = 0xE2, // => 226 | modifiers | keys[6]
+    SC_DBG_KEYSEQ_ENQUEUE        = 0xE4, // => 228 | key | event | modifiers
+    SC_DBG_USB_MOD_PRESS         = 0xE8, // => 232 | modifier-XOR
+    SC_DBG_USB_MOD_RELEASE       = 0xE9, // => 233 | modifier-XOR
+    SC_DBG_USB_MOD_AUTOCHANGE    = 0xEA, // => 234 | 
+
+    SC_TRC_MARK_0                = 0xF0, // => 240
+    SC_TRC_MARK_1                = 0xF1, // => 241
+    SC_TRC_MARK_2                = 0xF2, // => 242
+    SC_TRC_MARK_3                = 0xF3, // => 243
+    SC_TRC_MARK_4                = 0xF4, // => 244
+    SC_TRC_MARK_5                = 0xF5, // => 245
+    SC_TRC_MARK_6                = 0xF6, // => 246
+    SC_TRC_MARK_7                = 0xF7, // => 247
+    SC_TRC_MARK_8                = 0xF8, // => 248
+    SC_TRC_MARK_9                = 0xF9, // => 249
+    SC_TRC_MARK_A                = 0xFA, // => 250
+    sc_TRC_MARK_B                = 0xFB, // => 251
+    SC_TRC_MARK_C                = 0xFC, // => 252
+    SC_TRC_MARK_D                = 0xFD, // => 253
+    SC_TRC_MARK_E                = 0xFE, // => 254
+    SC_TRC_MARK_F                = 0xFF, // => 255
 };
 
 enum infolevel_e {
