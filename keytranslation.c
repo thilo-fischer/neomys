@@ -55,6 +55,29 @@ KF(prev_target_layout) {
     }
 }
 
+// statechange drivers for regular keyboards
+
+KF(numlock) {
+    switch (tl) {
+    default:
+        kev_allow_modifiers(KEY_NUM_LOCK, event);
+    }    
+}
+
+KF(scrolllock) {
+    switch (tl) {
+    default:
+        kev_allow_modifiers(KEY_SCROLL_LOCK, event);
+    }    
+}
+
+KF(capslock) {
+    switch (tl) {
+    default:
+        kev_allow_modifiers(KEY_CAPS_LOCK, event);
+    }    
+}
+
 // level modifiers
 
 static inline void set_modifier_bit(enum neo_level_modifiers_e mod, keystate_t event) {
@@ -2543,7 +2566,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // switch target layout // TODO preliminary use of this key
             {
                 .type = KT_IGNORE_ALLLOCK,
-                .kf = { kf_next_target_layout, kf_prev_target_layout },
+                .kf = { kf_next_target_layout, kf_prev_target_layout, kf_numlock, kf_scrolllock, kf_capslock },
             },
             // left Alt
             {
@@ -2566,7 +2589,7 @@ keyrecord_t keymap[ROW_COUNT][2][COL_COUNT] = {
             // space, numpad-zero
             {
                 .type = KT_REGULAR,
-                .kf = { kf_space, kf_space, kf_space, kf_numpad_0, kf_next_target_layout, },
+                .kf = { kf_space, kf_space, kf_space, kf_numpad_0, },
             },
             // level4 modifier
             {

@@ -13,7 +13,7 @@
   @TODO XXX provide a way to send numpad_enter key event (e.g. return on LEVEL4_MOUSE+V, numpad_enter on LEVEL4+V)
   @TODO FIXME provide LED to indicate current level
   @TODO TODO display current target layout selection (extra hardware ?)
-
+  @TODO XXX autoadapt numlock/capslock/scrolllock/neo-levellock states based on keyboard led states
 
  */
 
