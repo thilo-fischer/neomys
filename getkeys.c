@@ -108,14 +108,16 @@ void set_keystate(uint8_t controller, enum row_e row, uint8_t col, keystate_t st
     }
 }
 
-struct keychange_t {
-    const keyrecord_t *record;
-    keystate_t state;
+enum key_role_e {
+    KR_REGULAR,
+    KR_LEVELMOD,
+    KR_COUNT
 };
 
-#define KEYCHANGE_CNT_MAX 8
-struct keychange_t keychange[KEYCHANGE_CNT_MAX] /*= {{ 0 }}*/;
-uint8_t keychange_cnt = 0;
+#define CHANGE_CNT_MAX 8
+
+const keyrecord_t *keychange[KR_COUNT][2][CHANGE_CNT_MAX] /*= {{ 0 }}*/;
+uint8_t keychange_cnt[KR_COUNT][2] = {{ 0, }, };
 
 static inline void inform_keystates() {
     if (info_uart(IL_DBG)) {
@@ -146,18 +148,21 @@ void update_own_key_states() {
 
 // key changes
 
-void enqueue_keychange(const keyrecord_t *record, keystate_t state) {
-    if (keychange_cnt < KEYCHANGE_CNT_MAX) {
-        keychange[keychange_cnt].record = record;
-        keychange[keychange_cnt].state = state;
-        ++keychange_cnt;
+void enqueue_keychange(enum key_role_e type, const keyrecord_t *record, keystate_t state) {
+    uint8_t cnt = keychange_cnt[type][state];
+    if (cnt < CHANGE_CNT_MAX) {
+        keychange[type][state][cnt] = record;
+        ++keychange_cnt[type][state];
     } else {
         inform(IL_WARN, SC_WARN_TOO_MANY_KEYS);
     }
 }
 
 static inline void clear_keychanges() {
-    keychange_cnt = 0;
+    for (enum key_role_e t = KR_REGULAR; t < KR_COUNT; ++t) {
+        keychange_cnt[t][0] = 0;
+        keychange_cnt[t][1] = 0;
+    } // fixme: memset
 }
 
 struct kchange_info_byte {
@@ -189,56 +194,64 @@ void process_keychange(uint8_t controller, uint8_t row, uint8_t col) {
 
     switch (keyrecord->type) {
     case KT_LEVELMOD:
-    case KT_IGNORE_LEVEL:
-        
-        if (keyrecord->kf[0] != NULL) {
-            keyrecord->kf[0](target_layout, keystate);
-        } else {
-            // Does not make sense to have this pointer set to NULL, should be KT_DUMB instead of KT_LEVELMOD/KT_IGNORE_LEVEL then.
-            inform_programming_error();
-        }
-        
-        break;
+        enqueue_keychange(KR_LEVELMOD, keyrecord, keystate);
+        break;      
     case KT_DUMB:
         // do nothing
         break;
     default:
-        enqueue_keychange(keyrecord, keystate);
+        enqueue_keychange(KR_REGULAR, keyrecord, keystate);
     }
 }
 
 extern keyrecord_t keymap[ROW_COUNT][2][COL_COUNT]; // FIXME only for debugging output
 
-void process_queued_keychange(const struct keychange_t *change) {
-    const keyrecord_t *record = change->record;
+void process_queued_keychange(const keyrecord_t *record, keystate_t change) {
     enum neo_levels_e level;
     
     switch (record->type) {
     case KT_LEVELMOD:
     case KT_IGNORE_LEVEL:
-        // These keys shall be handled directly without being enqueued.
-        inform_programming_error();
+        if (record->kf[0] != NULL) {
+            record->kf[0](target_layout, change);
+        } else {
+            // Does not make sense to have this pointer set to NULL, should be KT_DUMB instead of KT_LEVELMOD/KT_IGNORE_LEVEL then.
+            inform_programming_error();
+        }
         return;
     case KT_IGNORE_SHIFTLOCK:
         level = get_level_il2l();
+        break;
     default:
         level = get_level();
     }
     
     if (record->kf[level] != NULL) {
-        record->kf[level](target_layout, change->state);
+        record->kf[level](target_layout, change);
     } else if (level == LEVEL4_MOUSE && record->kf[LEVEL4] != NULL) {
         // fallback to LEVEL4 if no kf specified for LEVEL4_MOUSE
-        record->kf[LEVEL4](target_layout, change->state);
+        record->kf[LEVEL4](target_layout, change);
     } else {
         inform(IL_WARN, SC_WARN_KEY_NOT_YET_IMPLMTD);
     }
 }
 
-void process_change_queue() {
-    for (uint8_t i = 0; i < keychange_cnt; ++i) {
-        process_queued_keychange(&keychange[i]);
+void process_change_queue_section(enum key_role_e type, keystate_t change) {
+    for (uint8_t i = 0; i < keychange_cnt[type][change]; ++i) {
+        process_queued_keychange(keychange[type][change][i], change);
     }
+}
+
+// TODO: handle situation where modifier key is being released while regular key remains pressed
+
+void process_change_queue() {
+    // first, process all regular key releases
+    process_change_queue_section(KR_REGULAR, KS_RELEASE);
+    // second, process all level modifier key presses and releases 
+    process_change_queue_section(KR_LEVELMOD, KS_RELEASE);
+    process_change_queue_section(KR_LEVELMOD, KS_PRESS);
+    // last, process all regular key presses
+    process_change_queue_section(KR_REGULAR, KS_PRESS);
 }
 
 void process_keystates() {
