@@ -128,9 +128,13 @@ uint8_t keychange_cnt[KR_COUNT][2] = {{ 0, }, };
 static inline void inform_keystates() {
     if (info_uart(IL_DBG)) {
         inform(IL_DBG, SC_DBG_KEYSTATES);
-        uint8_t row;
-        for (row = 0; row < ROW_COUNT; ++row) {
-            info_add(key_states[CONTROLLER][row]);
+        uint8_t ctlr;
+        for (ctlr = 0; ctlr < CTLR_COUNT; ++ctlr) {
+            info_add(ctlr);
+            uint8_t row;
+            for (row = 0; row < ROW_COUNT; ++row) {
+                info_add(key_states[ctlr][row]);
+            }
         }
     }
 }
