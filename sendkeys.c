@@ -135,26 +135,46 @@ void kev_plain(uint8_t key, keystate_t event) {
 
 void kev_w_shift(uint8_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_SHIFT_L2));
+    if (event == KS_RELEASE) {
+        // make sure to send notification that modifier key was released
+        keyseq_queue_enqueue(KEY_NONE, event, modifiers_current_in);
+    }
 }
 
 // for TL_DE and similar
 void kev_w_altgr(uint8_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_ALTGR_L3));
+    if (event == KS_RELEASE) {
+        // make sure to send notification that modifier key was released
+        keyseq_queue_enqueue(KEY_NONE, event, modifiers_current_in);
+    }
 }
 
 // for TL_APPLE and similar
 void kev_w_alt(uint8_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_ALT_L3));
+    if (event == KS_RELEASE) {
+        // make sure to send notification that modifier key was released
+        keyseq_queue_enqueue(KEY_NONE, event, modifiers_current_in);
+    }
 }
 
 // for TL_APPLE and similar
 void kev_w_shift_alt(uint8_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_SHIFT_ALT_L4));
+    if (event == KS_RELEASE) {
+        // make sure to send notification that modifier key was released
+        keyseq_queue_enqueue(KEY_NONE, event, modifiers_current_in);
+    }
 }
 
 // for TL_NEO
 void kev_level2(uint8_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_SHIFT_L2));
+    if (event == KS_RELEASE) {
+        // make sure to send notification that modifier key was released
+        keyseq_queue_enqueue(KEY_NONE, event, modifiers_current_in);
+    }
 }
 
 // for TL_NEO
