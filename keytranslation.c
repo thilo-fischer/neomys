@@ -1327,7 +1327,10 @@ KF(caret) {
         kev_plain(KEY_TILDE, event);
         break;
     case TL_DE_APPLE:
-        kev_w_shift_alt(KEY_K, event);
+        // kev_w_shift_alt(KEY_K, event); => produces the accent sign ontop of nothing
+        // To get ASCII char 0x5E, we need to combine the caret dead key with space:
+        kev_w_shift_alt(KEY_6, event);
+        kev_plain(KEY_SPACE, event);        
         break;
     default:
         kev_w_shift(KEY_6, event);
@@ -1429,7 +1432,10 @@ KF(tilde) {
         kev_w_altgr(KEY_RIGHT_BRACE, event);
         break;
     case TL_DE_APPLE:
-        kev_w_shift_alt(KEY_8, event);
+        // kev_w_shift_alt(KEY_8, event); => produces the accent sign ontop of nothing
+        // To get ASCII char 0x7E, we need to combine the tilde dead key with space:
+        kev_w_alt(KEY_N, event);
+        kev_plain(KEY_SPACE, event);
         break;
     default:
         kev_w_shift(KEY_TILDE, event);
