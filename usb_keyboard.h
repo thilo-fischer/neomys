@@ -48,8 +48,6 @@ void init_usb_keyboard();
 void press_key(uint8_t key);
 void release_key(uint8_t key);
 
-void clear_all_keys();
-
 void send_keys_usb();
 
 #endif /* USB_KEYBOARD_H_ */
