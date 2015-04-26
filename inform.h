@@ -74,7 +74,8 @@ extern const enum infolevel_e BLINK_INFOLEVEL;
         info_add(__FILE__[0]);                           \
         info_add(__FILE__[1]);                           \
         info_add(__FILE__[2]);                           \
-        info_add(__LINE__);                              \
+        info_add((char) (__LINE__>>8)&0xFF);             \
+        info_add((char) (__LINE__   )&0xFF);             \
     }
 
 static inline bool info_blink(enum infolevel_e il) {

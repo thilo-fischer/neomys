@@ -20,6 +20,51 @@
 #include "io.h"
 #include "ctlrcomm.h"
 
+// keep track of the currently active keys
+#define ACTIVE_KEYS_LIST_LENGTH 8
+keyfunc_t active_keys_list[ACTIVE_KEYS_LIST_LENGTH] /*= {{0}}*/;
+size_t active_keys_count = 0;
+
+void active_keys_list_add(keyfunc_t keyfunc) {
+    if (active_keys_count < ACTIVE_KEYS_LIST_LENGTH) {
+        active_keys_list[active_keys_count] = keyfunc;
+        ++active_keys_count;
+    } else {
+        inform(IL_WARN, SC_WARN_TOO_MANY_KEYS);        
+    }
+}
+
+/**
+ * If keyfunc is in list, remove it from there.
+ * @return true if keyfunc was found in list, false otherwise.
+ */
+bool active_keys_list_remove(keyfunc_t keyfunc) {
+    for (size_t idx = 0; idx < active_keys_count; ++idx) {
+        if (active_keys_list[idx] == keyfunc) {
+            memmove(&active_keys_list[idx],
+                    &active_keys_list[idx+1],
+                    (active_keys_count-(idx+1))*sizeof(active_keys_list[0])
+                    );
+            --active_keys_count;
+            return true;
+        }
+    }
+    return false;
+}
+
+void active_keys_list_clear() {
+    active_keys_count = 0;
+}
+
+void release_all_active_keys() {
+    for (size_t idx = 0; idx < active_keys_count; ++idx) {
+        active_keys_list[idx](target_layout, KS_RELEASE);
+    }
+    active_keys_list_clear();
+}
+
+
+
 
 enum neo_levels_e locked_level = LEVEL1;
 uint8_t level_modifiers = 0x00;
@@ -211,6 +256,7 @@ void process_keychange(uint8_t controller, uint8_t row, uint8_t col) {
     switch (keyrecord->type) {
     case KT_LEVELMOD:
         enqueue_keychange(KR_LEVELMOD, keyrecord, keystate);
+        release_all_active_keys();
         break;      
     case KT_DUMB:
         // do nothing
@@ -243,9 +289,19 @@ void process_queued_keychange(const keyrecord_t *record, keystate_t change) {
     }
     
     if (record->kf[level] != NULL) {
+        if (change == KS_PRESS) {
+            active_keys_list_add(record->kf[level]);
+        } else {
+            active_keys_list_remove(record->kf[level]);
+        }
         record->kf[level](target_layout, change);
     } else if (level == LEVEL4_MOUSE && record->kf[LEVEL4] != NULL) {
         // fallback to LEVEL4 if no kf specified for LEVEL4_MOUSE
+        if (change == KS_PRESS) {
+            active_keys_list_add(record->kf[LEVEL4]);
+        } else {
+            active_keys_list_remove(record->kf[LEVEL4]);
+        }
         record->kf[LEVEL4](target_layout, change);
     } else {
         inform(IL_WARN, SC_WARN_KEY_NOT_YET_IMPLMTD);
