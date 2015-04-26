@@ -32,7 +32,7 @@
 // global symbols
 
 
-const uint8_t cycle_delay = 20;
+const uint8_t cycle_delay = 8;
 
 // global functions
 

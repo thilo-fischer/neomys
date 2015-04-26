@@ -36,9 +36,7 @@ extern uint8_t key_states[2][ROW_COUNT]; // XXX
     void discard_uart() {
         uint8_t available;
         do {
-            // XXX -- need 3ms delay at 4800 bauds because transmission of 1 byte takes about 2ms
-            //_delay_ms(1);
-            _delay_ms(3);
+            _delay_ms(1);
             available = uart_available();
             int i;
             for (i = 0; i < available; ++i) {

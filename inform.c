@@ -37,7 +37,7 @@ const enum infolevel_e BLINK_INFOLEVEL = IL_WARN;
 
 static inline bool is_code_disabled(enum status_code_e code) {
     switch (code) {
-#if 0
+#if 1
     case SC_DBG_KEYSTATES:
         return true;
 #endif
