@@ -28,7 +28,7 @@ extern uint8_t key_states[2][ROW_COUNT]; // XXX
         uint8_t row;
         uart_putchar(startendbyte);
         for (row = 0; row < ROW_COUNT; ++row) {
-            uart_putchar(key_states[CTLR_SLAVE][row]);
+            uart_putchar(key_states[CTLR_MASTER][row]);
         }
         uart_putchar(startendbyte);
     }

@@ -129,13 +129,19 @@ static inline void inform_keystates() {
     if (info_uart(IL_DBG)) {
         inform(IL_DBG, SC_DBG_KEYSTATES);
         uint8_t ctlr;
+#if 0
         for (ctlr = 0; ctlr < CTLR_COUNT; ++ctlr) {
             info_add(ctlr);
+#else
+            ctlr = CONTROLLER;   
+#endif
             uint8_t row;
             for (row = 0; row < ROW_COUNT; ++row) {
                 info_add(key_states[ctlr][row]);
             }
+#if 0
         }
+#endif
     }
 }
 
@@ -144,11 +150,11 @@ void update_own_key_states() {
     for (row = 0; row < ROW_COUNT; ++row) {
         activate_row(row);
         // set all switches of that row to KS_RELEASE (KS_RELEASE == 0x00)
-        key_states[CONTROLLER][row] = 0x00;
+        key_states[CTLR_MASTER][row] = 0x00;
         uint8_t col;
         for (col = 0; col < COL_COUNT; ++col) {
             if (test_col(col) == 1)
-                set_keystate(CONTROLLER, row, col, KS_PRESS);
+                set_keystate(CTLR_MASTER, row, col, KS_PRESS);
         }
         deactivate_row(row);
     }
