@@ -1192,7 +1192,8 @@ KF(chevron_left) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-    case TL_DE_APPLE: // FIXME: not working properly on Macbook ...
+    case TL_DE_APPLE:
+        // Apple: OsX will open a dialog to identify the keyboard when connected to the Mac the first time and ask to press the key in between the shift and the Y key -- the ISO_EXTRA key. Switch the neomys to APPLE host layout and press the keys to produce a '<' character (Mod3+H). Otherwise, the '<' and '>' characters won't work correctly. => FIXME: document this accordingly in "end user documentation"
         kev_plain(KEY_ISO_EXTRA, event);
         break;
     default:
@@ -1222,7 +1223,7 @@ KF(chevron_right) {
         break;
     case TL_DE:
     case TL_DE_NODEAD:
-    case TL_DE_APPLE: // FIXME: not working properly on Macbook ...
+    case TL_DE_APPLE:
         kev_w_shift(KEY_ISO_EXTRA, event);
         break;
     default:
@@ -1358,7 +1359,7 @@ KF(backtick) {
         kev_level3(KEY_B, event);
         break;
     case TL_DE:
-    case TL_DE_APPLE: // FIXME: not working properly on Macbook ...
+    case TL_DE_APPLE: // This was not working properly on my Macbook once -- but since the chevrons have been fixed, backtick is also fixed. XXX reproduce backtick issue and verify it is fixed as the chevron problem when keyboard is properly detected.
         kev_w_shift(KEY_EQUAL, event);
         kev_plain  (KEY_SPACE, event);
         break;
