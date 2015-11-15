@@ -17,6 +17,7 @@
 
 #include "keyhandling.h"
 #include "keytranslation.h"
+#include "keystates.h"
 #include "io.h"
 #include "ctlrcomm.h"
 
@@ -140,24 +141,7 @@ enum neo_levels_e get_level_il2l() {
 }
 
 
-
-// key states
-// Transmit states of all keys from slave to master. This is the simplest, most deterministic and probably most fail-safe approach (compared to sending only pressed keys or key state changes).
-
-uint8_t key_states[2][ROW_COUNT] = {{0}, {0}};
-uint8_t prev_key_states[2][ROW_COUNT] = {{0}, {0}};
-
-keystate_t get_keystate(uint8_t controller, enum row_e row, uint8_t col) {
-    return ((key_states[controller][row] & (1 << col)) > 0) ? KS_PRESS : KS_RELEASE;
-}
-
-void set_keystate(uint8_t controller, enum row_e row, uint8_t col, keystate_t state) {
-    if (state == KS_PRESS) {
-        key_states[controller][row] |=  (1 << col);
-    } else {
-        key_states[controller][row] &= ~(1 << col);
-    }
-}
+//
 
 enum key_role_e {
     KR_REGULAR,
@@ -170,6 +154,7 @@ enum key_role_e {
 const keyrecord_t *keychange[KR_COUNT][2][CHANGE_CNT_MAX] /*= {{ 0 }}*/;
 uint8_t keychange_cnt[KR_COUNT][2] = {{ 0, }, };
 
+#if 0
 static inline void inform_keystates() {
     if (info_uart(IL_DBG)) {
         inform(IL_DBG, SC_DBG_KEYSTATES);
@@ -189,21 +174,11 @@ static inline void inform_keystates() {
 #endif
     }
 }
+#endif
 
 void update_own_key_states() {
-    uint8_t row;
-    for (row = 0; row < ROW_COUNT; ++row) {
-        activate_row(row);
-        // set all switches of that row to KS_RELEASE (KS_RELEASE == 0x00)
-        key_states[CTLR_MASTER][row] = 0x00;
-        uint8_t col;
-        for (col = 0; col < COL_COUNT; ++col) {
-            if (test_col(col) == 1)
-                set_keystate(CTLR_MASTER, row, col, KS_PRESS);
-        }
-        deactivate_row(row);
-    }
-    inform_keystates();
+  io_read_switches();
+  //inform_keystates();
 }
 
 
@@ -327,31 +302,31 @@ void process_change_queue() {
 }
 
 void process_keystates() {
-    // find changes
+  // find changes
 
-    if (memcmp(prev_key_states, key_states, sizeof(key_states))) {
+  if (keystates_changed()) {
 
-        clear_keychanges();
+    clear_keychanges();
 
-        uint8_t controller;
-        for (controller = CTLR_MASTER; controller < CTLR_COUNT; ++controller) {
-            uint8_t row;
-            for (row = 0; row < ROW_COUNT; ++row) {
-                uint8_t xor = prev_key_states[controller][row] ^ key_states[controller][row];
-                if (xor > 0) {
-                    uint8_t col;
-                    for (col = 0; col < COL_COUNT; ++col) {
-                        if ((xor & (1 << col)) > 0) {
-                            // key state at [row,col] has changed
-                            process_keychange(controller, row, col);
-                        }
-                    } // col loop
-                } // xor > 0
-            } // row loop
-        } // controller loop
+    uint8_t element;
+    for (element = 0; element < ELEMENT_COUNT_MAX; ++element) {
+      uint8_t row;
+      for (row = 0; row < ROW_COUNT; ++row) {
+	uint8_t row_changes = keystate_row_changes(element, row);
+	if (row_changes > 0) {
+	  uint8_t col;
+	  for (col = 0; col < COL_COUNT; ++col) {
+	    if (keystate_changed_col(col, row_changes)) {
+	      // key state at [row,col] has changed
+	      process_keychange(element, row, col);
+	    }
+	  } // col loop
+	} // row_changes > 0
+      } // row loop
+    } // element loop
 
-        process_change_queue();
+    process_change_queue();
 
-        memcpy(prev_key_states, key_states, sizeof(key_states));
-    } // memcmp
+    keystate_buffer();
+  } // keystates_changed
 }

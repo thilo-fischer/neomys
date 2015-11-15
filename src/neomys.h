@@ -34,14 +34,27 @@
 #include "inform.h"
 
 enum row_e {
-    ROW_NUM,
-    ROW_TOP,
-    ROW_HOME,
-    ROW_BTM,
-    ROW_SPACE,
-    ROW_COUNT
+  ROW_VIRTUAL_ID = 0,
+  ROW_NUM        = 1,
+  ROW_TOP        = 2,
+  ROW_HOME       = 3,
+  ROW_BTM        = 4,
+  ROW_SPACE      = 5,
+  ROW_EXTRA_A    = 6,
+  ROW_EXTRA_B    = 7,
+  ROW_COUNT
 };
 
+/// Number of columns a key matrix may have at most.
+/// This is not a configuration value one may tune,
+/// it is just to give a semantically relevant name to
+/// the number of bits in a byte.
+/// Implementation requires this values must be less than
+/// or equal to the number of bits in a uint8_t.
 #define COL_COUNT 8
+
+
+typedef uint8_t kmatrix_raw_t[ROW_COUNT];
+typedef kmatrix_raw_t allkeys_raw_t[MAX_ELEMENT_COUNT];
 
 #endif // _NEOMYS_H_
