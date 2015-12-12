@@ -8,19 +8,18 @@
 /*
   An okey keyboard consists of several (usually two or three for a regular keyboard) panels. The default panel may contain up to 56 (7*8) key switches.
 
-  One panel contains the micro controller to connect the keyboard to the host PC via USB, to collect the state information of the key switches from all panel, process those states, translate them to key codes and transmit the key codes to the host PC and to drive indicators (LEDs and such) for modes and states. This panel is called the master panel, all other panels are called slave panels.
+  One of the keyboard's panels contains the micro controller to connect the keyboard to the host via USB, to collect the state information of the key switches from all panel, process those states, translate them to key codes and transmit the key codes to the host and to drive indicators (LEDs and such) for modes and states. This panel is called the master panel, all other panels are called slave panels.
 
   In the default setup, all panels are connected in a line with a cable with 6 wires with the master panel on the starting point of the line. All slave panels may contain a micro controller, but the required logic can also be implemented with just a few digital integrated circuits not requiring any processor or software on the slave panels.
 
   The okey hard- and software is designed to be very flexible. Panels with different sizes than the default size and other approaches to connect the slave panels to the master panel are supported as well.
+
+  Most of this software is intended to run on the controller of the host panel, but if a slave panel has a separate micro controller onboard, parts of this software can be used as well to run on the slave panel's controller.
 */
 
 #ifndef _PANEL_H_
 #define _PANEL_H_
 
-
-/// The maximum number of panels that can be driven by this controller (1 master panel and (MAX_SUPPORTED_PANELS-1) slave panels)
-#define MAX_SUPPORTED_PANELS 4
 
 // Computes the number of bytes necessary to store all key switch states of one row.
 // (One key switch states corresponds to one bit.)
@@ -53,7 +52,7 @@ typedef struct {
   ///@{
 
   /// User layout
-  userlayout_t *userlayout;
+  const userlayout_t *userlayout;
   
   ///@}
 
@@ -106,9 +105,6 @@ typedef struct {
   
 } panel_io_spec_t;
 
-
-/// defines the order in which the specified panels will be processed
-const panel_t panel_processing[MAX_SUPPORTED_PANELS];
 
 
 void pnl_init_io_all() {

@@ -1,13 +1,22 @@
+/*
+   Neomys - Driver software for my Teensy-based DIY keyboard for the Neo2 keyboard layout.
+  
+   Copyright (c) 2015 Thilo Fischer
+   This program is licenced under GPLv3.
+*/
 
-
+#include "ucontroller.h"
+#include "panel.h"
+#include "adaptation.h"
+#include "hostcomm.h"
 
 int main(void) {
   init();
   while (true) {
-    await_next_cycle();
+    adp_await_next_cycle();
     pnl_sync_io_all();
-    process_keystate_changes();
-    progress_out_keyseq();
+    pnl_process_keystate_changes();
+    hcm_progress_out_keyseq();
   };
   return 0;
 }

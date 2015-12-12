@@ -1,33 +1,43 @@
-#include "ucontroller.h"
+/*
+   Neomys - Driver software for my Teensy-based DIY keyboard for the Neo2 keyboard layout.
+  
+   Copyright (c) 2015 Thilo Fischer
+   This program is licenced under GPLv3.
+*/
+
+/** @file
+ * Implements the ucontroller.h API for the ATMEGA32U4 microcontroller (and probably other microcontrollers of the same family).
+ */
+
+#include <avr/io.h>
+
+#include "ucontroller_ATMEGA32U4.h"
+
+// FIXME why are these symbols not known from iom32u4.h ?!?
+#define DDRB  _SFR_IO8(0x04)
+#define PORTB _SFR_IO8(0x05)
+#define PINB  _SFR_IO8(0x03)
+
+#define DDRC  _SFR_IO8(0x07)
+#define PORTC _SFR_IO8(0x08)
+#define PINC  _SFR_IO8(0x06)
+
+#define DDRD  _SFR_IO8(0x0A)
+#define PORTD _SFR_IO8(0x0B)
+#define PIND  _SFR_IO8(0x09)
+
+#define DDRF  _SFR_IO8(0x10)
+#define PORTF _SFR_IO8(0x11)
+#define PINF  _SFR_IO8(0x0F)
 
 
-typedef enum {
-  IOPORT_B,
-  IOPORT_C,
-  IOPORT_D,
-  IOPORT_E,
-  IOPORT_F,
-  IOPORT_COUNT
-} ioport_t;
-
+/// arrays allow mapping from ioport_t to the according registers
+///@{
 uint8_t *const DDR_REGISTERS [IOPORT_COUNT] = {DDRB , DDRC , DDRD , DDRE , DDRF };
 uint8_t *const PORT_REGISTERS[IOPORT_COUNT] = {PORTB, PORTC, PORTD, PORTE, PORTF};
 uint8_t *const PIN_REGISTERS [IOPORT_COUNT] = {PINB , PINC , PIND , PINE , PINF };
+///@}
 
-
-#if 0 // deprecated
-typedef struct {
-  uint8_t bitpos;
-  uint8_t *ddr;
-  uint8_t *port;
-  uint8_t *pin;
-} gpio_pin_t;
-#else
-typedef struct {
-  ioport_t port;
-  uint8_t bitpos;
-} gpio_pin_t;
-#endif
 
 void gpio_pin_init(gpio_pin_t pin, gpio_state_t state) {
   switch (state) {
