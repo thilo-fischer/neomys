@@ -22,4 +22,6 @@ const panel_t panel_processing[MAX_SUPPORTED_PANELS];
 
 typedef enum level_t;
 
+void adp_await_next_cycle();
+
 #endif // _ADAPTATION_H_

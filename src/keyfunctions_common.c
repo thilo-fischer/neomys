@@ -10,6 +10,8 @@
  * Commenly used key functions. 
  */
 
+// FIXME rename file: different file extension to indicate it is included in another .c file
+
 #include "userlayout.h"
 
 KF(nop) {}

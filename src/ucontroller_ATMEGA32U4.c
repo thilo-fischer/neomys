@@ -39,6 +39,26 @@ uint8_t *const PIN_REGISTERS [IOPORT_COUNT] = {PINB , PINC , PIND , PINE , PINF 
 ///@}
 
 
+void uc_init() {
+    
+}
+
+void uc_spi_transmit_byte(uint8_t mosi, uint8_t *miso) {
+  // start transmission by writing output byte to the appropriate register
+  SPDR = mosi;
+  // busy wait for transmission complete
+  while(!(SPSR & (1<<SPIF)));
+  // write data received to destination
+  *mosi = SPDR;
+}
+
+
+void uc_sleep(uint16_t milliseconds) {
+    _delay_ms(milliseconds);
+}
+
+
+
 void gpio_pin_init(gpio_pin_t pin, gpio_state_t state) {
   switch (state) {
   case GPIO_OPEN_DRAIN:
@@ -121,12 +141,3 @@ void gpio_inpin_pullup_to_opendrain(gpio_pin_t) {
 }
 
 
-
-void uc_spi_transmit_byte(uint8_t mosi, uint8_t *miso) {
-  // start transmission by writing output byte to the appropriate register
-  SPDR = mosi;
-  // busy wait for transmission complete
-  while(!(SPSR & (1<<SPIF)));
-  // write data received to destination
-  *mosi = SPDR;
-}

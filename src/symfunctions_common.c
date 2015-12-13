@@ -11,6 +11,7 @@
  */
 
 #include "keyhandling.h"
+#include "sendkeys.h"
 #include "keytranslation.h" // for target_layout
 
 SF(nop) {}

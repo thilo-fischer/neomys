@@ -129,11 +129,6 @@ typedef void (*symfunc_t)(targetlayout_t targetlayout, keystate_t event);
 #define KF(name) static void kf_##name(level_t effective_levels[], targetlayout_t targetlayout, keystate_t event)
 
 
-#define LEVEL_SWITCH switch (level)
-#define LEVEL_CASE(level, symbol) case LVL_##level: sf_##symbol(targetlayout, event); break;
-#define LEVEL_DEFAULT(symbol) default: sf_##symbol(targetlayout, event); break;
-#define LEVEL_ELSE default: /* TODO signal error state */; break;
-
 /// Function header for `symbol functions', i.e. functions called from
 /// the `key functions' depending on the currently active level
 /// modifiers.

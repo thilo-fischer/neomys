@@ -21,10 +21,45 @@
 #define _PANEL_H_
 
 
+// forward declarations
+struct userlayout_struct;
+typedef struct userlayout_struct userlayout_t;
+
+
 // Computes the number of bytes necessary to store all key switch states of one row.
 // (One key switch states corresponds to one bit.)
 #define BYTES_PER_ROW(width) ((width + 7) / 8)
 
+
+
+/// Initialize the io devices according to cfg.
+typedef void (*panel_init_io_func_t)(const void *cfg);
+/// Read key switch states of height rows of keys with width keys per row from the hardware into the ksw_states array,
+/// read the numeric ID value from the hardware into numeric_id
+/// and write out_size bytes of data contained in out_data to the hardware
+/// using the io configuration as given by cfg.
+typedef void (*panel_sync_io_func_t)(uint8_t ksw_states[][], uint8_t width, uint8_t height, uint8_t *numeric_id, bool gives_numeric_id, const uint8_t out_data[], uint8_t out_size, const void *cfg);
+/// Run before syncing all panels.
+typedef void (*panel_before_sync_io_func_t)(const void *cfg);
+/// Run after syncing all panels.
+typedef void (*panel_after_sync_io_func_t)(const void *cfg);
+
+
+
+typedef struct {
+
+  /// This function must implement all measures necessary to initialize the io devices to communicate to the panel.
+  panel_init_io_func_t init_io;
+  /// This function must implement the measures necessary to read out the key switch states and possibly ID from and to write the output data to the panel's hardware.
+  panel_sync_io_func_t sync_io;
+
+  panel_before_sync_io_func_t before_sync;
+  panel_after_sync_io_func_t after_sync;
+  
+  /// io implementation specific configuration data specifying configurable details of the io mechanisms.
+  void *config_data;
+  
+} panel_io_spec_t;
 
 
 
@@ -77,69 +112,13 @@ typedef struct {
 
 } panel_t;
 
-/// Initialize the io devices according to cfg.
-typedef void (*panel_init_io_func_t)(const void *cfg);
-/// Read key switch states of height rows of keys with width keys per row from the hardware into the ksw_states array,
-/// read the numeric ID value from the hardware into numeric_id
-/// and write out_size bytes of data contained in out_data to the hardware
-/// using the io configuration as given by cfg.
-typedef void (*panel_sync_io_func_t)(uint8_t ksw_states[][], uint8_t width, uint8_t height, uint8_t *numeric_id, bool gives_numeric_id, const out_data[], uint8_t out_size, const void *cfg);
-/// Run before syncing all panels.
-typedef void (*panel_before_sync_io_func_t)(const void *cfg);
-/// Run after syncing all panels.
-typedef void (*panel_after_sync_io_func_t)(const void *cfg);
 
 
-typedef struct {
+void pnl_init_io_all();
 
-  /// This function must implement all measures necessary to initialize the io devices to communicate to the panel.
-  panel_init_io_func_t init_io;
-  /// This function must implement the measures necessary to read out the key switch states and possibly ID from and to write the output data to the panel's hardware.
-  panel_sync_io_func_t sync_io;
+void pnl_sync_io_all();
 
-  panel_before_sync_io_func_t before_sync;
-  panel_after_sync_io_func_t after_sync;
-  
-  /// io implementation specific configuration data specifying configurable details of the io mechanisms.
-  void *config_data;
-  
-} panel_io_spec_t;
-
-
-
-void pnl_init_io_all() {
-  for (uint8_t i = 0; i < MAX_SUPPORTED_PANELS; ++i) {
-    pnl_init_io(&panel_processing[i]);
-  }
-}
-
-
-void pnl_init_io(panel_t *panel) {
-  panel->io_spec.init_io(panel->io_spec.config);
-}
-
-
-void pnl_sync_io_all() {
-  for (uint8_t i = 0; i < MAX_SUPPORTED_PANELS; ++i) {
-    if (panel_processing[i].io_spec.before_sync != NULL) {
-      panel_processing[i].io_spec.before_sync(&panel_processing[i]);
-    }
-  }
-  for (uint8_t i = 0; i < MAX_SUPPORTED_PANELS; ++i) {
-    pnl_sync_io(&panel_processing[i]);
-  }
-  for (uint8_t i = 0; i < MAX_SUPPORTED_PANELS; ++i) {
-    if (panel_processing[i].io_spec.after_sync != NULL) {
-      panel_processing[i].io_spec.after_sync(&panel_processing[i]);
-    }
-  }
-}
-
-
-void pnl_sync_io(panel_t *panel) {
-  uint8_t ksw_state_buffer_current[][] = panel->ksw_states[panel->ksw_states_previous_first ? 1 : 0];
-  panel->io_spec.sync_io(ksw_state_buffer_current, panel->width, panel->height, panel->numeric_id, panel->gives_numeric_id, panel->out_data, panel->out_size, panel->io_spec.config);
-}
+void pnl_process_keystate_changes_all();
 
 
 #endif // _PANEL_H_

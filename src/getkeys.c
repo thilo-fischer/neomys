@@ -23,10 +23,10 @@
 
 // keep track of the currently active keys
 #define ACTIVE_KEYS_LIST_LENGTH 8
-keyfunc_t active_keys_list[ACTIVE_KEYS_LIST_LENGTH] /*= {{0}}*/;
+symfunc_t active_keys_list[ACTIVE_KEYS_LIST_LENGTH] /*= {{0}}*/;
 size_t active_keys_count = 0;
 
-void active_keys_list_add(keyfunc_t keyfunc) {
+void active_keys_list_add(symfunc_t keyfunc) {
     if (active_keys_count < ACTIVE_KEYS_LIST_LENGTH) {
         active_keys_list[active_keys_count] = keyfunc;
         ++active_keys_count;
@@ -39,7 +39,7 @@ void active_keys_list_add(keyfunc_t keyfunc) {
  * If keyfunc is in list, remove it from there.
  * @return true if keyfunc was found in list, false otherwise.
  */
-bool active_keys_list_remove(keyfunc_t keyfunc) {
+bool active_keys_list_remove(symfunc_t keyfunc) {
     for (size_t idx = 0; idx < active_keys_count; ++idx) {
         if (active_keys_list[idx] == keyfunc) {
             memmove(&active_keys_list[idx],
@@ -201,6 +201,7 @@ static inline void clear_keychanges() {
     } // fixme: memset
 }
 
+#if 0 // XXX
 struct kchange_info_byte {
     keystate_t keystate : 1;
     uint8_t controller  : 1;
@@ -220,6 +221,7 @@ static inline void inform_kchange(keystate_t keystate, uint8_t controller, uint8
         info_add(*(uint8_t*)&chbyte);
     }
 }
+#endif
 
 void process_keychange(uint8_t controller, uint8_t row, uint8_t col) {
     const keyrecord_t *keyrecord = get_keyrecord(controller, row, col);

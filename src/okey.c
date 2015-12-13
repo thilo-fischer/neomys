@@ -15,7 +15,7 @@ int main(void) {
   while (true) {
     adp_await_next_cycle();
     pnl_sync_io_all();
-    pnl_process_keystate_changes();
+    pnl_process_keystate_changes_all();
     hcm_progress_out_keyseq();
   };
   return 0;

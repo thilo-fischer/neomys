@@ -13,8 +13,9 @@
 
 #include "io_spi01.h"
 #include "ucontroller_teensy-2.0.h"
-#include "userlayout_neomys.h"
+#include "ucontroller.h"
 
+#include "userlayout_neomys.h"
 
 const uint8_t MAX_SUPPORTED_PANELS = 4;
 
@@ -60,3 +61,8 @@ panel_t neomys_pnl_right = {
 };
 
 const panel_t panel_processing[] = { neomys_pnl_left, neomys_pnl_right };
+
+void adp_await_next_cycle() {
+    uc_sleep(10);
+}
+

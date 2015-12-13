@@ -12,13 +12,20 @@
 #ifndef _UCONTROLLER_H_
 #define _UCONTROLLER_H_
 
+#include <stdint.h>
+#include <stdbool.h>
+
 /// specifies a certain GPIO pin of the microcontroller
-typedef struct gpio_pin_t;
+struct gpio_pin_struct;
+typedef struct gpio_pin_struct gpio_pin_t;
 
 /// parameters to specify a certain SPI baudrate
-typedef struct spi_baudrate_t;
+struct spi_baudrate_struct;
+typedef struct spi_baudrate_struct spi_baudrate_t;
+
 /// parameters to specify a certain SPI baudrate
-typedef struct uart_baudrate_t;
+struct uart_baudrate_struct;
+typedef struct uart_baudrate_struct uart_baudrate_t;
 
 /// to specify application of a GPIO pin or to query its current application
 typedef enum {
@@ -40,19 +47,27 @@ typedef enum {
 /// initialize the controller: register at host computer as USB keyboard and controller specific initialization (e.g. set up timers, cpu prescaler, ...)
 void uc_init();
 
+/// transmit one byte via SPI.
+/// @param[out] mosi the value to send
+/// @param[in]  miso write the value received to this memory location
+void uc_spi_transmit_byte(uint8_t mosi, uint8_t *miso);
+
+/// sleep for specified number of milliseconds
+void uc_sleep(uint16_t milliseconds);
+
 
 /// helper function: set a single bit in an 8-bit register to a given value
-static inline void set_bit(uint8_t *register, uint8_t bitpos, bool state) {
+static inline void set_bit(uint8_t *address, uint8_t bitpos, bool state) {
   if (state) {
-    *register |=  (1 << bitpos);
+    *address |=  (1 << bitpos);
   } else {
-    *register &= ~(1 << bitpos);
+    *address &= ~(1 << bitpos);
   }
 }
 
 /// helper function: get the value of a single bit in a 8-bit register
-static inline bool get_bit(uint8_t *register, uint8_t bitpos) {
-  return (register & (1 << bitpos));
+static inline bool get_bit(uint8_t *address, uint8_t bitpos) {
+  return (*address & (1 << bitpos));
 }
 
 /// configure the operation mode of a GPIO pin
@@ -76,11 +91,5 @@ void gpio_outpin_opendrain_to_low(gpio_pin_t);
 void gpio_inpin_opendrain_to_pullup(gpio_pin_t);
 void gpio_inpin_pullup_to_opendrain(gpio_pin_t);
 ///@}
-
-/// transmit one byte via SPI.
-/// @param[out] mosi the value to send
-/// @param[in]  miso write the value received to this memory location
-void uc_spi_transmit_byte(uint8_t mosi, uint8_t *miso);
-
 
 #endif // _UCONTROLLER_H_

@@ -5,6 +5,18 @@
    This program is licenced under GPLv3.
 */
 
+/**
+  Central TODO list. Other TODO issues can be found scattered over the
+  source code marked with "FIXME" for important issues, "TODO" for
+  normal issues, "XXX" for minor issues (eclipse IDE TODO comment
+  convention).
+
+  @TODO FIXME provide LED to indicate current level
+  @TODO TODO display current target layout selection (extra hardware ?)
+  @TODO XXX autoadapt numlock/capslock/scrolllock/neo-levellock states based on keyboard led states
+
+ */
+
 
 #ifndef _OKEY_H_
 #define _OKEY_H_

@@ -41,22 +41,21 @@
 
 
 # Target file name (without extension).
-TARGET = neomys$(CTLR_SUFFIX)
+TARGET = okey
 
 
 # List C source files here. (C dependencies are automatically generated.)
-SRC =	$(TARGET).c \
-	keytranslation.c \
-	ctlrcomm.c \
-	getkeys.c \
-	inform.c \
-	io.c \
-	sendkeys.c \
-	uart.c \
-	usb_keyboard.c \
-	teensy_codelib/usb_keyboard/usb_keyboard.c \
-	teensy_codelib/uart/uart.c
-#	sendkeys.c \
+SRC =	src/$(TARGET).c \
+src/io_spi01.c \
+src/keystates.c \
+src/neomys_2015-02.c \
+src/okey.c \
+src/panel.c \
+src/sendkeys.c \
+src/symfunctions_common.c \
+src/ucontroller_teensy-2.0.c \
+src/usb_keyboard.c \
+src/userlayout_neomys_2015_02.c
 
 
 # MCU name, you MUST set this to match the board you are using
@@ -399,7 +398,7 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 
 # Default target.
-all: begin gccversion master slave end
+all: begin gccversion master end
 
 
 master:
