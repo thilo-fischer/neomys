@@ -25,6 +25,9 @@ typedef enum {
 } keystate_t;
 
 
+
+// FIXME neomys-specific
+
 enum neo_levels_e {
     // As we use level values as array indices, LEVEL1 must have value 0x00. (Using value 0x01 for LEVEL1 would make reading binary data during debugging somewhat more intuitive, but makes using values for array indexing more error prone.)
     LEVEL1 = 0x00,
@@ -49,6 +52,11 @@ enum neo_level_modifiers_e {
 
 extern enum neo_levels_e locked_level;
 extern uint8_t level_modifiers;
+
+/**
+ * Keyboard layout the USB host is configured to use.
+ */
+extern target_layout_t target_layout;
 
 
 #endif // _KEYHANDLING_H_

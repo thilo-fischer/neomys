@@ -20,6 +20,6 @@ const uint8_t MAX_SUPPORTED_PANELS;
 /// holds the specifications of the supported panels and defines the order in which the specified panels will be processed
 const panel_t panel_processing[MAX_SUPPORTED_PANELS];
 
-
+typedef enum level_t;
 
 #endif // _ADAPTATION_H_

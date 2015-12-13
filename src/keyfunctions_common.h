@@ -10,10 +10,3 @@
  * Commenly used key functions. 
  */
 
-#include "userlayout.h"
-
-KF(nop) {}
-
-KF(TODO) {
-    // FIXME signal error state
-}
