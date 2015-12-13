@@ -5,6 +5,17 @@
    This program is licenced under GPLv3.
 */
 
+#include <avr/io.h>
+
+#include "io_spi01.h"
+
+void io_spi01_rst(io_spi01_cfg_t *config, bool state);
+
+
+#define DDR_SPI DDRB
+#define DD_SCK  1
+#define DD_MOSI 2
+#define DD_MISO 3
 
 void io_spi01_init(void *cfg) {
 
@@ -26,17 +37,21 @@ void io_spi01_init(void *cfg) {
   io_spi01_rst(config, true);
 #endif
 
-  /* Set MOSI and SCK output, all others input */
-  DDR_SPI = (1<<DD_MOSI)|(1<<DD_SCK);
+  /* Set MOSI and SCK output */
+  DDR_SPI |= (1<<DD_MOSI)|(1<<DD_SCK);
+  /* Set MISO input */
+  DDR_SPI &= ~(1<<DD_MISO);
   /* Enable SPI, LSB first, Master, set clock rate fck/128 */
   SPCR = (1<<SPE)|(1<<DORD)|(1<<MSTR)|(1<<SPR1)|(1<<SPR0);
 }
 
 void io_spi01_before_sync(void *cfg) {
+  io_spi01_cfg_t *config = (io_spi01_cfg_t*) cfg;
   io_spi01_rst(config, false);
 }
 
 void io_spi01_after_sync(void *cfg) {
+  io_spi01_cfg_t *config = (io_spi01_cfg_t*) cfg;
   io_spi01_rst(config, true);
 }
 

@@ -38,7 +38,16 @@ typedef void (*panel_init_io_func_t)(const void *cfg);
 /// read the numeric ID value from the hardware into numeric_id
 /// and write out_size bytes of data contained in out_data to the hardware
 /// using the io configuration as given by cfg.
-typedef void (*panel_sync_io_func_t)(uint8_t ksw_states[][], uint8_t width, uint8_t height, uint8_t *numeric_id, bool gives_numeric_id, const uint8_t out_data[], uint8_t out_size, const void *cfg);
+typedef void (*panel_sync_io_func_t)(
+                                     uint8_t *ksw_states,
+                                     uint8_t width,
+                                     uint8_t height,
+                                     uint8_t *numeric_id,
+                                     bool gives_numeric_id,
+                                     const uint8_t out_data[],
+                                     uint8_t out_size,
+                                     const void *cfg
+                                     );
 /// Run before syncing all panels.
 typedef void (*panel_before_sync_io_func_t)(const void *cfg);
 /// Run after syncing all panels.
@@ -67,18 +76,22 @@ typedef struct {
   /// @name Configuration values
   ///@{
   
-  /// The number of (logical) key switch columns of the panel. Default: 8
-  const uint8_t width;
   /// The number of (logical) key switch rows of the panel. Default: 7
   const uint8_t height;
-  /// Whether a numeric ID of the panel will be provided after the last row. Default: true
+  /// The number of (logical) key switch columns of the
+  /// panel. Default: 8
+  const uint8_t width;
+  /// Whether a numeric ID of the panel will be provided after the
+  /// last row. Default: true
   const bool gives_numeric_id;
 
-  /// The number of bytes to send to the panel (to drive indicators of the panel's hardware). Default: 2
+  /// The number of bytes to send to the panel (to drive indicators of
+  /// the panel's hardware). Default: 2
   const uint8_t out_size;
   
-  /// specifies the mechanisms to use to read out the key switch states from the hardware
-  /// and to drive indicators (LEDs and such) of the panel's hardware
+  /// specifies the mechanisms to use to read out the key switch
+  /// states from the hardware and to drive indicators (LEDs and such)
+  /// of the panel's hardware
   const panel_io_spec_t io_spec;
 
   ///@}
@@ -96,7 +109,7 @@ typedef struct {
   ///@{
 
   /// Buffers all *k*ey *sw*itch states of the panel for the previous and the current cycle.
-  uint8_t ksw_states[2][height][BYTES_PER_ROW(width)];
+  uint8_t *ksw_states;
   /// If true, find the *k*ey *sw*itch states of the previous cycle at ksw_states[0] and
   /// those of the current cycle at ksw_states[1]; if false, it's the other way around.
   /// By toggling this value each cycle, copying form current to previous buffer is not
@@ -105,7 +118,7 @@ typedef struct {
 
   uint8_t numeric_id;
 
-  uint8_t out_data[out_size];
+  uint8_t out_data[];
   
   ///@}
 

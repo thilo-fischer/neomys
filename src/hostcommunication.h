@@ -10,6 +10,9 @@
 #ifndef _HOSTCOMMUNICATION_H_
 #define _HOSTCOMMUNICATION_H_
 
+#include "sendkeys.h"
+#include "usb_keyboard.h"
+
 // temporarily: alias to previous API
 #define hcm_progress_out_keyseq progress_keyseq_queue
 

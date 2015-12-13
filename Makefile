@@ -48,13 +48,14 @@ TARGET = okey
 SRC =	src/$(TARGET).c \
 src/io_spi01.c \
 src/keystates.c \
-src/neomys_2015-02.c \
 src/okey.c \
 src/panel.c \
 src/sendkeys.c \
 src/symfunctions_common.c \
 src/ucontroller_teensy-2.0.c \
 src/usb_keyboard.c \
+src/adaptation_neomys_2015-02.c \
+src/panel_neomys_2015-02.c \
 src/userlayout_neomys_2015_02.c
 
 

@@ -10,7 +10,7 @@
 
 // add definitions for additional scancodes we wanna use not included in teensy usb_keyboard.h
 
-#include <SDL/SDL_scancode.h>
+#include "../extern/SDL/SDL_scancode.h"
 
 #define KEY_ISO_EXTRA SDL_SCANCODE_NONUSBACKSLASH
 

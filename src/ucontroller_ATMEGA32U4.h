@@ -22,9 +22,9 @@ typedef enum {
 } ioport_t;
 
 /// @see ucontroller.h:gpio_pin_t
-typedef struct {
+struct gpio_pin_struct {
     ioport_t port;  ///< port the GPIO pin belongs to
     uint8_t bitpos; ///< bit position of the pin in its port
-} gpio_pin_t;
+};
 
 

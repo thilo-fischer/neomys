@@ -8,7 +8,9 @@
 #include "ucontroller.h"
 #include "panel.h"
 #include "adaptation.h"
-#include "hostcomm.h"
+#include "hostcommunication.h"
+
+static void init();
 
 int main(void) {
   init();
@@ -21,7 +23,7 @@ int main(void) {
   return 0;
 }
 
-void init() {
+static void init() {
   uc_init();
   pnl_init_io_all();
 }

@@ -40,7 +40,7 @@ uint8_t *const PIN_REGISTERS [IOPORT_COUNT] = {PINB , PINC , PIND , PINE , PINF 
 
 
 void uc_init() {
-    
+    init_usb_keyboard();
 }
 
 void uc_spi_transmit_byte(uint8_t mosi, uint8_t *miso) {

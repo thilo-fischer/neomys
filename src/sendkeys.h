@@ -8,7 +8,6 @@
 #ifndef SENDKEYS_H_
 #define SENDKEYS_H_
 
-#include "neomys.h"
 #include "keyhandling.h"
 
 void progress_keyseq_queue();

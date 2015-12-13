@@ -15,12 +15,13 @@
 #include "panel.h"
 
 /// The maximum number of panels that can be driven by this controller (1 master panel and (MAX_SUPPORTED_PANELS-1) slave panels)
-const uint8_t MAX_SUPPORTED_PANELS;
+extern const uint8_t MAX_SUPPORTED_PANELS;
 
 /// holds the specifications of the supported panels and defines the order in which the specified panels will be processed
-const panel_t panel_processing[MAX_SUPPORTED_PANELS];
+extern const panel_t panel_processing[];
 
-typedef enum level_t;
+enum level_enum;
+typedef enum level_enum level_t;
 
 void adp_await_next_cycle();
 
