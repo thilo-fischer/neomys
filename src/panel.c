@@ -14,6 +14,50 @@ void pnl_sync_io(panel_t *panel);
 void pnl_process_keystate_changes(panel_t *panel);
 
 
+static inline uint8_t *pnl_get_single_ksw_state_buffer(uint8_t buffer_idx, panel_t *panel) {
+  const uint8_t single_buffer_size = panel->height * bitcount_to_bytecount(panel->width);
+  return panel->ksw_states + single_buffer_size * buffer_idx;
+}
+
+static inline uint8_t *pnl_get_current_ksw_state_buffer(panel_t *panel) {
+  return pnl_get_single_ksw_state_buffer(panel->ksw_states_previous_first ? 1 : 0, panel);
+}
+
+static inline uint8_t *pnl_get_previous_ksw_state_buffer(panel_t *panel) {
+  return pnl_get_single_ksw_state_buffer(panel->ksw_states_previous_first ? 0 : 1, panel);
+}
+
+static inline uint8_t *pnl_get_ksw_state_byte_address(uint8_t *buffer, uint8_t row, uint8_t col, const panel_t *panel) {
+  const uint8_t byte_at_row   = col / 8;
+  const uint8_t bytes_per_row = bitcount_to_bytecount(panel->width);
+  return buffer + row * bytes_per_row + byte_at_row;
+}
+
+static inline bool pnl_get_ksw_state_from_buffer(uint8_t *buffer, uint8_t row, uint8_t col, const panel_t *panel) {
+  const uint8_t bitpos       = col % 8;
+  uint8_t *const byteaddress = pnl_get_ksw_state_byte_address(buffer, row, col, panel);
+  return get_bit(byteaddress, bitpos);
+}
+
+static inline bool pnl_get_ksw_state_current(uint8_t row, uint8_t col, panel_t *panel) {
+  return pnl_get_ksw_state_from_buffer(pnl_get_current_ksw_state_buffer(panel), row, col, panel);
+}
+
+static inline bool pnl_get_ksw_state_previous(uint8_t row, uint8_t col, panel_t *panel) {
+  return pnl_get_ksw_state_from_buffer(pnl_get_previous_ksw_state_buffer(panel), row, col, panel);
+}
+
+static inline void pnl_set_ksw_state_in_buffer(uint8_t *buffer, uint8_t row, uint8_t col, const panel_t *panel, bool state) {
+  const uint8_t bitpos       = col % 8;
+  uint8_t *const byteaddress = pnl_get_ksw_state_byte_address(buffer, row, col, panel);
+  set_bit(byteaddress, bitpos, state);
+}
+
+static inline void pnl_set_ksw_state_current(uint8_t row, uint8_t col, panel_t *panel, bool state) {
+  pnl_set_ksw_state_from_buffer(pnl_get_current_ksw_state_buffer(panel), row, col, panel, state);
+}
+
+
 void pnl_init_io_all() {
   for (uint8_t i = 0; i < MAX_SUPPORTED_PANELS; ++i) {
     pnl_init_io(&panel_processing[i]);
