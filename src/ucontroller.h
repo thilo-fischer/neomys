@@ -56,20 +56,6 @@ void uc_spi_transmit_byte(uint8_t mosi, uint8_t *miso);
 void uc_sleep(uint16_t milliseconds);
 
 
-/// helper function: set a single bit in an 8-bit register to a given value
-static inline void set_bit(uint8_t *address, uint8_t bitpos, bool state) {
-  if (state) {
-    *address |=  (1 << bitpos);
-  } else {
-    *address &= ~(1 << bitpos);
-  }
-}
-
-/// helper function: get the value of a single bit in a 8-bit register
-static inline bool get_bit(uint8_t *address, uint8_t bitpos) {
-  return (*address & (1 << bitpos));
-}
-
 /// configure the operation mode of a GPIO pin
 void gpio_pin_init(gpio_pin_t pin, gpio_state_t state);
 /// query the operation mode of a GPIO pin

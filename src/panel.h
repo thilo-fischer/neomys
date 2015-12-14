@@ -26,11 +26,6 @@ struct userlayout_struct;
 typedef struct userlayout_struct userlayout_t;
 
 
-// Computes the number of bytes necessary to store all key switch states of one row.
-// (One key switch states corresponds to one bit.)
-#define BYTES_PER_ROW(width) ((width + 7) / 8)
-
-
 
 /// Initialize the io devices according to cfg.
 typedef void (*panel_init_io_func_t)(const void *cfg);

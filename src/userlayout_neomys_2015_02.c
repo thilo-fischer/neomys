@@ -40,6 +40,11 @@ level_t current_levels[LVR_COUNT] = { LVL_DEFAULT, LVL_DEFAULT, LVL_DEFAULT };
 
 // definitions of user layouts
 
+// Array elemets not given an initialization value will be initialzed
+// to 0. Thus,
+// my_userlayout[index_of_element_without_explicit_initialization_value]
+// == NULL. (0 == NULL is guaranteed by the C standard.)
+
 const userlayout_t ulo_neomys_left = {
     { kf_dead_circumfex, kf_1, kf_2, kf_3, kf_4, kf_5 },
     { kf_level4mod_left, kf_X, kf_V, kf_L, kf_C, kf_w },
