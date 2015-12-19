@@ -9,6 +9,9 @@
  * Implements the ucontroller.h API for the ATMEGA32U4 microcontroller (and probably other microcontrollers of the same family).
  */
 
+#ifndef _UCONTROLLER_ATMEGA32U4_H_
+#define _UCONTROLLER_ATMEGA32U4_H_
+
 #include "ucontroller.h"
 
 /// the GPIO ports (groups of 8 GPIO pins) of this micro controller
@@ -28,3 +31,4 @@ struct gpio_pin_struct {
 };
 
 
+#endif // _UCONTROLLER_ATMEGA32U4_H_

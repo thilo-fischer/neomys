@@ -26,7 +26,7 @@ static inline uint8_t bitcount_to_bytecount(uint8_t bitcount) {
 
 
 /// set a single bit in a byte to a given value (not changing any of the other bits)
-static inline void set_bit(uint8_t *byteaddress, uint8_t bitpos, bool state) {
+static inline void set_bit(volatile uint8_t *byteaddress, uint8_t bitpos, bool state) {
   if (state) {
     *byteaddress |=  (1 << bitpos);
   } else {
@@ -35,7 +35,7 @@ static inline void set_bit(uint8_t *byteaddress, uint8_t bitpos, bool state) {
 }
 
 /// get the value of a single bit in a byte
-static inline bool get_bit(uint8_t *byteaddress, uint8_t bitpos) {
+static inline bool get_bit(volatile uint8_t *byteaddress, uint8_t bitpos) {
   return (*byteaddress & (1 << bitpos));
 }
 

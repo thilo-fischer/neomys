@@ -12,6 +12,9 @@
 #ifndef _ADAPTATION_H_
 #define _ADAPTATION_H_
 
+#include <stdint.h>
+#include <stdbool.h>
+
 // forward declaration
 struct panel_struct;
 typedef struct panel_struct panel_t;
@@ -26,7 +29,5 @@ enum level_enum;
 typedef enum level_enum level_t;
 
 void adp_await_next_cycle();
-
-extern level_t g_effective_levels[];
 
 #endif // _ADAPTATION_H_

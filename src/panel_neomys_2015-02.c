@@ -11,7 +11,7 @@
  */
 
 #include "panel.h"
-#include "userlayout_neomys.h"
+#include "userlayout_neomys_2015-02.h"
 
 const uint8_t MAX_SUPPORTED_PANELS = 4;
 

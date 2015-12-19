@@ -26,8 +26,9 @@ enum level_enum {
 
 #include "userlayout.h"
 
-const userlayout_t ulo_neomys_left;
-const userlayout_t ulo_neomys_right;
+extern const userlayout_t ulo_neomys_left;
+extern const userlayout_t ulo_neomys_right;
 
+extern level_t g_effective_levels[]; // XXX move elsewhere
 
 #endif // _USERLAYOUT_NEOMYS_2015_02_H_

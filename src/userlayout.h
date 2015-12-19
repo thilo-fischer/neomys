@@ -112,7 +112,7 @@
 /// with the other key functions).
 ///
 /// @param[in] targetlayout the current target layout. Will normally not be evaluated by the key function itself but 
-typedef void (*keyfunc_t)(level_t effective_levels[], targetlayout_t targetlayout, keystate_t event);
+typedef void (*keyfunc_t)(level_t *effective_levels, targetlayout_t targetlayout, keystate_t event);
 
 /// The type for user layouts. Refers to a pointer to a
 /// two-dimensional array with the height according to the number of
@@ -130,7 +130,7 @@ typedef void (*symfunc_t)(targetlayout_t targetlayout, keystate_t event);
 /// Function header for `key functions', i.e. functions referenced
 /// directly from the layout that call the `symbol functions'
 /// according to the currently active level modifiers.
-#define KF(name) static void kf_##name(level_t effective_levels[], targetlayout_t targetlayout, keystate_t event)
+#define KF(name) static void kf_##name(level_t *effective_levels, targetlayout_t targetlayout, keystate_t event)
 
 
 /// Function header for `symbol functions', i.e. functions called from

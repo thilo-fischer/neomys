@@ -16,11 +16,16 @@
 
 #include "usb_keyboard.h"
 
-#include "neomys.h"
-#include "delay_wrapper.h"
+#include "ucontroller.h"
+
 
 #define KEYBOARD_KEYS_CNT 6
 //(sizeof(keyboard_keys)/sizeof(keyboard_keys[0]))
+
+// FIXME
+#define inform(a, b)
+#define info_add(x)
+#define info_uart(x)
 
 static inline uint8_t *find_keyboard_key(uint8_t key);
 static inline void inform_usb_keys();
@@ -36,11 +41,11 @@ void init_usb_keyboard() {
     // this will wait forever.
     usb_init();
     while (!usb_configured()) {
-        _delay_ms(5);
+        uc_sleep(5);
     };
     // Wait an extra second for the PC's operating system to load drivers
     // and do whatever it does to actually be ready for input
-    _delay_ms(1000);
+    uc_sleep(1000);
 }
 
 
@@ -82,7 +87,9 @@ void send_keys_usb() {
 }
 
 
+// FIXME
 static inline void inform_usb_keys() {
+#if 0
     if (info_uart(IL_DBG)) {
         inform(IL_DBG, SC_DBG_USB_KEYS);
         info_add(keyboard_modifier_keys);
@@ -90,4 +97,5 @@ static inline void inform_usb_keys() {
             info_add(keyboard_keys[i]);
         }
     }
+#endif
 }

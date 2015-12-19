@@ -10,8 +10,13 @@
  */
 
 #include <avr/io.h>
+#include <util/delay.h>
 
 #include "ucontroller_ATMEGA32U4.h"
+
+#include "util.h"
+#include "usb_keyboard.h"
+
 
 // FIXME why are these symbols not known from iom32u4.h ?!?
 #define DDRB  _SFR_IO8(0x04)
@@ -30,12 +35,11 @@
 #define PORTF _SFR_IO8(0x11)
 #define PINF  _SFR_IO8(0x0F)
 
-
 /// arrays allow mapping from ioport_t to the according registers
 ///@{
-uint8_t *const DDR_REGISTERS [IOPORT_COUNT] = {DDRB , DDRC , DDRD , DDRE , DDRF };
-uint8_t *const PORT_REGISTERS[IOPORT_COUNT] = {PORTB, PORTC, PORTD, PORTE, PORTF};
-uint8_t *const PIN_REGISTERS [IOPORT_COUNT] = {PINB , PINC , PIND , PINE , PINF };
+volatile uint8_t *const DDR_REGISTERS [IOPORT_COUNT] = {&DDRB , &DDRC , &DDRD , &DDRE , &DDRF };
+volatile uint8_t *const PORT_REGISTERS[IOPORT_COUNT] = {&PORTB, &PORTC, &PORTD, &PORTE, &PORTF};
+volatile uint8_t *const PIN_REGISTERS [IOPORT_COUNT] = {&PINB , &PINC , &PIND , &PINE , &PINF };
 ///@}
 
 
@@ -49,7 +53,7 @@ void uc_spi_transmit_byte(uint8_t mosi, uint8_t *miso) {
   // busy wait for transmission complete
   while(!(SPSR & (1<<SPIF)));
   // write data received to destination
-  *mosi = SPDR;
+  *miso = SPDR;
 }
 
 
@@ -85,20 +89,20 @@ void gpio_pin_init(gpio_pin_t pin, gpio_state_t state) {
   }
 }
 
-gpio_state_t gpio_pin_get_state(gpio_pin_t) {
-  bool ddr = get_bit(DDR_REGISTERS [pin.port], pin.bitpos);
-  if (ddr) {
+gpio_state_t gpio_pin_get_state(gpio_pin_t pin) {
+  bool flag_ddr = get_bit(DDR_REGISTERS [pin.port], pin.bitpos);
+  if (flag_ddr) {
     // output pin
-    bool port = get_bit(PORT_REGISTERS[pin.port], pin.bitpos);
-    if (port) {
+    bool flag_port = get_bit(PORT_REGISTERS[pin.port], pin.bitpos);
+    if (flag_port) {
       return GPIO_OUT_HIGH;
     } else {
       return GPIO_OUT_LOW;
     }
   } else {
     // input pin
-    bool pin = get_bit(PIN_REGISTERS [pin.port], pin.bitpos);
-    if (pin) {
+    bool flag_pin = get_bit(PIN_REGISTERS [pin.port], pin.bitpos);
+    if (flag_pin) {
       return GPIO_IN_HIGH;
     } else {
       return GPIO_IN_LOW;
@@ -110,7 +114,7 @@ void gpio_outpin_set(gpio_pin_t pin, bool state) {
   set_bit(PORT_REGISTERS[pin.port], pin.bitpos, state);
 }
 
-bool gpio_inpin_get(gpio_pin_t) {
+bool gpio_inpin_get(gpio_pin_t pin) {
   return get_bit(PIN_REGISTERS [pin.port], pin.bitpos);
 }
 
@@ -119,7 +123,7 @@ bool gpio_inpin_get(gpio_pin_t) {
 // => function not implemented for this controller!
 void gpio_outpin_high_to_opendrain(gpio_pin_t);
 
-void gpio_outpin_low_to_opendrain(gpio_pin_t) {
+void gpio_outpin_low_to_opendrain(gpio_pin_t pin) {
   set_bit(DDR_REGISTERS [pin.port], pin.bitpos, false);
 }
 
@@ -127,16 +131,16 @@ void gpio_outpin_low_to_opendrain(gpio_pin_t) {
 // => function not implemented for this controller!
 void gpio_outpin_opendrain_to_high(gpio_pin_t);
 
-void gpio_outpin_opendrain_to_low(gpio_pin_t) {
+void gpio_outpin_opendrain_to_low(gpio_pin_t pin) {
   set_bit(DDR_REGISTERS [pin.port], pin.bitpos, true );
 }
 
 
-void gpio_inpin_opendrain_to_pullup(gpio_pin_t) {
+void gpio_inpin_opendrain_to_pullup(gpio_pin_t pin) {
   set_bit(PORT_REGISTERS[pin.port], pin.bitpos, true );
 }
 
-void gpio_inpin_pullup_to_opendrain(gpio_pin_t) {
+void gpio_inpin_pullup_to_opendrain(gpio_pin_t pin) {
   set_bit(PORT_REGISTERS[pin.port], pin.bitpos, false);
 }
 

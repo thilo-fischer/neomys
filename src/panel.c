@@ -11,6 +11,8 @@
 
 #include "adaptation.h"
 
+#include "userlayout_neomys_2015_02.h" // FIXME for level_t
+
 
 void pnl_init_io(panel_t *panel);
 void pnl_sync_io(panel_t *panel);

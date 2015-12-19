@@ -10,6 +10,7 @@
  */
 
 #include "adaptation.h"
+#include "io_spi01.h"
 
 io_spi01_cfg_t neomys_io_cfg = {
   .rst_pin = { IOPORT_B, 0 },
