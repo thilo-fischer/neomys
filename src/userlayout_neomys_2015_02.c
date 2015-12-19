@@ -14,18 +14,6 @@
 
 
 typedef enum {
-    LVL_DEFAULT, ///< the default level active when no level modifiers are active
-    LVL_SHIFT,   ///< the level associated with the shift modifier
-    LVL_3,       ///< Neo2 level 3
-    LVL_4,       ///< Neo2 level 4
-    LVL_4M,      ///< neomys special mouse level derived from Neo2 level 4
-    LVL_5,       ///< Neo2 level 5
-    LVL_6,       ///< Neo2 level 6
-    LVL_COUNT    ///< number of known levels
-} level_t;
-
-
-typedef enum {
     LVR_MAIN,  ///< regular level, applies to all letter keys
     LVR_IL2L,  ///< level reached when ignoring level-2-lock, applies to number and punctuation character keys
     LVR_IGNORE_ANY_LOCK,
@@ -33,7 +21,7 @@ typedef enum {
 } level_variants_t;
 
 
-level_t current_levels[LVR_COUNT] = { LVL_DEFAULT, LVL_DEFAULT, LVL_DEFAULT };
+level_t g_effective_levels[LVR_COUNT] = { LVL_DEFAULT, LVL_DEFAULT, LVL_DEFAULT };
 
 #include "keyfunctions_common.c"
 #include "keyfunctions_neomys_2015_02.c"

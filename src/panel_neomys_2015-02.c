@@ -63,5 +63,5 @@ panel_t neomys_pnl_right = {
   .out_data = neomys_pnl_right_out_buffer,
 };
 
-const panel_t panel_processing[] = { neomys_pnl_left, neomys_pnl_right };
+panel_t * const panel_processing[] = { &neomys_pnl_left, &neomys_pnl_right };
 

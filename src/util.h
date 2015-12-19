@@ -8,8 +8,9 @@
 #ifndef _UTIL_H_
 #define _UTIL_H_
 
-#include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 /// Computes the number of bytes necessary to store all key switch
 /// states of one row.  (One key switch states corresponds to one bit.)

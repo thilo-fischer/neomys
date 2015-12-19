@@ -10,9 +10,41 @@
  * Commenly used symbol functions. 
  */
 
+#include "../teensy_codelib/usb_keyboard/usb_keyboard.h"
+#include "usb_keyboard.h"
+
 #include "keyhandling.h"
 #include "sendkeys.h"
-#include "keytranslation.h" // for target_layout
+#include "userlayout.h" // SF macro
+#include "targetlayout.h"
+
+
+// FIXME neomys-specific
+
+enum neo_levels_e {
+    // As we use level values as array indices, LEVEL1 must have value 0x00. (Using value 0x01 for LEVEL1 would make reading binary data during debugging somewhat more intuitive, but makes using values for array indexing more error prone.)
+    LEVEL1 = 0x00,
+    LEVEL2,
+    LEVEL3,
+    LEVEL4,
+    LEVEL4_MOUSE,
+    LEVEL5,
+    LEVEL6,
+    LEVEL_COUNT
+};
+
+enum neo_level_modifiers_e {
+    LM2_L = 0x01,
+    LM2_R = 0x02,
+    LM3_L = 0x04,
+    LM3_R = 0x08,
+    LM4_L = 0x10,
+    LM4_R = 0x20,
+};
+
+enum neo_level_modifiers_e level_modifiers = 0;
+enum neo_levels_e locked_level = LEVEL1;
+
 
 SF(nop) {}
 
@@ -22,21 +54,21 @@ SF(TODO) {
 
 SF(next_target_layout) {
     if (event == KS_PRESS) {
-        ++target_layout;
-        if (target_layout == TL_COUNT) {
-            target_layout = TL_NEO;
+        ++g_current_targetlayout;
+        if (g_current_targetlayout == TGL_COUNT) {
+            g_current_targetlayout = TGL_NEO;
         }
         // FIXME inform(IL_INFO, SC_INFO_SWITCH_TARGET_LAYOUT);
-        // FIXME info_add(target_layout);
+        // FIXME info_add(g_current_targetlayout);
     }
 }
 
 SF(prev_target_layout) {
     if (event == KS_PRESS) {
-        if (target_layout == TL_NEO) {
-            target_layout = TL_COUNT;
+        if (g_current_targetlayout == TGL_NEO) {
+            g_current_targetlayout = TGL_COUNT;
         }
-        --target_layout;
+        --g_current_targetlayout;
         // FIXME inform(IL_INFO, SC_INFO_SWITCH_TARGET_LAYOUT);
         // FIXME info_add(target_layout);
     }
@@ -107,7 +139,7 @@ static inline bool handle_level_mod(target_layout_t tl, enum neo_level_modifiers
     affect_levellock(mod, also_mod, lock_candidate, event);
     // Inform the host about the modifier event only if it uses the NEO layout and thus knows how to handle the modifier correctly. It is very unlikely the user wants to use modifier+mouseclick or modifier+return, esp. if the host uses another layout than the NEO layout.
     // Inform the host about the modifier event only if this won't affect a levellock. We will take care of level locking in the neomys firmware and hide any level locking events from the Neo driver on the host. We want to assure locking state of neomys and of the host's Neo driver can never go out of sync, also Neo driver does not always allow locking of all levels and does not even know of LEVEL4_MOUSE (which we also want to be able lock).
-    return (tl == TL_NEO) && ((level_modifiers & also_mod) == 0);
+    return (tl == TGL_NEO) && ((level_modifiers & also_mod) == 0);
 }
 
 SF(level2mod_left) {
@@ -170,9 +202,9 @@ SF(alt_left) {
 
 SF(alt_right) {
     switch (targetlayout) {
-    case TL_NEO:
-    case TL_DE:
-    case TL_DE_NODEAD:
+    case TGL_NEO:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
         kev_modifier(KEY_ALT, event);
         break;
     default:
@@ -274,7 +306,7 @@ SF(0) {
 
 SF(A) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_D, event);
         break;
     default:
@@ -284,7 +316,7 @@ SF(A) {
 
 SF(B) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_N, event);
         break;
     default:
@@ -294,7 +326,7 @@ SF(B) {
 
 SF(C) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_R, event);
         break;
     default:
@@ -304,7 +336,7 @@ SF(C) {
 
 SF(D) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_SEMICOLON, event);
         break;
     default:
@@ -314,7 +346,7 @@ SF(D) {
 
 SF(E) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_F, event);
         break;
     default:
@@ -324,7 +356,7 @@ SF(E) {
 
 SF(F) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_O, event);
         break;
     default:
@@ -334,7 +366,7 @@ SF(F) {
 
 SF(G) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_I, event);
         break;
     default:
@@ -344,7 +376,7 @@ SF(G) {
 
 SF(H) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_U, event);
         break;
     default:
@@ -354,7 +386,7 @@ SF(H) {
 
 SF(I) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_S, event);
         break;
     default:
@@ -364,7 +396,7 @@ SF(I) {
 
 SF(J) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_SLASH, event);
         break;
     default:
@@ -374,7 +406,7 @@ SF(J) {
 
 SF(K) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_Y, event);
         break;
     default:
@@ -384,7 +416,7 @@ SF(K) {
 
 SF(L) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_E, event);
         break;
     default:
@@ -394,7 +426,7 @@ SF(L) {
 
 SF(M) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_M, event);
         break;
     default:
@@ -404,7 +436,7 @@ SF(M) {
 
 SF(N) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_J, event);
         break;
     default:
@@ -414,7 +446,7 @@ SF(N) {
 
 SF(O) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_G, event);
         break;
     default:
@@ -424,7 +456,7 @@ SF(O) {
 
 SF(P) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_V, event);
         break;
     default:
@@ -434,7 +466,7 @@ SF(P) {
 
 SF(Q) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_P, event);
         break;
     default:
@@ -444,7 +476,7 @@ SF(Q) {
 
 SF(R) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_K, event);
         break;
     default:
@@ -454,7 +486,7 @@ SF(R) {
 
 SF(S) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_H, event);
         break;
     default:
@@ -464,7 +496,7 @@ SF(S) {
 
 SF(T) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_L, event);
         break;
     default:
@@ -474,7 +506,7 @@ SF(T) {
 
 SF(U) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_A, event);
         break;
     default:
@@ -484,7 +516,7 @@ SF(U) {
 
 SF(V) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_W, event);
         break;
     default:
@@ -494,7 +526,7 @@ SF(V) {
 
 SF(W) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_T, event);
         break;
     default:
@@ -504,7 +536,7 @@ SF(W) {
 
 SF(X) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_Q, event);
         break;
     default:
@@ -514,12 +546,12 @@ SF(X) {
 
 SF(Y) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_QUOTE, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_Z, event);
         break;
     default:
@@ -529,12 +561,12 @@ SF(Y) {
 
 SF(Z) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_B, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_Y, event);
         break;
     default:
@@ -544,12 +576,12 @@ SF(Z) {
 
 SF(AUML) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_C, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_QUOTE, event);
         break;
     default:
@@ -559,12 +591,12 @@ SF(AUML) {
 
 SF(OUML) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_X, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_SEMICOLON, event);
         break;
     default:
@@ -574,12 +606,12 @@ SF(OUML) {
 
 SF(UUML) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_Z, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_LEFT_BRACE, event);
         break;
     default:
@@ -589,7 +621,7 @@ SF(UUML) {
 
 SF(ESZETT) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_LEFT_BRACE, event);
         break;
     default:
@@ -602,7 +634,7 @@ SF(ESZETT) {
 
 SF(a) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_D, event);
         break;
     default:
@@ -612,7 +644,7 @@ SF(a) {
 
 SF(b) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_N, event);
         break;
     default:
@@ -622,7 +654,7 @@ SF(b) {
 
 SF(c) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_R, event);
         break;
     default:
@@ -632,7 +664,7 @@ SF(c) {
 
 SF(d) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_SEMICOLON, event);
         break;
     default:
@@ -642,7 +674,7 @@ SF(d) {
 
 SF(e) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_F, event);
         break;
     default:
@@ -652,7 +684,7 @@ SF(e) {
 
 SF(f) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_O, event);
         break;
     default:
@@ -662,7 +694,7 @@ SF(f) {
 
 SF(g) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_I, event);
         break;
     default:
@@ -672,7 +704,7 @@ SF(g) {
 
 SF(h) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_U, event);
         break;
     default:
@@ -682,7 +714,7 @@ SF(h) {
 
 SF(i) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_S, event);
         break;
     default:
@@ -692,7 +724,7 @@ SF(i) {
 
 SF(j) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_SLASH, event);
         break;
     default:
@@ -702,7 +734,7 @@ SF(j) {
 
 SF(k) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_Y, event);
         break;
     default:
@@ -712,7 +744,7 @@ SF(k) {
 
 SF(l) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_E, event);
         break;
     default:
@@ -722,7 +754,7 @@ SF(l) {
 
 SF(m) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_M, event);
         break;
     default:
@@ -732,7 +764,7 @@ SF(m) {
 
 SF(n) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_J, event);
         break;
     default:
@@ -742,7 +774,7 @@ SF(n) {
 
 SF(o) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_G, event);
         break;
     default:
@@ -752,7 +784,7 @@ SF(o) {
 
 SF(p) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_V, event);
         break;
     default:
@@ -762,7 +794,7 @@ SF(p) {
 
 SF(q) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_P, event);
         break;
     default:
@@ -772,7 +804,7 @@ SF(q) {
 
 SF(r) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_K, event);
         break;
     default:
@@ -782,7 +814,7 @@ SF(r) {
 
 SF(s) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_H, event);
         break;
     default:
@@ -792,7 +824,7 @@ SF(s) {
 
 SF(t) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_L, event);
         break;
     default:
@@ -802,7 +834,7 @@ SF(t) {
 
 SF(u) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_A, event);
         break;
     default:
@@ -812,7 +844,7 @@ SF(u) {
 
 SF(v) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_W, event);
         break;
     default:
@@ -822,7 +854,7 @@ SF(v) {
 
 SF(w) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_T, event);
         break;
     default:
@@ -832,7 +864,7 @@ SF(w) {
 
 SF(x) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_Q, event);
         break;
     default:
@@ -842,12 +874,12 @@ SF(x) {
 
 SF(y) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_QUOTE, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_plain(KEY_Z, event);
         break;
     default:
@@ -857,12 +889,12 @@ SF(y) {
 
 SF(z) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_B, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_plain(KEY_Y, event);
         break;
     default:
@@ -872,12 +904,12 @@ SF(z) {
 
 SF(auml) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_C, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_plain(KEY_QUOTE, event);
         break;
     default:
@@ -887,12 +919,12 @@ SF(auml) {
 
 SF(ouml) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_X, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_plain(KEY_SEMICOLON, event);
         break;
     default:
@@ -902,12 +934,12 @@ SF(ouml) {
 
 SF(uuml) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_Z, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_plain(KEY_LEFT_BRACE, event);
         break;
     default:
@@ -917,12 +949,12 @@ SF(uuml) {
 
 SF(eszett) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_LEFT_BRACE, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_plain(KEY_MINUS, event);
         break;
     default:
@@ -938,7 +970,7 @@ SF(space) {
 
 SF(exclamation_mark) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_Y, event);
         break;
     default:
@@ -948,12 +980,12 @@ SF(exclamation_mark) {
 
 SF(straight_dbl_quote) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_COMMA, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_2, event);
         break;
     default:
@@ -963,12 +995,12 @@ SF(straight_dbl_quote) {
 
 SF(hash) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_Z, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_plain(KEY_BACKSLASH, event);
         break;
     default:
@@ -978,7 +1010,7 @@ SF(hash) {
 
 SF(dollar) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_X, event);
         break;
     default:
@@ -988,7 +1020,7 @@ SF(dollar) {
 
 SF(percent) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_M, event);
         break;
     default:
@@ -998,7 +1030,7 @@ SF(percent) {
 
 SF(ampersand) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_P, event);
         break;
     default:
@@ -1008,12 +1040,12 @@ SF(ampersand) {
 
 SF(apostrophe) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_PERIOD, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_BACKSLASH, event);
         break;
     default:
@@ -1023,12 +1055,12 @@ SF(apostrophe) {
 
 SF(parentheses_left) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_J, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_8, event);
         break;
     default:
@@ -1038,12 +1070,12 @@ SF(parentheses_left) {
 
 SF(parentheses_right) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_K, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_9, event);
         break;
     default:
@@ -1053,12 +1085,12 @@ SF(parentheses_right) {
 
 SF(asterisk) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_G, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_RIGHT_BRACE, event);
         break;
     default:
@@ -1068,12 +1100,12 @@ SF(asterisk) {
 
 SF(plus) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_N, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_plain(KEY_RIGHT_BRACE, event);
         break;
     default:
@@ -1090,12 +1122,12 @@ SF(comma) {
 
 SF(dash_neo_lvl1) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_MINUS, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_plain(KEY_SLASH, event);
         break;
     default:
@@ -1105,7 +1137,7 @@ SF(dash_neo_lvl1) {
 
 SF(dash_neo_lvl3) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_L, event);
         break;
     default:
@@ -1122,12 +1154,12 @@ SF(period) {
 
 SF(slash) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_S, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_7, event);
         break;
     default:
@@ -1138,12 +1170,12 @@ SF(slash) {
 
 SF(colon) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_SEMICOLON, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_PERIOD, event);
         break;
     default:
@@ -1153,12 +1185,12 @@ SF(colon) {
 
 SF(semicolon) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_SLASH, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_COMMA, event);
         break;
     default:
@@ -1168,12 +1200,12 @@ SF(semicolon) {
 
 SF(chevron_left) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_U, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         // Apple: OsX will open a dialog to identify the keyboard when connected to the Mac the first time and ask to press the key in between the shift and the Y key -- the ISO_EXTRA key. Switch the neomys to APPLE host layout and press the keys to produce a '<' character (Mod3+H). Otherwise, the '<' and '>' characters won't work correctly. => FIXME: document this accordingly in "end user documentation"
         kev_plain(KEY_ISO_EXTRA, event);
         break;
@@ -1184,12 +1216,12 @@ SF(chevron_left) {
 
 SF(equals) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_O, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_0, event);
         break;
     default:
@@ -1199,12 +1231,12 @@ SF(equals) {
 
 SF(chevron_right) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_I, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_ISO_EXTRA, event);
         break;
     default:
@@ -1214,12 +1246,12 @@ SF(chevron_right) {
 
 SF(question_mark) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_H, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_MINUS, event);
         break;
     default:
@@ -1229,14 +1261,14 @@ SF(question_mark) {
 
 SF(at) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_QUOTE, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
         kev_w_altgr(KEY_Q, event);
         break;
-    case TL_DE_APPLE:
+    case TGL_DE_APPLE:
         kev_w_alt(KEY_L, event);
         break;
     default:
@@ -1247,14 +1279,14 @@ SF(at) {
 
 SF(bracket_left) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_E, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
         kev_w_altgr(KEY_8, event);
         break;
-    case TL_DE_APPLE:
+    case TGL_DE_APPLE:
         kev_w_alt(KEY_5, event);
         break;
     default:
@@ -1264,14 +1296,14 @@ SF(bracket_left) {
 
 SF(backslash) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_A, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
         kev_w_altgr(KEY_MINUS, event);
         break;
-    case TL_DE_APPLE:
+    case TGL_DE_APPLE:
         kev_w_shift_alt(KEY_7, event);
         break;
     default:
@@ -1281,14 +1313,14 @@ SF(backslash) {
 
 SF(bracket_right) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_R, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
         kev_w_altgr(KEY_9, event);
         break;
-    case TL_DE_APPLE:
+    case TGL_DE_APPLE:
         kev_w_alt(KEY_6, event);
         break;
     default:
@@ -1298,17 +1330,17 @@ SF(bracket_right) {
 
 SF(caret) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_T, event);
         break;
-    case TL_DE:
+    case TGL_DE:
         kev_plain(KEY_TILDE, event);
         kev_plain(KEY_SPACE, event);
         break;
-    case TL_DE_NODEAD:
+    case TGL_DE_NODEAD:
         kev_plain(KEY_TILDE, event);
         break;
-    case TL_DE_APPLE:
+    case TGL_DE_APPLE:
         // kev_w_shift_alt(KEY_K, event); => produces the accent sign ontop of nothing
         // To get ASCII char 0x5E, we need to combine the caret dead key with space:
         kev_w_shift_alt(KEY_6, event);
@@ -1321,12 +1353,12 @@ SF(caret) {
 
 SF(underscore) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_W, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_SLASH, event);
         break;
     default:
@@ -1336,15 +1368,15 @@ SF(underscore) {
 
 SF(backtick) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_B, event);
         break;
-    case TL_DE:
-    case TL_DE_APPLE: // This was not working properly on my Macbook once -- but since the chevrons have been fixed, backtick is also fixed. XXX reproduce backtick issue and verify it is fixed as the chevron problem when keyboard is properly detected.
+    case TGL_DE:
+    case TGL_DE_APPLE: // This was not working properly on my Macbook once -- but since the chevrons have been fixed, backtick is also fixed. XXX reproduce backtick issue and verify it is fixed as the chevron problem when keyboard is properly detected.
         kev_w_shift(KEY_EQUAL, event);
         kev_plain  (KEY_SPACE, event);
         break;
-    case TL_DE_NODEAD:
+    case TGL_DE_NODEAD:
         kev_w_shift(KEY_EQUAL, event);
         break;
     default:
@@ -1355,14 +1387,14 @@ SF(backtick) {
 
 SF(brace_left) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_D, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
         kev_w_altgr(KEY_7, event);
         break;
-    case TL_DE_APPLE:
+    case TGL_DE_APPLE:
         kev_w_alt(KEY_8, event);
         break;
     default:
@@ -1372,14 +1404,14 @@ SF(brace_left) {
 
 SF(pipe) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_C, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
         kev_w_altgr(KEY_ISO_EXTRA, event);
         break;
-    case TL_DE_APPLE:
+    case TGL_DE_APPLE:
         kev_w_alt(KEY_7, event);
         break;
     default:
@@ -1389,14 +1421,14 @@ SF(pipe) {
 
 SF(brace_right) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_F, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
         kev_w_altgr(KEY_0, event);
         break;
-    case TL_DE_APPLE:
+    case TGL_DE_APPLE:
         kev_w_alt(KEY_9, event);
         break;
     default:
@@ -1406,14 +1438,14 @@ SF(brace_right) {
 
 SF(tilde) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_V, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
         kev_w_altgr(KEY_RIGHT_BRACE, event);
         break;
-    case TL_DE_APPLE:
+    case TGL_DE_APPLE:
         // kev_w_shift_alt(KEY_8, event); => produces the accent sign ontop of nothing
         // To get ASCII char 0x7E, we need to combine the tilde dead key with space:
         kev_w_alt(KEY_N, event);
@@ -1429,12 +1461,12 @@ SF(tilde) {
 
 SF(degree) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_1, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_TILDE, event);
         break;
     default:
@@ -1444,12 +1476,12 @@ SF(degree) {
 
 SF(sectionsign) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_2, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_w_shift(KEY_3, event);
         break;
     default:
@@ -1459,14 +1491,14 @@ SF(sectionsign) {
 
 SF(euro_currency) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_7, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
         kev_w_altgr(KEY_E, event);
         break;
-    case TL_DE_APPLE:
+    case TGL_DE_APPLE:
         kev_w_alt(KEY_E, event);
         break;
     default:
@@ -1476,7 +1508,7 @@ SF(euro_currency) {
 
 SF(cent_currency) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_6, event);
         break;
     default:
@@ -1486,7 +1518,7 @@ SF(cent_currency) {
 
 SF(pound_currency) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_6, event);
         break;
     default:
@@ -1496,7 +1528,7 @@ SF(pound_currency) {
 
 SF(yen_currency) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_7, event);
         break;
     default:
@@ -1506,7 +1538,7 @@ SF(yen_currency) {
 
 SF(currency_sign) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_7, event);
         break;
     default:
@@ -1518,7 +1550,7 @@ SF(currency_sign) {
 
 SF(superscript1) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_1, event);
         break;
     default:
@@ -1528,11 +1560,11 @@ SF(superscript1) {
 
 SF(superscript2) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_2, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
         kev_w_altgr(KEY_2, event);
         break;
     default:
@@ -1542,7 +1574,7 @@ SF(superscript2) {
 
 SF(script_small_l) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_3, event);
         break;
     default:
@@ -1552,11 +1584,11 @@ SF(script_small_l) {
 
 SF(superscript3) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_3, event);
         break;
-    case TL_DE:
-    case TL_DE_NODEAD:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
         kev_w_altgr(KEY_3, event);
         break;
     default:
@@ -1566,7 +1598,7 @@ SF(superscript3) {
 
 SF(numero_sign) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_3, event);
         break;
     default:
@@ -1576,7 +1608,7 @@ SF(numero_sign) {
 
 SF(guillemet_dbl_gt) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_4, event);
         break;
     default:
@@ -1586,7 +1618,7 @@ SF(guillemet_dbl_gt) {
 
 SF(guillemet_sgl_gt) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_4, event);
         break;
     default:
@@ -1596,7 +1628,7 @@ SF(guillemet_sgl_gt) {
 
 SF(guillemet_dbl_lt) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_5, event);
         break;
     default:
@@ -1606,7 +1638,7 @@ SF(guillemet_dbl_lt) {
 
 SF(guillemet_sgl_lt) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_5, event);
         break;
     default:
@@ -1616,7 +1648,7 @@ SF(guillemet_sgl_lt) {
 
 SF(low9quote_dbl) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_8, event);
         break;
     default:
@@ -1626,7 +1658,7 @@ SF(low9quote_dbl) {
 
 SF(low9quote_sgl) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_8, event);
         break;
     default:
@@ -1636,7 +1668,7 @@ SF(low9quote_sgl) {
 
 SF(6quote_dbl) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_9, event);
         break;
     default:
@@ -1646,7 +1678,7 @@ SF(6quote_dbl) {
 
 SF(6quote_sgl) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_9, event);
         break;
     default:
@@ -1656,7 +1688,7 @@ SF(6quote_sgl) {
 
 SF(9quote_dbl) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_0, event);
         break;
     default:
@@ -1666,7 +1698,7 @@ SF(9quote_dbl) {
 
 SF(9quote_sgl) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_0, event);
         break;
     default:
@@ -1677,7 +1709,7 @@ SF(9quote_sgl) {
 // Geviertstrich
 SF(mdash) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_MINUS, event);
         break;
     default:
@@ -1687,7 +1719,7 @@ SF(mdash) {
 
 SF(ellipsis) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_Q, event);
         break;
     default:
@@ -1697,7 +1729,7 @@ SF(ellipsis) {
 
 SF(inverted_exclamation_mark) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_Y, event);
         break;
     default:
@@ -1707,7 +1739,7 @@ SF(inverted_exclamation_mark) {
 
 SF(long_s) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_LEFT_BRACE, event);
         break;
     default:
@@ -1717,7 +1749,7 @@ SF(long_s) {
 
 SF(minus) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_LEFT_BRACE, event);
         break;
     default:
@@ -1727,7 +1759,7 @@ SF(minus) {
 
 SF(inverted_question_mark) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_H, event);
         break;
     default:
@@ -1738,7 +1770,7 @@ SF(inverted_question_mark) {
 // Halbgeviertstrich
 SF(ndash) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_COMMA, event);
         break;
     default:
@@ -1748,7 +1780,7 @@ SF(ndash) {
 
 SF(bullet) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_PERIOD, event);
         break;
     default:
@@ -1762,7 +1794,7 @@ SF(bullet) {
 
 SF(dead_grave) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_EQUAL, event);
         break;
     default:
@@ -1772,7 +1804,7 @@ SF(dead_grave) {
 
 SF(dead_cedilla) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_EQUAL, event);
         break;
     default:
@@ -1782,7 +1814,7 @@ SF(dead_cedilla) {
 
 SF(dead_ring) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_EQUAL, event);
         break;
     default:
@@ -1792,7 +1824,7 @@ SF(dead_ring) {
 
 SF(dead_umlaut) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_EQUAL, event);
         break;
     default:
@@ -1802,7 +1834,7 @@ SF(dead_umlaut) {
 
 SF(dead_circumfex) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_TILDE, event);
         break;
     default:
@@ -1812,7 +1844,7 @@ SF(dead_circumfex) {
 
 SF(dead_caron) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_TILDE, event);
         break;
     default:
@@ -1822,7 +1854,7 @@ SF(dead_caron) {
 
 SF(dead_dot) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_TILDE, event);
         break;
     default:
@@ -1832,7 +1864,7 @@ SF(dead_dot) {
 
 SF(dead_acute) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_plain(KEY_RIGHT_BRACE, event);
         break;
     default:
@@ -1842,7 +1874,7 @@ SF(dead_acute) {
 
 SF(dead_perispomene) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level2(KEY_RIGHT_BRACE, event);
         break;
     default:
@@ -1852,7 +1884,7 @@ SF(dead_perispomene) {
 
 SF(dead_bar) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level3(KEY_RIGHT_BRACE, event);
         break;
     default:
@@ -1862,7 +1894,7 @@ SF(dead_bar) {
 
 SF(dead_double_acute) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_RIGHT_BRACE, event);
         break;
     default:
@@ -1976,7 +2008,7 @@ SF(return) {
 
 SF(numpad_1) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_M, event);
         break;
     default:
@@ -1986,7 +2018,7 @@ SF(numpad_1) {
 
 SF(numpad_2) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_COMMA, event);
         break;
     default:
@@ -1996,7 +2028,7 @@ SF(numpad_2) {
 
 SF(numpad_3) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_PERIOD, event);
         break;
     default:
@@ -2006,7 +2038,7 @@ SF(numpad_3) {
 
 SF(numpad_4) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_J, event);
         break;
     default:
@@ -2016,7 +2048,7 @@ SF(numpad_4) {
 
 SF(numpad_5) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_K, event);
         break;
     default:
@@ -2026,7 +2058,7 @@ SF(numpad_5) {
 
 SF(numpad_6) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_L, event);
         break;
     default:
@@ -2036,7 +2068,7 @@ SF(numpad_6) {
 
 SF(numpad_7) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_U, event);
         break;
     default:
@@ -2046,7 +2078,7 @@ SF(numpad_7) {
 
 SF(numpad_8) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_I, event);
         break;
     default:
@@ -2056,7 +2088,7 @@ SF(numpad_8) {
 
 SF(numpad_9) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_O, event);
         break;
     default:
@@ -2066,7 +2098,7 @@ SF(numpad_9) {
 
 SF(numpad_0) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_SPACE, event);
         break;
     default:
@@ -2076,7 +2108,7 @@ SF(numpad_0) {
 
 SF(numpad_divide) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_9, event);
         break;
     default:
@@ -2086,7 +2118,7 @@ SF(numpad_divide) {
 
 SF(numpad_multiply) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_0, event);
         break;
     default:
@@ -2096,7 +2128,7 @@ SF(numpad_multiply) {
 
 SF(numpad_plus) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_P, event);
         break;
     default:
@@ -2106,7 +2138,7 @@ SF(numpad_plus) {
 
 SF(numpad_minus) {
     switch (targetlayout) {
-    case TL_NEO:
+    case TGL_NEO:
         kev_level4(KEY_LEFT_BRACE, event);
         break;
     default:
@@ -2118,10 +2150,10 @@ SF(numpad_minus) {
 // XXX not 100% in accordance with http://wiki.neo-layout.org/browser/A-REFERENZ-A/neo20.txt?format=raw
 SF(numpad_comma) {
     switch (targetlayout) {
-    case TL_NEO:
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_NEO:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_allow_modifiers(KEYPAD_PERIOD, event);
         break;
     default:
@@ -2133,10 +2165,10 @@ SF(numpad_comma) {
 // XXX not 100% in accordance with http://wiki.neo-layout.org/browser/A-REFERENZ-A/neo20.txt?format=raw
 SF(numpad_period) {
     switch (targetlayout) {
-    case TL_NEO:
-    case TL_DE:
-    case TL_DE_NODEAD:
-    case TL_DE_APPLE:
+    case TGL_NEO:
+    case TGL_DE:
+    case TGL_DE_NODEAD:
+    case TGL_DE_APPLE:
         kev_plain(KEY_PERIOD, event);
         break;
     default:

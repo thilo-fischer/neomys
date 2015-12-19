@@ -5,8 +5,11 @@
    This program is licenced under GPLv3.
 */
 
+#include <string.h>
 
 #include "panel.h"
+
+#include "adaptation.h"
 
 
 void pnl_init_io(panel_t *panel);
@@ -14,101 +17,66 @@ void pnl_sync_io(panel_t *panel);
 void pnl_process_keystate_changes(panel_t *panel);
 
 
-static inline uint8_t *pnl_get_single_ksw_state_buffer(uint8_t buffer_idx, panel_t *panel) {
-  const uint8_t single_buffer_size = panel->height * bitcount_to_bytecount(panel->width);
-  return panel->ksw_states + single_buffer_size * buffer_idx;
-}
-
-static inline uint8_t *pnl_get_current_ksw_state_buffer(panel_t *panel) {
-  return pnl_get_single_ksw_state_buffer(panel->ksw_states_previous_first ? 1 : 0, panel);
-}
-
-static inline uint8_t *pnl_get_previous_ksw_state_buffer(panel_t *panel) {
-  return pnl_get_single_ksw_state_buffer(panel->ksw_states_previous_first ? 0 : 1, panel);
-}
-
-static inline uint8_t *pnl_get_ksw_state_byte_address(uint8_t *buffer, uint8_t row, uint8_t col, const panel_t *panel) {
-  const uint8_t byte_at_row   = col / 8;
-  const uint8_t bytes_per_row = bitcount_to_bytecount(panel->width);
-  return buffer + row * bytes_per_row + byte_at_row;
-}
-
-static inline bool pnl_get_ksw_state_from_buffer(uint8_t *buffer, uint8_t row, uint8_t col, const panel_t *panel) {
-  const uint8_t bitpos       = col % 8;
-  uint8_t *const byteaddress = pnl_get_ksw_state_byte_address(buffer, row, col, panel);
-  return get_bit(byteaddress, bitpos);
-}
-
-static inline bool pnl_get_ksw_state_current(uint8_t row, uint8_t col, panel_t *panel) {
-  return pnl_get_ksw_state_from_buffer(pnl_get_current_ksw_state_buffer(panel), row, col, panel);
-}
-
-static inline bool pnl_get_ksw_state_previous(uint8_t row, uint8_t col, panel_t *panel) {
-  return pnl_get_ksw_state_from_buffer(pnl_get_previous_ksw_state_buffer(panel), row, col, panel);
-}
-
-static inline void pnl_set_ksw_state_in_buffer(uint8_t *buffer, uint8_t row, uint8_t col, const panel_t *panel, bool state) {
-  const uint8_t bitpos       = col % 8;
-  uint8_t *const byteaddress = pnl_get_ksw_state_byte_address(buffer, row, col, panel);
-  set_bit(byteaddress, bitpos, state);
-}
-
-static inline void pnl_set_ksw_state_current(uint8_t row, uint8_t col, panel_t *panel, bool state) {
-  pnl_set_ksw_state_from_buffer(pnl_get_current_ksw_state_buffer(panel), row, col, panel, state);
+static inline void pnl_swap_ksw_state_buffers(panel_t *panel) {
+  panel->ksw_states_previous_first = !panel->ksw_states_previous_first;
 }
 
 
 void pnl_init_io_all() {
   for (uint8_t i = 0; i < MAX_SUPPORTED_PANELS; ++i) {
-    pnl_init_io(&panel_processing[i]);
+    pnl_init_io(panel_processing[i]);
   }
 }
 
 
 void pnl_init_io(panel_t *panel) {
-  panel->io_spec.init_io(panel->io_spec.config);
+  panel->io_spec.init_io(panel->io_spec.config_data);
 }
 
 
 void pnl_sync_io_all() {
   for (uint8_t i = 0; i < MAX_SUPPORTED_PANELS; ++i) {
-    if (panel_processing[i].io_spec.before_sync != NULL) {
-      panel_processing[i].io_spec.before_sync(&panel_processing[i]);
+    if (panel_processing[i]->io_spec.before_sync != NULL) {
+      panel_processing[i]->io_spec.before_sync(&panel_processing[i]);
     }
   }
   for (uint8_t i = 0; i < MAX_SUPPORTED_PANELS; ++i) {
-    pnl_sync_io(&panel_processing[i]);
+    pnl_sync_io(panel_processing[i]);
   }
   for (uint8_t i = 0; i < MAX_SUPPORTED_PANELS; ++i) {
-    if (panel_processing[i].io_spec.after_sync != NULL) {
-      panel_processing[i].io_spec.after_sync(&panel_processing[i]);
+    if (panel_processing[i]->io_spec.after_sync != NULL) {
+      panel_processing[i]->io_spec.after_sync(&panel_processing[i]);
     }
   }
 }
 
 
 void pnl_sync_io(panel_t *panel) {
-  panel->ksw_states_previous_first ^= true;
-  uint8_t ksw_state_buffer_current[][] = panel->ksw_states[panel->ksw_states_previous_first ? 1 : 0];
-  panel->io_spec.sync_io(ksw_state_buffer_current, panel->width, panel->height, panel->numeric_id, panel->gives_numeric_id, panel->out_data, panel->out_size, panel->io_spec.config);
+  pnl_swap_ksw_state_buffers(panel);
+  panel->io_spec.sync_io(panel);
 }
 
 void pnl_process_keystate_changes_all() {
   for (uint8_t i = 0; i < MAX_SUPPORTED_PANELS; ++i) {
-    pnl_process_keystate_changes(&panel_processing[i]);
+    pnl_process_keystate_changes(panel_processing[i]);
   }
 }
 
 void pnl_process_keystate_changes(panel_t *panel) {
-  if (memcmp(panel->ksw_states[0], panel->ksw_states[1], BYTES_PER_ROW(panel->width) * panel->height) != 0) {
+  const uint8_t *const current_ksw_state_buffer  = pnl_get_current_ksw_state_buffer (panel);
+  const uint8_t *const previous_ksw_state_buffer = pnl_get_previous_ksw_state_buffer(panel);
+  if (memcmp(current_ksw_state_buffer, previous_ksw_state_buffer, pnl_get_single_buffer_size(panel)) != 0) {
     for (uint8_t row = 0; row < panel->height; ++row) {
-      for (uint8_t byte = 0; byte < BYTES_PER_ROW(panel->width); ++byte) {
-        uint8_t diff = panel->ksw_states[0][row][col] ^ panel->ksw_states[1][row][col];
+      for (uint8_t byte = 0; byte < pnl_get_bytes_per_row(panel); ++byte) {
+        const uint8_t *current  = pnl_get_byte_from_row_const(current_ksw_state_buffer , row, byte, panel);
+        const uint8_t *previous = pnl_get_byte_from_row_const(previous_ksw_state_buffer, row, byte, panel);
+        uint8_t diff = *current ^ *previous;
         if (diff > 0) {
           for (uint8_t bit = 0; bit < 8; ++bit) {
             if (diff & (1<<bit)) {
-              keystate_t keystate = (panel->ksw_states[0][row][col] & (1<<bit)) ^ panel->ksw_states_previous_first;
-              panel->userlayout[row][bit + bytes*panel->width](g_effective_levels, g_targetlayout, keystate);
+              keystate_t keystate = *current & (1<<bit) ? KS_RELEASE : KS_PRESS;
+              keyfunc_t keyfunc = pnl_get_keyfunc(row, 8 * byte + bit, panel);
+              keyfunc(g_effective_levels, g_current_targetlayout, keystate);
             }
           }
         }

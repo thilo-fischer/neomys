@@ -9,6 +9,9 @@
 
 #include "io_spi01.h"
 
+#include "util.h"
+#include "panel.h"
+
 void io_spi01_rst(io_spi01_cfg_t *config, bool state);
 
 
@@ -55,34 +58,36 @@ void io_spi01_after_sync(void *cfg) {
   io_spi01_rst(config, true);
 }
 
-void io_spi01_sync(uint8_t ksw_states[][], uint8_t width, uint8_t height, uint8_t *numeric_id, bool gives_numeric_id, const out_data[], uint8_t out_size, const void *cfg) {
-  io_spi01_cfg_t *config = (io_spi01_cfg_t*) cfg;
+void io_spi01_sync(panel_t *panel) {
+#if 0 // currently not in use
+  io_spi01_cfg_t *config = (io_spi01_cfg_t*) panel->io_spec.config_data;
+#endif
 
   //io_spi_SS(true);
 
-  const uint16_t bytes_total = height * BYTES_PER_ROW(width) + (gives_numeric_id ? 1 : 0);
+  const uint16_t bytes_total = pnl_get_single_buffer_size(panel) + (panel->gives_numeric_id ? 1 : 0);
   uint16_t bytes_left = bytes_total;
 
-  for (uint8_t row = 0; row < height; ++row) {
-    for (uint8_t col = 0; col < BYTES_PER_ROW(width); ++col) {
+  uint8_t *current_ksw_state_buffer = pnl_get_current_ksw_state_buffer(panel);
 
-      // start transmission by writing a byte to be sent (MOSI) to the appropriate register
-      if (bytes_left > out_size) {
-	uc_spi_transmit_byte(0, &ksw_states[row][col]);
-      } else {
- 	uc_spi_transmit_byte(out_data[out_size - bytes_left], &ksw_states[row][col]);
+  for (uint8_t row = 0; row < panel->height; ++row) {
+    for (uint8_t byte = 0; byte < pnl_get_bytes_per_row(panel); ++byte) {
+      uint8_t mosi_byte = 0;
+      if (bytes_left <= panel->out_size) {
+ 	mosi_byte = panel->out_data[panel->out_size - bytes_left];
       }
 
-      
+      // start transmission by writing a byte to be sent (MOSI) to the appropriate register
+      uc_spi_transmit_byte(mosi_byte, pnl_get_byte_from_row(current_ksw_state_buffer, row, byte, panel));      
     }
   }
 
-  if (gives_numeric_id) {
-    if (out_size > 0) {
-      uc_spi_transmit_byte(out_data[out_size - 1], numeric_id);
-    } else {
-      uc_spi_transmit_byte(0, numeric_id);
+  if (panel->gives_numeric_id) {
+    uint8_t mosi_byte = 0;
+    if (panel->out_size > 0) {
+      mosi_byte = panel->out_data[panel->out_size - 1];
     }
+    uc_spi_transmit_byte(mosi_byte, &panel->numeric_id);
   }
   
   //io_spi_SS(false);  
@@ -91,10 +96,10 @@ void io_spi01_sync(uint8_t ksw_states[][], uint8_t width, uint8_t height, uint8_
 #if 0
 void io_spi01_SS(io_spi01_cfg_t *config, bool state) {
   // SS is active low, so activating (true) results in clearing the bit
-  gpio_outpin_set(config.rst_pin, !state);
+  gpio_outpin_set(config->rst_pin, !state);
 }
 #else
 void io_spi01_rst(io_spi01_cfg_t *config, bool state) {
-  gpio_outpin_set(config.rst_pin, state);
+  gpio_outpin_set(config->rst_pin, state);
 }
 #endif

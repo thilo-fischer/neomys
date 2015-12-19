@@ -8,6 +8,9 @@
 #ifndef SENDKEYS_H_
 #define SENDKEYS_H_
 
+#include <stdint.h>
+#include <stdbool.h>
+
 #include "keyhandling.h"
 
 void progress_keyseq_queue();

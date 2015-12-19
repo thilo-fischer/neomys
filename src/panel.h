@@ -20,29 +20,22 @@
 #ifndef _PANEL_H_
 #define _PANEL_H_
 
+#include "util.h"
+// FIXME #include "userlayout.h"
+#include "userlayout_neomys_2015_02.h"
 
 // forward declarations
-struct userlayout_struct;
-typedef struct userlayout_struct userlayout_t;
-
+struct panel_struct;
+typedef struct panel_struct panel_t;
 
 
 /// Initialize the io devices according to cfg.
 typedef void (*panel_init_io_func_t)(const void *cfg);
-/// Read key switch states of height rows of keys with width keys per row from the hardware into the ksw_states array,
+/// Read key switch states of height rows of keys with width keys per row from the hardware into the current ksw_states array,
 /// read the numeric ID value from the hardware into numeric_id
 /// and write out_size bytes of data contained in out_data to the hardware
-/// using the io configuration as given by cfg.
-typedef void (*panel_sync_io_func_t)(
-                                     uint8_t *ksw_states,
-                                     uint8_t width,
-                                     uint8_t height,
-                                     uint8_t *numeric_id,
-                                     bool gives_numeric_id,
-                                     const uint8_t out_data[],
-                                     uint8_t out_size,
-                                     const void *cfg
-                                     );
+/// using the io configuration as given by io_spec.config_data.
+typedef void (*panel_sync_io_func_t)(panel_t *panel);
 /// Run before syncing all panels.
 typedef void (*panel_before_sync_io_func_t)(const void *cfg);
 /// Run after syncing all panels.
@@ -67,7 +60,7 @@ typedef struct {
 
 
 
-typedef struct {
+struct panel_struct {
   /// @name Configuration values
   ///@{
   
@@ -118,7 +111,7 @@ typedef struct {
   ///@}
 
 
-} panel_t;
+};
 
 
 
@@ -127,6 +120,69 @@ void pnl_init_io_all();
 void pnl_sync_io_all();
 
 void pnl_process_keystate_changes_all();
+
+
+static inline const uint8_t pnl_get_bytes_per_row(const panel_t *panel) {
+  return bitcount_to_bytecount(panel->width);
+}
+
+static inline const uint16_t pnl_get_single_buffer_size(const panel_t *panel) {
+  return ((uint16_t) panel->height) * pnl_get_bytes_per_row(panel);
+}
+
+static inline uint8_t *pnl_get_single_ksw_state_buffer(uint8_t buffer_idx, panel_t *panel) {
+  return panel->ksw_states + pnl_get_single_buffer_size(panel) * buffer_idx;
+}
+
+static inline uint8_t *pnl_get_current_ksw_state_buffer(panel_t *panel) {
+  return pnl_get_single_ksw_state_buffer(panel->ksw_states_previous_first ? 1 : 0, panel);
+}
+
+static inline uint8_t *pnl_get_previous_ksw_state_buffer(panel_t *panel) {
+  return pnl_get_single_ksw_state_buffer(panel->ksw_states_previous_first ? 0 : 1, panel);
+}
+
+static inline uint8_t *pnl_get_byte_from_row(uint8_t *buffer, uint8_t row, uint8_t byte, const panel_t *panel) {
+  return buffer + row * pnl_get_bytes_per_row(panel) + byte;
+}
+
+static inline const uint8_t *pnl_get_byte_from_row_const(const uint8_t *buffer, uint8_t row, uint8_t byte, const panel_t *panel) {
+  return buffer + row * pnl_get_bytes_per_row(panel) + byte;
+}
+
+static inline uint8_t *pnl_get_ksw_state_byte_address(uint8_t *buffer, uint8_t row, uint8_t col, const panel_t *panel) {
+  const uint8_t byte_at_row   = col / 8;
+  return pnl_get_byte_from_row(buffer, row, byte_at_row, panel);
+}
+
+static inline bool pnl_get_ksw_state_from_buffer(uint8_t *buffer, uint8_t row, uint8_t col, const panel_t *panel) {
+  const uint8_t bitpos       = col % 8;
+  uint8_t *const byteaddress = pnl_get_ksw_state_byte_address(buffer, row, col, panel);
+  return get_bit(byteaddress, bitpos);
+}
+
+static inline bool pnl_get_ksw_state_current(uint8_t row, uint8_t col, panel_t *panel) {
+  return pnl_get_ksw_state_from_buffer(pnl_get_current_ksw_state_buffer(panel), row, col, panel);
+}
+
+static inline bool pnl_get_ksw_state_previous(uint8_t row, uint8_t col, panel_t *panel) {
+  return pnl_get_ksw_state_from_buffer(pnl_get_previous_ksw_state_buffer(panel), row, col, panel);
+}
+
+static inline void pnl_set_ksw_state_in_buffer(uint8_t *buffer, uint8_t row, uint8_t col, const panel_t *panel, bool state) {
+  const uint8_t bitpos       = col % 8;
+  uint8_t *const byteaddress = pnl_get_ksw_state_byte_address(buffer, row, col, panel);
+  set_bit(byteaddress, bitpos, state);
+}
+
+static inline void pnl_set_ksw_state_current(uint8_t row, uint8_t col, panel_t *panel, bool state) {
+  pnl_set_ksw_state_in_buffer(pnl_get_current_ksw_state_buffer(panel), row, col, panel, state);
+}
+
+static inline keyfunc_t pnl_get_keyfunc(uint8_t row, uint8_t col, const panel_t *panel) {
+  return (*panel->userlayout)[row * panel->width + col];
+}
+
 
 
 #endif // _PANEL_H_

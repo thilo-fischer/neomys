@@ -78,9 +78,9 @@
 #ifndef _USERLAYOUT_H_
 #define _USERLAYOUT_H_
 
-#include "adaption.h"
-
-typedef enum targetlayout_t;
+#include "adaptation.h"
+#include "targetlayout.h"
+#include "keyhandling.h"
 
 /// The function pointer type to be used in the user layout arrays.
 /// 
@@ -114,13 +114,17 @@ typedef enum targetlayout_t;
 /// @param[in] targetlayout the current target layout. Will normally not be evaluated by the key function itself but 
 typedef void (*keyfunc_t)(level_t effective_levels[], targetlayout_t targetlayout, keystate_t event);
 
-/// The type for user layouts.
-typedef keyfunc_t userlayout_t[][];
+/// The type for user layouts. Refers to a pointer to a
+/// two-dimensional array with the height according to the number of
+/// key rows and the width according to the number of key columns of
+/// the associated panel.
+typedef keyfunc_t *userlayout_t;
 
 typedef void (*symfunc_t)(targetlayout_t targetlayout, keystate_t event);
 
 /// Macros to provide a domain specific language to describe user
 /// layouts and translations to target layouts.
+/// @todo XXX move to .c files ??
 ///@{
 
 /// Function header for `key functions', i.e. functions referenced
@@ -146,6 +150,7 @@ typedef enum {
     KT_LEVELMOD,         ///< key is a modifier key which affects the current level
 } keytype_t;
 
+#if 0 // XXX deprecated
 typedef struct {
     keytype_t type;
     keyfunc_t kf[LEVEL_COUNT];
@@ -153,7 +158,6 @@ typedef struct {
 
 
 const keyrecord_t *get_keyrecord(uint8_t controller, uint8_t row, uint8_t col);
-
-extern target_layout_t target_layout;
+#endif
 
 #endif // _USERLAYOUT_H_

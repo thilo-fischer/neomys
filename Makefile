@@ -159,6 +159,8 @@ CFLAGS += -fpack-struct
 CFLAGS += -fshort-enums
 CFLAGS += -Werror
 CFLAGS += -Wall
+CFLAGS += -Wno-error=unused-function
+CFLAGS += -Wno-unused-function # symfunctions_common.c usually has many unused function definitions
 #CFLAGS += -Wstrict-prototypes
 #CFLAGS += -mshort-calls
 #CFLAGS += -fno-unit-at-a-time

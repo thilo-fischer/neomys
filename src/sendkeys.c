@@ -18,6 +18,10 @@
 
 #include "teensy_codelib/usb_keyboard/usb_keyboard.h" // FIXME: move all code dependent on this file to usb_keyboard.c
 
+// FIXME
+#define inform(a, b)
+#define info_add(x)
+
 // internal symbols
 
 uint8_t modifiers_current_in  = 0x00;
