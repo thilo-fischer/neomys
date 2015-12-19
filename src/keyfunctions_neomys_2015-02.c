@@ -7,7 +7,9 @@
 
 // FIXME rename file: different file extension to indicate it is included in another .c file
 
-#include "userlayout_neomys_2015_02.h"
+#include <stddef.h>
+
+#include "userlayout_neomys_2015-02.h"
 
 /// helper functions to implement the common and ordinary key functions
 /// @todo FIXME extract adaption unspecific generic parts of these helper functions and move to userlayout.h or userlayout_common.c

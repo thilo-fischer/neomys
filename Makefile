@@ -56,7 +56,7 @@ src/ucontroller_teensy-2.0.c \
 src/usb_keyboard.c \
 src/adaptation_neomys_2015-02.c \
 src/panel_neomys_2015-02.c \
-src/userlayout_neomys_2015_02.c
+src/userlayout_neomys_2015-02.c
 
 
 # MCU name, you MUST set this to match the board you are using

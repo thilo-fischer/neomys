@@ -22,7 +22,7 @@
 
 #include "util.h"
 // FIXME #include "userlayout.h"
-#include "userlayout_neomys_2015_02.h"
+#include "userlayout_neomys_2015-02.h"
 
 // forward declarations
 struct panel_struct;

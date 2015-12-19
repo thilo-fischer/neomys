@@ -10,7 +10,7 @@
  * run on the 2nd version of 2015 of the neomys keyboard hardware.
  */
 
-#include "userlayout_neomys_2015_02.h"
+#include "userlayout_neomys_2015-02.h"
 
 
 typedef enum {
@@ -24,7 +24,7 @@ typedef enum {
 level_t g_effective_levels[LVR_COUNT] = { LVL_DEFAULT, LVL_DEFAULT, LVL_DEFAULT };
 
 #include "keyfunctions_common.c"
-#include "keyfunctions_neomys_2015_02.c"
+#include "keyfunctions_neomys_2015-02.c"
 
 // definitions of user layouts
 

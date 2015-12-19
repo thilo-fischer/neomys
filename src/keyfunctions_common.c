@@ -13,7 +13,7 @@
 // FIXME rename file: different file extension to indicate it is included in another .c file
 
 // FIXME #include "userlayout.h"
-#include "userlayout_neomys_2015_02.h"
+#include "userlayout_neomys_2015-02.h"
 
 KF(nop) {}
 
