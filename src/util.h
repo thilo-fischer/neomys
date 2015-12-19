@@ -14,14 +14,14 @@
 
 /// Computes the number of bytes necessary to store all key switch
 /// states of one row.  (One key switch states corresponds to one bit.)
-/// @todo FIXME deprecated, use bitcount_to_bytecount instead
-#define BYTES_PER_ROW(width) (bitcount_to_bytecount(width)
+/// @note There is a inline function bitcount_to_bytecount which should be used preferably over this macro whenever possible!
+#define BYTES_PER_ROW(width) ((width + 7) / 8)
 
 /// @return the number of bytes necessary to store the given number of
 /// bits: you will need one byte to store 1 to 8 bits, two bytes to
 /// store 9 to 16 bits and so on.
 static inline uint8_t bitcount_to_bytecount(uint8_t bitcount) {
-  return (bitcount + 7) / 8;
+  return BYTES_PER_ROW(bitcount);
 }
 
 

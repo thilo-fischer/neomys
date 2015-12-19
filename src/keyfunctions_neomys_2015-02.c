@@ -115,21 +115,21 @@ static inline void kf_level_modifier(level_t effective_levels[], level_t affecte
 
 
 // macros for domain specific language
-#define KF_REGULAR_1TO4(key, sym1, sym2, sym3, sym4) KF(name) { kf_1to4(LVR_MAIN, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4); }
-#define KF_REGULAR_1TO4M(key, sym1, sym2, sym3, sym4, sym4m) KF(name) { kf_1to4m(LVR_MAIN, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4, sf_##sym4m); }
-#define KF_REGULAR_1TO6(key, sym1, sym2, sym3, sym4, sym5, sym6) KF(name) { kf_1to4(LVR_MAIN, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4, sf_##sym5, sf_##sym6); }
-#define KF_REGULAR_1TO6_4M(key, sym1, sym2, sym3, sym4, sym4m, sym5, sym6) KF(name) { kf_1to4m(LVR_MAIN, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4, sf_##sym4m, sf_##sym5, sf_##sym6); }
+#define KF_REGULAR_1TO4(name, sym1, sym2, sym3, sym4) KF(name) { kf_1to4(LVR_MAIN, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4); }
+#define KF_REGULAR_1TO4M(name, sym1, sym2, sym3, sym4, sym4m) KF(name) { kf_1to4m(LVR_MAIN, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4, sf_##sym4m); }
+#define KF_REGULAR_1TO6(name, sym1, sym2, sym3, sym4, sym5, sym6) KF(name) { kf_1to4(LVR_MAIN, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4, sf_##sym5, sf_##sym6); }
+#define KF_REGULAR_1TO6_4M(name, sym1, sym2, sym3, sym4, sym4m, sym5, sym6) KF(name) { kf_1to4m(LVR_MAIN, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4, sf_##sym4m, sf_##sym5, sf_##sym6); }
 
-#define KF_IL2LOCK_1TO4(key, sym1, sym2, sym3, sym4) KF(name) { kf_1to4(LVR_IL2L, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4); }
-#define KF_IL2LOCK_1TO4M(key, sym1, sym2, sym3, sym4, sym4m) KF(name) { kf_1to4m(LVR_IL2L, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4, sf_##sym4m); }
-#define KF_IL2LOCK_1TO6(key, sym1, sym2, sym3, sym4, sym5, sym6) KF(name) { kf_1to4(LVR_IL2L, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4, sf_##sym5, sf_##sym6); }
-#define KF_IL2LOCK_1TO6_4M(key, sym1, sym2, sym3, sym4, sym4m, sym5, sym6) KF(name) { kf_1to4m(LVR_IL2L, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4, sf_##sym4m, sf_##sym5, sf_##sym6); }
+#define KF_IL2LOCK_1TO4(name, sym1, sym2, sym3, sym4) KF(name) { kf_1to4(LVR_IL2L, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4); }
+#define KF_IL2LOCK_1TO4M(name, sym1, sym2, sym3, sym4, sym4m) KF(name) { kf_1to4m(LVR_IL2L, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4, sf_##sym4m); }
+#define KF_IL2LOCK_1TO6(name, sym1, sym2, sym3, sym4, sym5, sym6) KF(name) { kf_1to4(LVR_IL2L, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4, sf_##sym5, sf_##sym6); }
+#define KF_IL2LOCK_1TO6_4M(name, sym1, sym2, sym3, sym4, sym4m, sym5, sym6) KF(name) { kf_1to4m(LVR_IL2L, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4, sf_##sym4m, sf_##sym5, sf_##sym6); }
 
-#define KF_IGNORE_ANY_LOCK(key, sym1, sym2, sym3, sym4, sym4m, sym5, sym6) KF(name) { kf_generic(LVR_IGNORE_ANY_LOCK, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4, sf_##sym4m, sf_##sym5, sf_##sym6); }
+#define KF_IGNORE_ANY_LOCK(name, sym1, sym2, sym3, sym4, sym4m, sym5, sym6) KF(name) { kf_generic(LVR_IGNORE_ANY_LOCK, effective_levels, targetlayout, event, sf_##sym1, sf_##sym2, sf_##sym3, sf_##sym4, sf_##sym4m, sf_##sym5, sf_##sym6); }
 
-#define KF_ALL_LEVELS(key, sym) KF(name) { kf_all_levels(targetlayout, event, sf_##sym); }
+#define KF_ALL_LEVELS(name, sym) KF(name) { kf_all_levels(targetlayout, event, sf_##sym); }
 
-#define KF_LEVEL_MODIFIER(key, lvl, id, sym) KF(name) { kf_all_levels(effective_levels, LVL_##lvl, id, targetlayout, event, sf_##sym); }
+#define KF_LEVEL_MODIFIER(name, lvl, id, sym) KF(name) { kf_level_modifier(effective_levels, LVL_##lvl, id, targetlayout, event, sf_##sym); }
 
 
 // definitions of key functions
@@ -204,14 +204,14 @@ KF_LEVEL_MODIFIER(level2mod_right, SHIFT, 1, shift_right)
 // ROW_SPACE left (0x40-0x47)
 KF_ALL_LEVELS(ctrl_left, ctrl_left)
 KF_ALL_LEVELS(gui_left, gui_left)
-KF_IGNORE_ANY_LOCK(target_layout, next_target_layout, prev_target_layout, numlock, scrolllock, capslock, NULL, NULL)
+KF_IGNORE_ANY_LOCK(target_layout, next_target_layout, prev_target_layout, numlock, scrolllock, capslock, nop, nop)
 KF_ALL_LEVELS(alt_left, alt_left)
 KF_ALL_LEVELS(space_left, space)
 KF_ALL_LEVELS(enter, enter)
 
 // ROW_SPACE right (0x48-0x4F)
 KF_REGULAR_1TO4(space_right, space, space, space, numpad_0)
-KF_LEVEL_MODIFIER(level4mod_right, 4, 1, NULL)
+KF_LEVEL_MODIFIER(level4mod_right, 4, 1, nop)
 KF_ALL_LEVELS(alt_right, alt_right)
 KF_ALL_LEVELS(app, app)
 KF_ALL_LEVELS(gui_right, gui_right)

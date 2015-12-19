@@ -118,7 +118,7 @@ typedef void (*keyfunc_t)(level_t *effective_levels, targetlayout_t targetlayout
 /// two-dimensional array with the height according to the number of
 /// key rows and the width according to the number of key columns of
 /// the associated panel.
-typedef keyfunc_t *userlayout_t;
+typedef const keyfunc_t *userlayout_t;
 
 typedef void (*symfunc_t)(targetlayout_t targetlayout, keystate_t event);
 

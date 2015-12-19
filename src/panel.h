@@ -106,7 +106,7 @@ struct panel_struct {
 
   uint8_t numeric_id;
 
-  uint8_t out_data[];
+  uint8_t *out_data;
   
   ///@}
 

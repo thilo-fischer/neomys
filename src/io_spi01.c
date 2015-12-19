@@ -20,7 +20,7 @@ void io_spi01_rst(io_spi01_cfg_t *config, bool state);
 #define DD_MOSI 2
 #define DD_MISO 3
 
-void io_spi01_init(void *cfg) {
+void io_spi01_init(const void *cfg) {
 
   // run this function only once
   static bool initialized = false;
@@ -48,12 +48,12 @@ void io_spi01_init(void *cfg) {
   SPCR = (1<<SPE)|(1<<DORD)|(1<<MSTR)|(1<<SPR1)|(1<<SPR0);
 }
 
-void io_spi01_before_sync(void *cfg) {
+void io_spi01_before_sync(const void *cfg) {
   io_spi01_cfg_t *config = (io_spi01_cfg_t*) cfg;
   io_spi01_rst(config, false);
 }
 
-void io_spi01_after_sync(void *cfg) {
+void io_spi01_after_sync(const void *cfg) {
   io_spi01_cfg_t *config = (io_spi01_cfg_t*) cfg;
   io_spi01_rst(config, true);
 }

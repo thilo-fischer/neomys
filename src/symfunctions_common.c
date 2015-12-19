@@ -142,13 +142,13 @@ static inline bool handle_level_mod(targetlayout_t targetlayout, enum neo_level_
     return (targetlayout == TGL_NEO) && ((level_modifiers & also_mod) == 0);
 }
 
-SF(level2mod_left) {
+SF(shift_left) {
     handle_level_mod(targetlayout, LM2_L, LM2_R, LEVEL2, event);
     // Inform the host about the shift modifier event -- any host will understand the shift modifier and users will want to be able to use e.g. shift+mouseclick shift+return.
     kev_modifier(KEY_LEFT_SHIFT, event);
 }
 
-SF(level2mod_right) {
+SF(shift_right) {
     handle_level_mod(targetlayout, LM2_R, LM2_L, LEVEL2, event);
     // Inform the host about the shift modifier event -- any host will understand the shift modifier and users will want to be able to use e.g. shift+mouseclick shift+return.
     kev_modifier(KEY_RIGHT_SHIFT, event);
@@ -1997,6 +1997,13 @@ SF(insert) {
 }
 
 SF(return) {
+    switch (targetlayout) {
+    default:
+        kev_allow_modifiers(KEY_ENTER, event);
+    }
+}
+
+SF(enter) {
     switch (targetlayout) {
     default:
         kev_allow_modifiers(KEY_ENTER, event);
