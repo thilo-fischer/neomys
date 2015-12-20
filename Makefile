@@ -44,21 +44,8 @@
 TARGET = okey
 
 
-# List C source files here. (C dependencies are automatically generated.)
-SRC =	src/$(TARGET).c \
-src/io_spi01.c \
-src/okey.c \
-src/panel.c \
-src/sendkeys.c \
-src/targetlayout.c \
-src/ucontroller_teensy-2.0.c \
-src/usb_keyboard.c \
-src/adaptation_neomys_2015-02.c \
-src/panel_neomys_2015-02.c \
-src/userlayout_neomys_2015-02.c \
-teensy_codelib/usb_keyboard/usb_keyboard.c \
-teensy_codelib/uart/uart.c
-
+CONTROLLER = teensy-2.0
+#CONTROLLER = teensy++-2.0
 
 # MCU name, you MUST set this to match the board you are using
 # type "make clean" after changing this, so all files will be rebuilt
@@ -67,6 +54,22 @@ teensy_codelib/uart/uart.c
 MCU = atmega32u4        # Teensy 2.0
 #MCU = at90usb646       # Teensy++ 1.0
 #MCU = at90usb1286      # Teensy++ 2.0
+
+
+# List C source files here. (C dependencies are automatically generated.)
+SRC =	src/$(TARGET).c \
+src/io_spi01.c \
+src/okey.c \
+src/panel.c \
+src/sendkeys.c \
+src/targetlayout.c \
+src/ucontroller_$(CONTROLLER).c \
+src/usb_keyboard.c \
+src/adaptation_neomys_2015-02.c \
+src/panel_neomys_2015-02.c \
+src/userlayout_neomys_2015-02.c \
+teensy_codelib/usb_keyboard/usb_keyboard.c \
+teensy_codelib/uart/uart.c
 
 
 # Processor frequency.
@@ -171,7 +174,8 @@ CFLAGS += -Wsign-compare
 CFLAGS += -Wa,-adhlns=$(<:%.c=$(OBJDIR)/%.lst)
 CFLAGS += $(patsubst %,-I%,$(EXTRAINCDIRS))
 CFLAGS += $(CSTANDARD)
-
+#CFLAGS += -DCONTROLLER=$(CONTROLLER)
+#CFLAGS += -DMCU=$(MCU)
 
 #---------------- Compiler Options C++ ----------------
 #  -g*:          generate debugging information
@@ -405,16 +409,21 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 all: begin gccversion master end
 
 
-master:
-	@echo "--> master"
-	$(MAKE) CTLR_CDEF="-DCONTROLLER=0" CTLR_SUFFIX="_$@" sizebefore build sizeafter
+# to support distinct builds for master and slave controllers (slave operation is currently not supported)
+master : build
+#master:
+#	@echo "--> master"
+#	$(MAKE) CTLR_CDEF="-DCONTROLLER=0" CTLR_SUFFIX="_$@" sizebefore build sizeafter
+#
+#slave:
+#	@echo "--> slave"
+#	$(MAKE) CTLR_CDEF="-DCONTROLLER=1" CTLR_SUFFIX="_$@" sizebefore build sizeafter
 
-slave:
-	@echo "--> slave"
-	$(MAKE) CTLR_CDEF="-DCONTROLLER=1" CTLR_SUFFIX="_$@" sizebefore build sizeafter
+#flash_%: %
+#	teensy_loader_cli -mmcu=$(MCU) -w -v neomys_$<.hex
 
-flash_%: %
-	teensy_loader_cli -mmcu=atmega32u4 -w -v neomys_$<.hex
+flash: hex
+	teensy_loader_cli -mmcu=$(MCU) -w -v $<
 
 # Change the build target to build a HEX file or a library.
 build: elf hex eep lss sym
