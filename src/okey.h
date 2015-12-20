@@ -13,6 +13,7 @@
 
   @TODO FIXME provide LED to indicate current level
   @TODO TODO display current target layout selection (extra hardware ?)
+  @TODO TODO clean up include dependencies in between generic okay and specific okay adaptation code
   @TODO XXX autoadapt numlock/capslock/scrolllock/neo-levellock states based on keyboard led states
 
  */

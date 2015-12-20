@@ -42,7 +42,9 @@ enum neo_level_modifiers_e {
     LM4_R = 0x20,
 };
 
+// FIXME static
 enum neo_level_modifiers_e level_modifiers = 0;
+// FIXME static
 enum neo_levels_e locked_level = LEVEL1;
 
 

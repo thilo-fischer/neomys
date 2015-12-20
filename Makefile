@@ -47,16 +47,17 @@ TARGET = okey
 # List C source files here. (C dependencies are automatically generated.)
 SRC =	src/$(TARGET).c \
 src/io_spi01.c \
-src/keystates.c \
 src/okey.c \
 src/panel.c \
 src/sendkeys.c \
-src/symfunctions_common.c \
+src/targetlayout.c \
 src/ucontroller_teensy-2.0.c \
 src/usb_keyboard.c \
 src/adaptation_neomys_2015-02.c \
 src/panel_neomys_2015-02.c \
-src/userlayout_neomys_2015-02.c
+src/userlayout_neomys_2015-02.c \
+teensy_codelib/usb_keyboard/usb_keyboard.c \
+teensy_codelib/uart/uart.c
 
 
 # MCU name, you MUST set this to match the board you are using
