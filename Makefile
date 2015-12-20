@@ -44,16 +44,16 @@
 TARGET = okey
 
 
-CONTROLLER = teensy-2.0
-#CONTROLLER = teensy++-2.0
+#CONTROLLER = teensy-2.0
+CONTROLLER = teensy++-2.0
 
 # MCU name, you MUST set this to match the board you are using
 # type "make clean" after changing this, so all files will be rebuilt
 #
 #MCU = at90usb162       # Teensy 1.0
-MCU = atmega32u4        # Teensy 2.0
+#MCU = atmega32u4        # Teensy 2.0
 #MCU = at90usb646       # Teensy++ 1.0
-#MCU = at90usb1286      # Teensy++ 2.0
+MCU = at90usb1286      # Teensy++ 2.0
 
 
 # List C source files here. (C dependencies are automatically generated.)
@@ -425,10 +425,10 @@ master : build
 flash: $(TARGET).hex
 	teensy_loader_cli -mmcu=$(MCU) -w -v $<
 
+
 # Change the build target to build a HEX file or a library.
 build: elf hex eep lss sym
 #build: lib
-
 
 elf: $(TARGET).elf
 hex: $(TARGET).hex
@@ -528,7 +528,6 @@ extcoff: $(TARGET).elf
 	@echo
 	@echo $(MSG_EXTENDED_COFF) $(TARGET).cof
 	$(COFFCONVERT) -O coff-ext-avr $< $(TARGET).cof
-
 
 
 # Create final output files (.hex, .eep) from ELF output file.

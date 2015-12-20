@@ -25,8 +25,25 @@ volatile uint8_t *const PORT_REGISTERS[IOPORT_COUNT] = {&PORTA, &PORTB, &PORTC, 
 volatile uint8_t *const PIN_REGISTERS [IOPORT_COUNT] = {&PINA , &PINB , &PINC , &PIND , &PINE , &PINF };
 ///@}
 
+void uc_init_uart(); // FIXME temporarily
+void uc_uart_send_byte(uint8_t byte); // FIXME temporarily
 
 void uc_init() {
+#if 1 // temporary test code
+  uc_init_uart();
+  DDRD |= (1<<6);
+  PORTD |=  (1<<6);
+  uc_uart_send_byte('t');
+  uc_uart_send_byte('e');
+  uc_uart_send_byte('s');
+  uc_uart_send_byte('t');
+  uc_sleep(50);
+  PORTD &= ~(1<<6);
+  uc_sleep(50);
+  PORTD |=  (1<<6);
+  uc_sleep(50);
+  PORTD &= ~(1<<6);
+#endif
     init_usb_keyboard();
 }
 
@@ -128,3 +145,12 @@ void gpio_inpin_pullup_to_opendrain(gpio_pin_t pin) {
 }
 
 
+// FIXME move to appropriate module
+#include "teensy_codelib/uart/uart.h"
+#define UART_BAUD_RATE 38400
+void uc_init_uart() {
+  uart_init(UART_BAUD_RATE);
+}
+void uc_uart_send_byte(uint8_t byte) {
+  uart_putchar(byte);
+}
