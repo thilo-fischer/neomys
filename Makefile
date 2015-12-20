@@ -422,7 +422,7 @@ master : build
 #flash_%: %
 #	teensy_loader_cli -mmcu=$(MCU) -w -v neomys_$<.hex
 
-flash: hex
+flash: $(TARGET).hex
 	teensy_loader_cli -mmcu=$(MCU) -w -v $<
 
 # Change the build target to build a HEX file or a library.

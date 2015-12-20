@@ -14,7 +14,9 @@
   @TODO FIXME provide LED to indicate current level
   @TODO TODO display current target layout selection (extra hardware ?)
   @TODO TODO clean up include dependencies in between generic okay and specific okay adaptation code
+  @TODO TODO Teensy-LC (Teensy-3.x) support (http://hackaday.com/2014/04/14/bare-metal-programming-on-the-teensy-3/, http://www.seanet.com/~karllunt/bareteensy31.html)
   @TODO XXX autoadapt numlock/capslock/scrolllock/neo-levellock states based on keyboard led states
+  @TODO XXX unicode-characters for different target layouts and Neo2 levels 5&6 (and ẞ•…¥№¤ and such on levels 2, 3 and 4)
 
  */
 
