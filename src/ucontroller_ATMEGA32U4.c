@@ -17,6 +17,17 @@
 #include "util.h"
 #include "usb_keyboard.h"
 
+// from https://www.pjrc.com/teensy/prescaler.html
+#define CPU_PRESCALE(n) (CLKPR = 0x80, CLKPR = (n))
+#define CPU_16MHz       0x00
+#define CPU_8MHz        0x01
+#define CPU_4MHz        0x02
+#define CPU_2MHz        0x03
+#define CPU_1MHz        0x04
+#define CPU_500kHz      0x05
+#define CPU_250kHz      0x06
+#define CPU_125kHz      0x07
+#define CPU_62kHz       0x08
 
 // FIXME why are these symbols not known from iom32u4.h ?!?
 #define DDRB  _SFR_IO8(0x04)
@@ -44,7 +55,8 @@ volatile uint8_t *const PIN_REGISTERS [IOPORT_COUNT] = {&PINB , &PINC , &PIND , 
 
 
 void uc_init() {
-    init_usb_keyboard();
+  CPU_PRESCALE(CPU_8MHz); // must be in accordance with F_CPU (see Makefile)
+  init_usb_keyboard();
 }
 
 void uc_spi_transmit_byte(uint8_t mosi, uint8_t *miso) {
