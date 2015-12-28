@@ -39,6 +39,6 @@ static inline bool get_bit(volatile uint8_t *byteaddress, uint8_t bitpos) {
   return (*byteaddress & (1 << bitpos));
 }
 
-
+void dbg_msg(const char *msg);
 
 #endif // _UTIL_H_

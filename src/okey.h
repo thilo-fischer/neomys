@@ -18,6 +18,8 @@
   @TODO XXX autoadapt numlock/capslock/scrolllock/neo-levellock states based on keyboard led states
   @TODO XXX unicode-characters for different target layouts and Neo2 levels 5&6 (and ẞ•…¥№¤ and such on levels 2, 3 and 4)
 
+  @TODO XXX store symbols created from string literals in ROM (http://www.nongnu.org/avr-libc/user-manual/FAQ.html#faq_rom_array, http://www.nongnu.org/avr-libc/user-manual/FAQ.html#faq_flashstrings, ...)
+
  */
 
 

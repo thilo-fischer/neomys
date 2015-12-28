@@ -53,7 +53,7 @@ void uc_init();
 void uc_spi_transmit_byte(uint8_t mosi, uint8_t *miso);
 
 /// sleep for specified number of milliseconds
-void uc_sleep(uint16_t milliseconds);
+int uc_sleep(uint16_t milliseconds);
 
 
 /// configure the operation mode of a GPIO pin
@@ -78,5 +78,6 @@ void gpio_inpin_opendrain_to_pullup(gpio_pin_t);
 void gpio_inpin_pullup_to_opendrain(gpio_pin_t);
 ///@}
 
+void uc_signaling_led(bool on);
 
 #endif // _UCONTROLLER_H_

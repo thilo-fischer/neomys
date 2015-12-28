@@ -10,6 +10,8 @@
  */
 
 #include <avr/io.h>
+
+#define __DELAY_BACKWARD_COMPATIBLE__
 #include <util/delay.h>
 
 #include "ucontroller_AT90USB1286.h"
@@ -39,25 +41,36 @@ volatile uint8_t *const PIN_REGISTERS [IOPORT_COUNT] = {&PINA , &PINB , &PINC , 
 void uc_init_uart(); // FIXME temporarily
 void uc_uart_send_byte(uint8_t byte); // FIXME temporarily
 
+
+void uc_signaling_led(bool on) {
+  set_bit(&PORTD, 6, on);
+}
+
+
+
 void uc_init() {
   CPU_PRESCALE(CPU_8MHz); // must be in accordance with F_CPU (see Makefile)
   
 #if 1 // temporary test code
   uc_init_uart();
   DDRD |= (1<<6);
-  PORTD |=  (1<<6);
+  uc_signaling_led(true);
+  uc_sleep(50);
+  uc_signaling_led(false);
+
   uc_uart_send_byte('t');
   uc_uart_send_byte('e');
   uc_uart_send_byte('s');
   uc_uart_send_byte('t');
-  uc_sleep(50);
-  PORTD &= ~(1<<6);
-  uc_sleep(50);
-  PORTD |=  (1<<6);
-  uc_sleep(50);
-  PORTD &= ~(1<<6);
+  
+  uc_signaling_led(true);
+  uc_sleep(100);
+  uc_signaling_led(false);
+  uc_sleep(100);
+  uc_signaling_led(true);
 #endif
-    init_usb_keyboard();
+   
+  // init_usb_keyboard();
 }
 
 void uc_spi_transmit_byte(uint8_t mosi, uint8_t *miso) {
@@ -70,8 +83,9 @@ void uc_spi_transmit_byte(uint8_t mosi, uint8_t *miso) {
 }
 
 
-void uc_sleep(uint16_t milliseconds) {
+int uc_sleep(uint16_t milliseconds) {
     _delay_ms(milliseconds);
+    return milliseconds;
 }
 
 
@@ -160,10 +174,28 @@ void gpio_inpin_pullup_to_opendrain(gpio_pin_t pin) {
 
 // FIXME move to appropriate module
 #include "teensy_codelib/uart/uart.h"
-#define UART_BAUD_RATE 38400
+//#define UART_BAUD_RATE 38400
+#define UART_BAUD_RATE 9600
+
 void uc_init_uart() {
+#if 0
+  UCSR1C =
+    // 2 Stop bits
+    (1<<USBS1)
+    |
+    // even parity bit
+    (1<<UPM11)
+    ;
+#endif
   uart_init(UART_BAUD_RATE);
 }
 void uc_uart_send_byte(uint8_t byte) {
   uart_putchar(byte);
+}
+void dbg_msg(const char *msg) {
+  while (*msg != '\0') {
+    uc_uart_send_byte(*msg);
+    ++msg;
+  }
+  uc_uart_send_byte('\0');
 }
