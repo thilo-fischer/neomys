@@ -29,16 +29,11 @@ void io_spi01_init(const void *cfg) {
   }
   initialized = true;
 
-  
   io_spi01_cfg_t *config = (io_spi01_cfg_t*) cfg;
 
-#if 0
-  gpio_pin_init(config.rst_pin, GPIO_OUT_HIGH);
-#elif 0
-  io_spi01_SS(config, false);
-#else 
-  io_spi01_rst(config, true);
-#endif
+  set_bit(&DDRB, 0, true); // FIXME use gpio_pin_init instead -- why does it not work ?!
+  io_spi01_rst(config, true); // FIXME use gpio_pin_init instead -- why does it not work ?!
+  gpio_pin_init(config->rst_pin, GPIO_OUT_HIGH);
 
   /* Set MOSI and SCK output */
   DDR_SPI |= (1<<DD_MOSI)|(1<<DD_SCK);
@@ -93,13 +88,7 @@ void io_spi01_sync(panel_t *panel) {
   //io_spi_SS(false);  
 }
 
-#if 0
-void io_spi01_SS(io_spi01_cfg_t *config, bool state) {
-  // SS is active low, so activating (true) results in clearing the bit
-  gpio_outpin_set(config->rst_pin, !state);
-}
-#else
 void io_spi01_rst(io_spi01_cfg_t *config, bool state) {
+  set_bit(&PORTB, 0, state); // FIXME use gpio_outpin_set instead -- why does it not work ?!
   gpio_outpin_set(config->rst_pin, state);
 }
-#endif
