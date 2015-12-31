@@ -57,17 +57,6 @@ void uc_init() {
   uc_signaling_led(true);
   uc_sleep(50);
   uc_signaling_led(false);
-
-  uc_uart_send_byte('t');
-  uc_uart_send_byte('e');
-  uc_uart_send_byte('s');
-  uc_uart_send_byte('t');
-  
-  uc_signaling_led(true);
-  uc_sleep(100);
-  uc_signaling_led(false);
-  uc_sleep(100);
-  uc_signaling_led(true);
 #endif
    
   // init_usb_keyboard();
@@ -174,8 +163,9 @@ void gpio_inpin_pullup_to_opendrain(gpio_pin_t pin) {
 
 // FIXME move to appropriate module
 #include "teensy_codelib/uart/uart.h"
-//#define UART_BAUD_RATE 38400
-#define UART_BAUD_RATE 9600
+#define UART_BAUD_RATE 38400
+//#define  UART_BAUD_RATE 19200
+//#define UART_BAUD_RATE 9600
 
 void uc_init_uart() {
 #if 0
