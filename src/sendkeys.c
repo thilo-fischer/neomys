@@ -60,7 +60,11 @@ static void keyseq_queue_dequeue();
 
 void progress_keyseq_queue() {
     if (!keyseq_queue_empty()) {
+        dbg_msg("KSEQ>");
         const struct keyseq_step_s* next_step = &keyseq_queue[keyseq_queue_start];
+        dbg_char(next_step->key);
+        dbg_char(next_step->modifiers);
+        dbg_char(next_step->change);
 
         if (next_step->key == KEY_NONE) {
             
@@ -90,6 +94,8 @@ void progress_keyseq_queue() {
         keyseq_queue_dequeue();
 
         send_keys_usb();
+    } else {
+        dbg_msg("kseq/");
     }
 }
 

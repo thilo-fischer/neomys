@@ -87,15 +87,10 @@ void send_keys_usb() {
 }
 
 
-// FIXME
 static inline void inform_usb_keys() {
-#if 0
-    if (info_uart(IL_DBG)) {
-        inform(IL_DBG, SC_DBG_USB_KEYS);
-        info_add(keyboard_modifier_keys);
-        for (uint8_t i = 0; i < KEYBOARD_KEYS_CNT; ++i) {
-            info_add(keyboard_keys[i]);
-        }
-    }
-#endif
+  dbg_msg("iuk");
+  dbg_char(keyboard_modifier_keys);
+  for (uint8_t i = 0; i < KEYBOARD_KEYS_CNT; ++i) {
+    dbg_char(keyboard_keys[i]);
+  }
 }
