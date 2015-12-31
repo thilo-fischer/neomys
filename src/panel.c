@@ -68,13 +68,19 @@ void pnl_process_keystate_changes_all() {
 void pnl_process_keystate_changes(panel_t *panel) {
   const uint8_t *const current_ksw_state_buffer  = pnl_get_current_ksw_state_buffer (panel);
   const uint8_t *const previous_ksw_state_buffer = pnl_get_previous_ksw_state_buffer(panel);
+  //dbg_msg("memcmp>");
+  //uc_sleep(5);
   if (memcmp(current_ksw_state_buffer, previous_ksw_state_buffer, pnl_get_single_buffer_size(panel)) != 0) {
+    //dbg_msg("<diff");
+    //uc_sleep(5);
     for (uint8_t row = 0; row < panel->height; ++row) {
       for (uint8_t byte = 0; byte < pnl_get_bytes_per_row(panel); ++byte) {
         const uint8_t *current  = pnl_get_byte_from_row_const(current_ksw_state_buffer , row, byte, panel);
         const uint8_t *previous = pnl_get_byte_from_row_const(previous_ksw_state_buffer, row, byte, panel);
         uint8_t diff = *current ^ *previous;
         if (diff > 0) {
+          //dbg_char('R');
+          //dbg_char(0x80 | row);
           for (uint8_t bit = 0; bit < 8; ++bit) {
             if (diff & (1<<bit)) {
               keystate_t keystate = *current & (1<<bit) ? KS_PRESS : KS_RELEASE;
@@ -82,9 +88,15 @@ void pnl_process_keystate_changes(panel_t *panel) {
               keyfunc(g_effective_levels, g_current_targetlayout, keystate);
             }
           }
+        } else {
+          //dbg_char('r');
+          //dbg_char(row);
         }
       }
     }
+  } else {
+    //dbg_msg("<eq");
+    //uc_sleep(5);
   }
 }
 

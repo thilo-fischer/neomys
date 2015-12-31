@@ -46,11 +46,15 @@ void io_spi01_init(const void *cfg) {
 void io_spi01_before_sync(const void *cfg) {
   io_spi01_cfg_t *config = (io_spi01_cfg_t*) cfg;
   io_spi01_rst(config, false);
+  dbg_char('>');
+  uc_sleep(2);
 }
 
 void io_spi01_after_sync(const void *cfg) {
   io_spi01_cfg_t *config = (io_spi01_cfg_t*) cfg;
   io_spi01_rst(config, true);
+  dbg_char('<');
+  uc_sleep(2);
 }
 
 void io_spi01_sync(panel_t *panel) {
@@ -87,6 +91,9 @@ void io_spi01_sync(panel_t *panel) {
       mosi_byte = panel->out_data[panel->out_size - 1];
     }
     uc_spi_transmit_byte(mosi_byte, &panel->numeric_id);
+#if 1 // for testing purposes
+    ++ *(uint16_t *) panel->out_data;
+#endif
   }
   
   //io_spi_SS(false);  

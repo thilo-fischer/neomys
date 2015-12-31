@@ -182,6 +182,9 @@ void uc_init_uart() {
 void uc_uart_send_byte(uint8_t byte) {
   uart_putchar(byte);
 }
+void dbg_char(char c) {
+  uc_uart_send_byte(c);
+}
 void dbg_msg(const char *msg) {
   while (*msg != '\0') {
     uc_uart_send_byte(*msg);
