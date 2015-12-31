@@ -77,7 +77,7 @@ void pnl_process_keystate_changes(panel_t *panel) {
         if (diff > 0) {
           for (uint8_t bit = 0; bit < 8; ++bit) {
             if (diff & (1<<bit)) {
-              keystate_t keystate = *current & (1<<bit) ? KS_RELEASE : KS_PRESS;
+              keystate_t keystate = *current & (1<<bit) ? KS_PRESS : KS_RELEASE;
               keyfunc_t keyfunc = pnl_get_keyfunc(row, 8 * byte + bit, panel);
               keyfunc(g_effective_levels, g_current_targetlayout, keystate);
             }
