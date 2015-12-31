@@ -41,11 +41,14 @@ volatile uint8_t *const PIN_REGISTERS [IOPORT_COUNT] = {&PINA , &PINB , &PINC , 
 void uc_init_uart(); // FIXME temporarily
 void uc_uart_send_byte(uint8_t byte); // FIXME temporarily
 
-
+// FIXME teensy specific, aling naming with teensy_init_onboard_led
 void uc_signaling_led(bool on) {
   set_bit(&PORTD, 6, on);
 }
 
+static void teensy_init_onboard_led() {
+  set_bit(&DDRD , 6, true);
+}
 
 
 void uc_init() {
@@ -53,7 +56,7 @@ void uc_init() {
   
 #if 1 // temporary test code
   uc_init_uart();
-  DDRD |= (1<<6);
+  teensy_init_onboard_led();
   uc_signaling_led(true);
   uc_sleep(50);
   uc_signaling_led(false);

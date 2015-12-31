@@ -57,8 +57,8 @@ panel_t neomys_pnl_right = {
   .io_spec = {
     .init_io = io_spi01_init,
     .sync_io = io_spi01_sync,
-    .before_sync = io_spi01_before_sync,
-    .after_sync  = io_spi01_after_sync,
+    .before_sync = NULL,
+    .after_sync  = NULL,
     .config_data = (void*) &neomys_io_cfg,
   },
   .userlayout = &ulo_neomys_right,
