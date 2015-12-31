@@ -19,6 +19,6 @@ io_spi01_cfg_t neomys_io_cfg = {
 
 
 void adp_await_next_cycle() {
-    uc_sleep(250);
+    uc_sleep(10);
 }
 

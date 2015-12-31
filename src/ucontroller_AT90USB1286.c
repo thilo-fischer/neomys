@@ -62,7 +62,7 @@ void uc_init() {
   uc_signaling_led(false);
 #endif
    
-  // init_usb_keyboard();
+  init_usb_keyboard();
 }
 
 void uc_spi_transmit_byte(uint8_t mosi, uint8_t *miso) {
