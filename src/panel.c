@@ -25,7 +25,8 @@ static inline void pnl_swap_ksw_state_buffers(panel_t *panel) {
 
 
 void pnl_init_io_all() {
-  for (uint8_t i = 0; i < MAX_SUPPORTED_PANELS; ++i) {
+  for (uint8_t i = 0; i < PANEL_COUNT; ++i) {
+    uc_signaling_led(i % 2);
     pnl_init_io(panel_processing[i]);
   }
 }
@@ -37,15 +38,15 @@ void pnl_init_io(panel_t *panel) {
 
 
 void pnl_sync_io_all() {
-  for (uint8_t i = 0; i < MAX_SUPPORTED_PANELS; ++i) {
+  for (uint8_t i = 0; i < PANEL_COUNT; ++i) {
     if (panel_processing[i]->io_spec.before_sync != NULL) {
       panel_processing[i]->io_spec.before_sync(&panel_processing[i]);
     }
   }
-  for (uint8_t i = 0; i < MAX_SUPPORTED_PANELS; ++i) {
+  for (uint8_t i = 0; i < PANEL_COUNT; ++i) {
     pnl_sync_io(panel_processing[i]);
   }
-  for (uint8_t i = 0; i < MAX_SUPPORTED_PANELS; ++i) {
+  for (uint8_t i = 0; i < PANEL_COUNT; ++i) {
     if (panel_processing[i]->io_spec.after_sync != NULL) {
       panel_processing[i]->io_spec.after_sync(&panel_processing[i]);
     }
@@ -59,7 +60,7 @@ void pnl_sync_io(panel_t *panel) {
 }
 
 void pnl_process_keystate_changes_all() {
-  for (uint8_t i = 0; i < MAX_SUPPORTED_PANELS; ++i) {
+  for (uint8_t i = 0; i < PANEL_COUNT; ++i) {
     pnl_process_keystate_changes(panel_processing[i]);
   }
 }
