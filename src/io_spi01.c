@@ -49,6 +49,10 @@ void io_spi01_before_sync(const void *cfg) {
 }
 
 void io_spi01_after_sync(const void *cfg) {
+  // small delay to let the highest bit of the counter from the last
+  // panel strobe the SIPO shift latch registers of that panel before
+  // resetting all panels' counters
+  uc_sleep(2);
   io_spi01_cfg_t *config = (io_spi01_cfg_t*) cfg;
   io_spi01_rst(config, true);
 }
