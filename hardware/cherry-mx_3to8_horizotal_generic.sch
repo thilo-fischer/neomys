@@ -392,4 +392,6 @@ Connection ~ 4250 2500
 Connection ~ 4150 2500
 Connection ~ 4050 2500
 Connection ~ 3950 2500
+Text Label 3750 2500 0    60   ~ 0
+ROW
 $EndSCHEMATC
