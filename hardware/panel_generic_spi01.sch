@@ -32,7 +32,6 @@ LIBS:Gajda_cmosieee
 LIBS:Gajda_ttlieee
 LIBS:40xx
 LIBS:cherry
-LIBS:okey-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
@@ -417,39 +416,15 @@ F 3 "" H 7450 1550 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	5800 4000 5800 3250
+	4900 3250 5900 3250
 Wire Wire Line
-	5800 3250 4900 3250
+	4900 3350 6000 3350
 Wire Wire Line
-	4900 3350 5900 3350
+	5800 4100 6300 4100
 Wire Wire Line
-	5900 3350 5900 4100
+	5800 4200 6400 4200
 Wire Wire Line
-	5900 4100 5800 4100
-Wire Wire Line
-	5800 4200 6000 4200
-Wire Wire Line
-	6000 4200 6000 3450
-Wire Wire Line
-	6000 3450 4900 3450
-Wire Wire Line
-	5800 4300 6100 4300
-Wire Wire Line
-	6100 4300 6100 3250
-Wire Wire Line
-	6100 3250 7050 3250
-Wire Wire Line
-	5800 4400 6200 4400
-Wire Wire Line
-	6200 4400 6200 3350
-Wire Wire Line
-	6200 3350 7050 3350
-Wire Wire Line
-	7050 3450 6300 3450
-Wire Wire Line
-	6300 3450 6300 4500
-Wire Wire Line
-	6300 4500 5800 4500
+	4900 3450 6100 3450
 Wire Wire Line
 	4900 3150 5000 3150
 Wire Wire Line
@@ -832,4 +807,30 @@ Connection ~ 3600 700
 Wire Wire Line
 	4950 6350 4900 6350
 Connection ~ 4950 6250
+Wire Wire Line
+	5800 4000 6200 4000
+Wire Wire Line
+	6200 4000 6200 3250
+Wire Wire Line
+	6200 3250 7050 3250
+Wire Wire Line
+	7050 3350 6300 3350
+Wire Wire Line
+	6300 3350 6300 4100
+Wire Wire Line
+	6400 4200 6400 3450
+Wire Wire Line
+	6400 3450 7050 3450
+Wire Wire Line
+	6100 3450 6100 4500
+Wire Wire Line
+	6100 4500 5800 4500
+Wire Wire Line
+	6000 3350 6000 4400
+Wire Wire Line
+	6000 4400 5800 4400
+Wire Wire Line
+	5900 3250 5900 4300
+Wire Wire Line
+	5900 4300 5800 4300
 $EndSCHEMATC

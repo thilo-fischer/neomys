@@ -32,7 +32,6 @@ LIBS:Gajda_cmosieee
 LIBS:Gajda_ttlieee
 LIBS:40xx
 LIBS:cherry
-LIBS:okey-cache
 EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
