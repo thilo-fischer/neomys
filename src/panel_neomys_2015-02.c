@@ -15,8 +15,6 @@
 #include "userlayout_neomys_2015-02.h"
 #include "io_spi01.h"
 
-const uint8_t MAX_SUPPORTED_PANELS = 4;
-
 extern io_spi01_cfg_t neomys_io_cfg;
 
 #if 0
@@ -70,5 +68,5 @@ panel_t neomys_pnl_right = {
   .out_data = neomys_pnl_right_out_buffer,
 };
 
-panel_t * const panel_processing[] = { &neomys_pnl_left, &neomys_pnl_right };
-
+panel_t * const panel_processing[] = { &neomys_pnl_left, &neomys_pnl_right }; // XXX rename: PANEL_PROCESSING
+const uint8_t PANEL_COUNT = sizeof(panel_processing)/sizeof(panel_processing[0]);
