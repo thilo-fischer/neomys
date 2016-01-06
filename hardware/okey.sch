@@ -62,7 +62,7 @@ $EndSheet
 $Sheet
 S 6800 4000 1500 500 
 U 56894E17
-F0 "Cherry-MX Switches Row 3x" 60
+F0 "Cherry-MX Switches Row 3x up to 8x " 60
 F1 "cherry-mx_3to8_horizotal_generic.sch" 60
 $EndSheet
 $EndSCHEMATC
