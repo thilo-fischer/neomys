@@ -187,11 +187,15 @@ void uc_uart_send_byte(uint8_t byte) {
 }
 void dbg_char(char c) {
   uc_uart_send_byte(c);
+  uc_sleep(1);
 }
 void dbg_msg(const char *msg) {
+  uint16_t msg_size = 0;
   while (*msg != '\0') {
     uc_uart_send_byte(*msg);
     ++msg;
+    ++msg_size;
   }
   uc_uart_send_byte('\0');
+  uc_sleep((msg_size + 4) / 4); // FIXME magic number 4 depends on UART_BAUD_RATE
 }
