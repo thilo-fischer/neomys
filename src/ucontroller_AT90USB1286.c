@@ -36,7 +36,6 @@ volatile uint8_t *const PORT_REGISTERS[IOPORT_COUNT] = {&PORTA, &PORTB, &PORTC, 
 volatile uint8_t *const PIN_REGISTERS [IOPORT_COUNT] = {&PINA , &PINB , &PINC , &PIND , &PINE , &PINF };
 ///@}
 
-
 void uc_init() {
   CPU_PRESCALE(CPU_8MHz); // must be in accordance with F_CPU (see Makefile)
   init_usb_keyboard();
