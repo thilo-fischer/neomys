@@ -74,6 +74,8 @@ void io_spi01_sync(panel_t *panel) {
 
       // start transmission by writing a byte to be sent (MOSI) to the appropriate register
       uc_spi_transmit_byte(mosi_byte, pnl_get_byte_from_row(current_ksw_state_buffer, row, byte, panel));      
+      
+      --bytes_left;
     }
   }
 
