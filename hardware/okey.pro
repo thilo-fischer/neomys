@@ -1,4 +1,4 @@
-update=Mon 04 Jan 2016 08:31:42 PM CET
+update=Thu 07 Jan 2016 10:10:27 AM CET
 version=1
 last_client=kicad
 [pcbnew]
@@ -62,3 +62,13 @@ LibName30=/home/thilo/devel/neomys/extern/Gajda_cmosieee
 LibName31=/home/thilo/devel/neomys/extern/Gajda_ttlieee
 LibName32=/home/thilo/devel/neomys/extern/40xx
 LibName33=/home/thilo/devel/neomys/extern/key64/cherry
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=Pcbnew
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60
