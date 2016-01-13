@@ -12,3 +12,10 @@ Cherry MX switches
 
 8 bit SIPO shift latch register 4094N
   https://github.com/musa/kicad-library/blob/master/library/40xx.lib
+
+
+
+Todo-List
+
+- Constoller board: Change BCE Transistors to more common CBE Transistors
+- Extra buttons board: Adapt button footprint to match 2.54 mm raster *and* 4.50/6.50 mm (6 mm) buttons (e.g. JTP-1130)
