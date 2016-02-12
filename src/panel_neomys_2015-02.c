@@ -61,5 +61,5 @@ panel_t neomys_pnl_right = {
   .out_data = neomys_pnl_right_out_buffer,
 };
 
-panel_t * const panel_processing[] = { &neomys_pnl_left, &neomys_pnl_right }; // XXX rename: PANEL_PROCESSING
+panel_t * const panel_processing[] = { &neomys_pnl_right, &neomys_pnl_left }; // XXX rename: PANEL_PROCESSING
 const uint8_t PANEL_COUNT = sizeof(panel_processing)/sizeof(panel_processing[0]);
