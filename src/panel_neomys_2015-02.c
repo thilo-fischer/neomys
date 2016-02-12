@@ -17,13 +17,6 @@
 
 extern io_spi01_cfg_t neomys_io_cfg;
 
-#if 0
-static const uint8_t neomys_pnl_height   = 7;
-static const uint8_t neomys_pnl_width    = 8;
-static const uint8_t neomys_pnl_out_size = 2;
-#endif
-
-
 uint8_t neomys_pnl_left_ksw_states_buffer [2][neomys_pnl_height][BYTES_PER_ROW(neomys_pnl_width)] = {{{0}}};
 uint8_t neomys_pnl_left_out_buffer [neomys_pnl_out_size] = {0};
 uint8_t neomys_pnl_right_ksw_states_buffer[2][neomys_pnl_height][BYTES_PER_ROW(neomys_pnl_width)] = {{{0}}};
