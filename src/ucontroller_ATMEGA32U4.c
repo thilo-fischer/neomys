@@ -55,7 +55,7 @@ volatile uint8_t *const PIN_REGISTERS [IOPORT_COUNT] = {&PINB , &PINC , &PIND , 
 
 
 void uc_init() {
-  CPU_PRESCALE(CPU_8MHz); // must be in accordance with F_CPU (see Makefile)
+  CPU_PRESCALE(CPU_2MHz); // must be in accordance with F_CPU (see Makefile)
   init_usb_keyboard();
 }
 

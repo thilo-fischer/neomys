@@ -39,8 +39,9 @@ void io_spi01_init(const void *cfg) {
   DDR_SPI |= (1<<DD_MOSI)|(1<<DD_SCK);
   /* Set MISO input */
   DDR_SPI &= ~(1<<DD_MISO);
-  /* Enable SPI, LSB first, Master, set clock rate fck/128 */
-  SPCR = (1<<SPE)|(1<<DORD)|(1<<MSTR)|(1<<SPR1)|(1<<SPR0);
+  // Enable SPI, LSB first, Master, set clock rate fck/128
+  // CPOL and CPHA shall be low, MOS4024 is counting up on falling clock edge
+  SPCR = (1<<SPE)|(1<<DORD)|(1<<MSTR)|(0<<CPOL)|(0<<CPHA)|(1<<SPR1)|(1<<SPR0);
 }
 
 void io_spi01_before_sync(const void *cfg) {
