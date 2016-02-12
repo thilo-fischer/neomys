@@ -26,7 +26,6 @@ static inline void pnl_swap_ksw_state_buffers(panel_t *panel) {
 
 void pnl_init_io_all() {
   for (uint8_t i = 0; i < PANEL_COUNT; ++i) {
-    uc_signaling_led(i % 2);
     pnl_init_io(panel_processing[i]);
   }
 }
