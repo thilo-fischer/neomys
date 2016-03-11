@@ -49,12 +49,18 @@ CONTROLLER = teensy-2.0
 
 # MCU name, you MUST set this to match the board you are using
 # type "make clean" after changing this, so all files will be rebuilt
-#
-#MCU = at90usb162       # Teensy 1.0
-MCU = atmega32u4        # Teensy 2.0
-#MCU = at90usb646       # Teensy++ 1.0
-#MCU = at90usb1286      # Teensy++ 2.0
 
+ifeq ("teensy-1.0", $(CONTROLLER))
+  MCU = at90usb162       # Teensy 1.0
+else ifeq ("teensy-2.0", $(CONTROLLER))
+  MCU = atmega32u4        # Teensy 2.0
+else ifeq ("teensy-1.0++", $(CONTROLLER))
+  MCU = at90usb646       # Teensy++ 1.0
+else ifeq ("teensy-2.0++", $(CONTROLLER))
+  MCU = at90usb1286      # Teensy++ 2.0
+else
+  $(error unknown controller: $(CONTROLLER))
+endif
 
 # List C source files here. (C dependencies are automatically generated.)
 SRC =	src/$(TARGET).c \
@@ -408,21 +414,7 @@ ALL_ASFLAGS = -mmcu=$(MCU) -I. -x assembler-with-cpp $(ASFLAGS)
 
 
 # Default target.
-all: begin gccversion master end
-
-
-# to support distinct builds for master and slave controllers (slave operation is currently not supported)
-master : build
-#master:
-#	@echo "--> master"
-#	$(MAKE) CTLR_CDEF="-DCONTROLLER=0" CTLR_SUFFIX="_$@" sizebefore build sizeafter
-#
-#slave:
-#	@echo "--> slave"
-#	$(MAKE) CTLR_CDEF="-DCONTROLLER=1" CTLR_SUFFIX="_$@" sizebefore build sizeafter
-
-#flash_%: %
-#	teensy_loader_cli -mmcu=$(MCU) -w -v neomys_$<.hex
+all: begin gccversion sizebefore build sizeafter end
 
 flash: $(TARGET).hex
 	teensy_loader_cli -mmcu=$(MCU) -w -v $<
