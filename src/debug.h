@@ -86,6 +86,18 @@ struct dbg_msgspec_s {
   uint8_t args_total_size; ///< Sum of byte sizes of all additional arguments.
 };
 
+/// XXX move to another file
+/// @return the sum of +count+ size_t arguments in the variable argument list.
+static inline size_t util_sum_args_size_t(uint8_t count, ...) {
+  va_list argptr;
+  va_start(argptr, count);
+  size_t sum = 0;
+  for (int i = 0; i < count; ++i) {
+    sum += va_arg(argptr, size_t);
+  }
+  va_end(argptr);
+}
+
 /// Debug system is not prepared to send arbitrary messages to the
 /// channels. All messages that possibly might be sent at runtime need
 /// to be declared somewhere in the code. These debug message
@@ -117,7 +129,7 @@ struct dbg_msgspec_s {
     format,								\
     &dbg_msg_##id##_arg_sizes,						\
     sizeof(dbg_msg_##id##_arg_sizes),					\
-    util_sum_args(__VA_ARGS__)						\
+    util_sum_args(sizeof(dbg_msg_##id##_arg_sizes), __VA_ARGS__)	\
   }
 
 /// Output debug message with loglevel DBG_LVL_ERROR.
@@ -177,9 +189,8 @@ static inline bool dbg_has_active_channels() {
 /// Output debug message to all currently active channels.
 void dbg_process(enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, ...);
 
-/// Output buffered dbg messages to the specified channels. Clear
-/// buffer afterwards (unless one of the specified channels is the
-/// buffer channel.)
+/// Output buffered dbg messages to the specified channels. Buffer
+/// channel will be ignored. Clear buffer afterwards.
 void dbg_flush_buffer(dbg_channel_spec_t dest_channels);
 
 
