@@ -1,0 +1,30 @@
+--- SDL_scancode.h.orig	2015-04-03 10:14:43.398460758 +0200
++++ SDL_scancode.h	2016-01-07 09:39:23.797589237 +0100
+@@ -1,4 +1,9 @@
+ /*
++  This file has been taken from the Simple DirectMedia Layer (libsdl.org)
++  and has been modified slightly.
++
++  --
++
+   Simple DirectMedia Layer
+   Copyright (C) 1997-2014 Sam Lantinga <slouken@libsdl.org>
+ 
+@@ -28,7 +33,7 @@
+ #ifndef _SDL_scancode_h
+ #define _SDL_scancode_h
+ 
+-#include "SDL_stdinc.h"
++//#include "SDL_stdinc.h"
+ 
+ /**
+  *  \brief The SDL keyboard scancode representation.
+@@ -38,7 +43,7 @@
+  *  SDL_Event structure.
+  *
+  *  The values in this enumeration are based on the USB usage page standard:
+- *  http://www.usb.org/developers/devclass_docs/Hut1_12v2.pdf
++ *  http://www.usb.org/developers/hidpage/Hut1_12v2.pdf
+  */
+ typedef enum
+ {
