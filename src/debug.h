@@ -38,11 +38,13 @@ void dbg_cycle();
 /// severity of the issue being logged. The enum defines the supported
 /// loglevels.
 enum dbg_level_e {
-  DBG_LVL_INFO, ///< informative messages
-  DBG_LVL_WARN, ///< messages to signal something not working as expected
-  DBG_LVL_ERROR, ///< messages to signal something is going seriously wrong
+  DBG_LVL_DEBUG,   ///< debug messages
+  DBG_LVL_INFO,    ///< informative messages
+  DBG_LVL_WARN,    ///< messages to signal something not working as expected
+  DBG_LVL_ERROR,   ///< messages to signal something is going seriously wrong
   DBG_LVL_ENUM_END ///< not a loglevel, just a reference behind the last enum element
 };
+
 /// Only debug messages with a loglevel equal to or greater than the
 /// value configured as threshold will be processed. Set to
 /// DBG_LVL_ENUM_END to disable logging at all.
@@ -50,6 +52,15 @@ extern enum dbg_level_e dbg_threshold;
 
 static inline void dbg_set_threshold(enum dbg_level_e t) {
   dbg_threshold = t;
+}
+
+/// Only debug messages with a loglevel equal to or greater than the
+/// value configured as buffer threshold will be buffered. Set to
+/// DBG_LVL_ENUM_END to disable debug message buffering at all.
+extern enum dbg_level_e dbg_buffer_threshold;
+
+static inline void dbg_set_buffer_threshold(enum dbg_level_e t) {
+  dbg_buffer_threshold = t;
 }
 
 /// Debug messages can be sent via one or multiple interfaces to
@@ -153,6 +164,15 @@ static inline size_t util_sum_args_size_t(uint8_t count, ...) {
 #define dbg_info(...) {					\
     dbg_add(DBG_LVL_INFO, __VA_ARGS__);			\
   }
+
+/// Output debug message with loglevel DBG_LVL_INFO. For parameter
+/// desciption, see @see dbg_error.
+#define dbg_debug(...) {					\
+    dbg_add(DBG_LVL_DEBUG, __VA_ARGS__);			\
+  }
+
+/// Shorthand for dbg_debug
+#define dbg(...) dbg_debug(__VA_ARGS__)
 
 /// For internal use, shuold not be called directly.
 /// Call dbg_error, dbg_warn or dbg_info instead.

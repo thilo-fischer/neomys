@@ -9,6 +9,8 @@
  * Generic parts and inclusion of specific debug implementation.
  */
 
+#include "indication.h"
+
 //////////////////
 // declarations //
 //////////////////
@@ -28,6 +30,7 @@ static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, 
 /////////////////
 
 enum dbg_level_e dbg_threshold = DBG_WARN;
+enum dbg_level_e dbg_buffer_threshold = DBG_WARN;
 
 dbg_channel_spec_t dbg_active_channels = DBG_CH_BUFFER;
 
