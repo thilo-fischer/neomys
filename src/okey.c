@@ -5,6 +5,8 @@
    This program is licenced under GPLv3.
 */
 
+#include "indication.h"
+#include "debug.h"
 #include "ucontroller.h"
 #include "panel.h"
 #include "adaptation.h"
@@ -15,6 +17,8 @@ static void init();
 int main(void) {
   init();
   while (true) {
+    ind_cycle();
+    dbg_cycle();
     adp_await_next_cycle();
     pnl_sync_io_all();
     pnl_process_keystate_changes_all();
@@ -24,6 +28,9 @@ int main(void) {
 }
 
 static void init() {
+  ind_init();
+  ind_signal(IND_SIG_OKEY_INIT);
+  dbg_init();
   uc_init();
   pnl_init_io_all();
 }

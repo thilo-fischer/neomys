@@ -66,6 +66,8 @@ endif
 SRC =	src/$(TARGET).c \
 src/io_spi01.c \
 src/okey.c \
+src/indication_$(CONTROLLER).c \
+src/debug.c \
 src/panel.c \
 src/sendkeys.c \
 src/targetlayout.c \
