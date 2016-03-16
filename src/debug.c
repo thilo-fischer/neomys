@@ -178,7 +178,7 @@ const uint8_t dbg_max_msg_arg_cnt = 8;
 
 void dbg_buf_add(lvl, struct dbg_msgspec_s *msg, char *bin_buf, uint8_t bin_buf_size) {
   assert(msg->args_total_size, bin_buf_size);
-  ntf_signal(NTF_SIGNAL_DBG_MSG_BUF);
+  ind_signal(IND_SIG_DBG_MSG_BUF);
   dbg_buf_push_char(lvl);
   dbg_buf_push_ptr(msg);
   dbg_buf_push_blob(bin_buf, msg->args_total_size);
