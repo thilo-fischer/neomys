@@ -79,4 +79,7 @@ void gpio_inpin_pullup_to_opendrain(gpio_pin_t);
 ///@}
 
 
+void uart_send_char(const char data);
+void uart_send_blob(const char *data, uint8_t size);
+
 #endif // _UCONTROLLER_H_
