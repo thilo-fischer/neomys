@@ -9,6 +9,12 @@
  * API to be used to signal states and events to the okey keyboard user.
  */
 
+#ifndef _INDICATION_H_
+#define _INDICATION_H_
+
+#include <stdint.h>
+#include <stdbool.h>
+
 /**
  * To be called at firmware initialization. May be used to configure pins etc.
  */
@@ -31,7 +37,9 @@ void ind_signal(uint8_t signal);
 
 enum ind_signals {
   IND_SIG_NONE,
+  IND_SIG_OKEY_INIT,
   IND_SIG_DBG_MSG_BUF,
   IND_SIGS_COUNT
-}
+};
 
+#endif // _INDICATION_H_

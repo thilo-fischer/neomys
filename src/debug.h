@@ -12,6 +12,8 @@
  * at compile time and even at runtime.
  */
 
+#ifndef _DEBUG_H_
+#define _DEBUG_H_
 
 #ifdef NDEBUG
 
@@ -29,6 +31,25 @@
 
 #else // def NDEBUG
 // !def(NDEBUG)
+
+#include <stdlib.h> // size_t
+#include <stdint.h>
+#include <stdbool.h>
+
+// XXX> move to another file
+#include <stdarg.h>
+/// @return the sum of +count+ size_t arguments in the variable argument list.
+static inline size_t util_sum_args_size_t(uint8_t count, ...) {
+  va_list argptr;
+  va_start(argptr, count);
+  size_t sum = 0;
+  for (int i = 0; i < count; ++i) {
+    sum += va_arg(argptr, size_t);
+  }
+  va_end(argptr);
+  return sum;
+}
+// <XXX
 
 void dbg_init();
 
@@ -96,18 +117,6 @@ struct dbg_msgspec_s {
   uint8_t args_cnt;   ///< Number of additional arguments to be expected.
   uint8_t args_total_size; ///< Sum of byte sizes of all additional arguments.
 };
-
-/// XXX move to another file
-/// @return the sum of +count+ size_t arguments in the variable argument list.
-static inline size_t util_sum_args_size_t(uint8_t count, ...) {
-  va_list argptr;
-  va_start(argptr, count);
-  size_t sum = 0;
-  for (int i = 0; i < count; ++i) {
-    sum += va_arg(argptr, size_t);
-  }
-  va_end(argptr);
-}
 
 /// Debug system is not prepared to send arbitrary messages to the
 /// channels. All messages that possibly might be sent at runtime need
@@ -216,3 +225,4 @@ void dbg_flush_buffer(dbg_channel_spec_t dest_channels);
 
 #endif // def NDEBUG
 
+#endif // _DEBUG_H_

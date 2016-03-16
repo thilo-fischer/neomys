@@ -9,6 +9,11 @@
  * Generic parts and inclusion of specific debug implementation.
  */
 
+#include "debug.h"
+
+#include <stdarg.h>
+#include <string.h>
+
 #include "indication.h"
 
 //////////////////
@@ -19,7 +24,7 @@
 static void dbg_vprocess(enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, const va_list argptr);
 
 /// vararg wrapper to dbg_voutput
-static void dbg_output(dbg_channel_spec_t dest_channel, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, ...) {
+static void dbg_output(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, ...);
 
 /// Output debug message to all channels active in the given bitfield.
 static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, const va_list start_argptr);
@@ -29,8 +34,8 @@ static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, 
 // definitions //
 /////////////////
 
-enum dbg_level_e dbg_threshold = DBG_WARN;
-enum dbg_level_e dbg_buffer_threshold = DBG_WARN;
+enum dbg_level_e dbg_threshold = DBG_LVL_WARN;
+enum dbg_level_e dbg_buffer_threshold = DBG_LVL_WARN;
 
 dbg_channel_spec_t dbg_active_channels = DBG_CH_BUFFER;
 
@@ -68,14 +73,14 @@ static void dbg_vprocess(enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, co
   dbg_voutput(dbg_active_channels, lvl, msgspec, argptr);
 }
 
-static void dbg_output(dbg_channel_spec_t dest_channel, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, ...) {
+static void dbg_output(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, ...) {
   va_list argptr;
   va_start(argptr, msgspec);
   dbg_voutput(dest_channels, lvl, msgspec, argptr);
   va_end(argptr);
 }
 
-static void dbg_voutput(dbg_channel_spec_t dest_channel, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, const va_list start_argptr) {
+static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, const va_list start_argptr) {
 
   const uint8_t errcode = msgspec->errcode;
   const char *const format = msgspec->format;
@@ -98,13 +103,13 @@ static void dbg_voutput(dbg_channel_spec_t dest_channel, enum dbg_level_e lvl, s
 
       switch (arg_sizes[i]) {
       case 1:
-	(uint8_t *) &(bin_buf[bin_buf_size]) = va_arg(argptr, uint8_t);
+	*((uint8_t *)&(bin_buf[bin_buf_size])) = va_arg(argptr, uint8_t);
 	break;
       case 2:
-	(uint16_t*) &(bin_buf[bin_buf_size]) = va_arg(argptr, uint16_t);
+	*((uint16_t*)&(bin_buf[bin_buf_size])) = va_arg(argptr, uint16_t);
 	break;
       case 4:
-	(uint32_t*) &(bin_buf[bin_buf_size]) = va_arg(argptr, uint32_t);
+	*((uint32_t*)&(bin_buf[bin_buf_size])) = va_arg(argptr, uint32_t);
 	break;
       default:
 	// TODO signal error state?
@@ -115,11 +120,11 @@ static void dbg_voutput(dbg_channel_spec_t dest_channel, enum dbg_level_e lvl, s
     } // for
 
 
-    if (dest_channel | DBG_CH_BUFFER) {
+    if (dest_channels | DBG_CH_BUFFER) {
       dbg_buf_add(lvl, msgspec, bin_buf, bin_buf_size);
     }
 
-    if ((dest_channel | DBG_CH_UART) && (dbg_uart_code)) {
+    if ((dest_channels | DBG_CH_UART) && (dbg_uart_code)) {
       dbg_output_uart_bin(errcode, bin_buf, bin_buf_size);
     }
 
