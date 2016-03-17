@@ -138,4 +138,3 @@ void gpio_inpin_pullup_to_opendrain(gpio_pin_t pin) {
   set_bit(PORT_REGISTERS[pin.port], pin.bitpos, false);
 }
 
-

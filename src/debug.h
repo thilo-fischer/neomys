@@ -26,6 +26,10 @@
 #define dbg_error(...)
 #define dbg_warn(...)
 #define dbg_info(...)
+#define dbg_debug(...)
+#define dbg(...)
+
+#define dbg_chkpnt(...)
 
 #define dbg_flush_buffer(...)
 
@@ -113,9 +117,9 @@ struct dbg_msgspec_s {
   char *const format; ///< Format string compatible to printf format
                       ///  strings. To be used when outputting the
                       ///  debug message in text form.
-  uint8_t *arg_sizes; ///< Byte sizes of additional arguments to be expected.
+  const size_t *arg_sizes; ///< Byte sizes of additional arguments to be expected.
   uint8_t args_cnt;   ///< Number of additional arguments to be expected.
-  uint8_t args_total_size; ///< Sum of byte sizes of all additional arguments.
+  // uint8_t args_total_size; ///< Sum of byte sizes of all additional arguments.
 };
 
 /// Debug system is not prepared to send arbitrary messages to the
@@ -143,14 +147,15 @@ struct dbg_msgspec_s {
 /// a list of the sizes (in bytes) of those data types of the expected
 /// additonal arguments shall be given as variable argument list.
 #define dbg_define_msg(id, errcode, format, ...)			\
-  static const uint8_t dbg_msg_##id##_arg_sizes[] = { __VA_ARGS__ };	\
-  const struct dbg_msgspec_s dbg_msg_##id = {				\
+  static const size_t dbg_msg_##id##_arg_sizes[] = { __VA_ARGS__ };	\
+  static const struct dbg_msgspec_s dbg_msg_##id = {                    \
     (uint8_t) errcode,							\
     format,								\
-    &dbg_msg_##id##_arg_sizes,						\
+    dbg_msg_##id##_arg_sizes,						\
     sizeof(dbg_msg_##id##_arg_sizes),					\
-    util_sum_args(sizeof(dbg_msg_##id##_arg_sizes), __VA_ARGS__)	\
   }
+
+// util_sum_args_size_t(sizeof(dbg_msg_##id##_arg_sizes), __VA_ARGS__)
 
 /// Output debug message with loglevel DBG_LVL_ERROR.
 /// 
@@ -182,6 +187,12 @@ struct dbg_msgspec_s {
 
 /// Shorthand for dbg_debug
 #define dbg(...) dbg_debug(__VA_ARGS__)
+
+/// checkpoint
+#define dbg_chkpnt(...)                         \
+  dbg_debug(CHECKPOINT, __FILE__, __LINE__)
+
+dbg_define_msg(CHECKPOINT, 0x00, "%s:%d", sizeof(__FILE__), sizeof(__LINE__));
 
 /// For internal use, shuold not be called directly.
 /// Call dbg_error, dbg_warn or dbg_info instead.
@@ -216,7 +227,7 @@ static inline bool dbg_has_active_channels() {
 /// Call dbg_error, dbg_warn or dbg_info instead.
 ///
 /// Output debug message to all currently active channels.
-void dbg_process(enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, ...);
+void dbg_process(enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, ...);
 
 /// Output buffered dbg messages to the specified channels. Buffer
 /// channel will be ignored. Clear buffer afterwards.

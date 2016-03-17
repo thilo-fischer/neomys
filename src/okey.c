@@ -14,6 +14,8 @@
 
 static void init();
 
+dbg_define_msg(BUILDTIME, 0x01, "build %s, %s", sizeof(__DATE__), sizeof(__TIME__));
+
 int main(void) {
   init();
   while (true) {
@@ -32,5 +34,6 @@ static void init() {
   ind_signal(IND_SIG_OKEY_INIT);
   dbg_init();
   uc_init();
+  dbg_info(BUILDTIME, __DATE__, __TIME__);
   pnl_init_io_all();
 }

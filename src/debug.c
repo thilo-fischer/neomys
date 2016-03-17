@@ -42,7 +42,11 @@ static void dbg_voutput_string(dbg_channel_spec_t dest_channel, enum dbg_level_e
 // definitions //
 /////////////////
 
+#if 0
 enum dbg_level_e dbg_threshold = DBG_LVL_WARN;
+#else
+enum dbg_level_e dbg_threshold = DBG_LVL_DEBUG;
+#endif
 enum dbg_level_e dbg_buffer_threshold = DBG_LVL_WARN;
 
 dbg_channel_spec_t dbg_active_channels = DBG_CH_BUFFER;
@@ -50,9 +54,14 @@ dbg_channel_spec_t dbg_active_channels = DBG_CH_BUFFER;
 /// whether to send just error codes via UART (in contrast to sending
 /// string corstructed form the printf-alike format string and
 /// optional additional arguments)
+#if 1
 bool dbg_uart_code = true;
+#else
+bool dbg_uart_code = false;
+#endif
+
 /// when dbg_uart_code is active: send binary data of additional
-/// arguments
+/// arguments @todo not yet supported
 bool dbg_uart_payload = true;
 
 bool dbg_uart_add_prefix = false; ///< prepend a certain byte pattern to UART debug output
@@ -70,11 +79,15 @@ static const uint16_t dbg_max_out_string_size = 128;
 // implementation //
 ////////////////////
 
-void dbg_init() {}
+void dbg_init() {
+  uc_uart_init();
+}
 
-void dbg_cycle() {}
+void dbg_cycle() {
+  uc_uart_cycle();
+}
 
-void dbg_process(enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, ...) {
+void dbg_process(enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, ...) {
   va_list argptr;
   va_start(argptr, msgspec);
   dbg_process(lvl, msgspec, argptr);
@@ -111,7 +124,7 @@ static inline bool dbg_is_string_active(dbg_channel_spec_t dest_channels) {
 static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, const va_list start_argptr) {
 
   const uint8_t errcode = msgspec->errcode;
-  const uint8_t *arg_sizes = msgspec->arg_sizes;
+  const size_t *arg_sizes = msgspec->arg_sizes;
   const uint8_t args_cnt = msgspec->args_cnt;
 
   if (dbg_is_binary_active(dest_channels)) {
@@ -166,14 +179,14 @@ static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, 
 
 static void dbg_output_uart_bin(uint8_t errcode, char *bin_buf, uint8_t bin_buf_size) {
   if (dbg_uart_add_prefix) {
-    uart_send_char(dbg_uart_prefix);
+    uc_uart_send_char(dbg_uart_prefix);
   }
-  uart_send_char(errcode);
+  uc_uart_send_char(errcode);
   if (dbg_uart_payload) {
-    uart_send_blob(bin_buf, bin_buf_size);
+    uc_uart_send_blob(bin_buf, bin_buf_size);
   }
   if (dbg_uart_add_suffix) {
-    uart_send_char(dbg_uart_suffix);
+    uc_uart_send_char(dbg_uart_suffix);
   }
 }
 
@@ -197,7 +210,7 @@ static void dbg_voutput_string(dbg_channel_spec_t dest_channels, enum dbg_level_
   }
   
   if ((dest_channels | DBG_CH_UART) && (!dbg_uart_code)) {
-    uart_send_blob(str_buf, strlen);      
+    uc_uart_send_blob(str_buf, strlen);      
   }
 }
 
