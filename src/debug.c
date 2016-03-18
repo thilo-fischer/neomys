@@ -23,19 +23,22 @@
 //////////////////
 
 /// Output debug message to all currently active channels.
-static void dbg_vprocess(enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, const va_list argptr);
+static void dbg_vprocess(enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, const va_list argptr);
 
 /// vararg wrapper to dbg_voutput
-static void dbg_output(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, ...);
+static void dbg_output(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, ...);
 
 /// Output debug message to all channels active in the given bitfield.
-static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, const va_list start_argptr);
+static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, const va_list start_argptr);
 
-static void dbg_buf_add(enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, char *bin_buf, uint8_t bin_buf_size);
+static void dbg_buf_add(enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, char *bin_buf, uint8_t bin_buf_size);
 
 static void dbg_output_uart_bin(uint8_t errcode, char *bin_buf, uint8_t bin_buf_size);
-static void dbg_output_string(dbg_channel_spec_t dest_channel, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, ...);
-static void dbg_voutput_string(dbg_channel_spec_t dest_channel, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, va_list argptr);
+static void dbg_output_string(dbg_channel_spec_t dest_channel, enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, ...);
+static void dbg_voutput_string(dbg_channel_spec_t dest_channel, enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, va_list argptr);
+
+static inline bool dbg_is_binary_active(dbg_channel_spec_t dest_channels);
+static inline bool dbg_is_string_active(dbg_channel_spec_t dest_channels);
 
 
 /////////////////
@@ -54,7 +57,7 @@ dbg_channel_spec_t dbg_active_channels = DBG_CH_BUFFER;
 /// whether to send just error codes via UART (in contrast to sending
 /// string corstructed form the printf-alike format string and
 /// optional additional arguments)
-#if 1
+#if 0
 bool dbg_uart_code = true;
 #else
 bool dbg_uart_code = false;
@@ -90,38 +93,22 @@ void dbg_cycle() {
 void dbg_process(enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, ...) {
   va_list argptr;
   va_start(argptr, msgspec);
-  dbg_process(lvl, msgspec, argptr);
+  dbg_vprocess(lvl, msgspec, argptr);
   va_end(argptr);
 }
 
-static void dbg_vprocess(enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, const va_list argptr) {
+static void dbg_vprocess(enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, const va_list argptr) {
   dbg_voutput(dbg_active_channels, lvl, msgspec, argptr);
 }
 
-static void dbg_output(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, ...) {
+static void dbg_output(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, ...) {
   va_list argptr;
   va_start(argptr, msgspec);
   dbg_voutput(dest_channels, lvl, msgspec, argptr);
   va_end(argptr);
 }
 
-static inline bool dbg_is_binary_active(dbg_channel_spec_t dest_channels) {
-  return
-    (dest_channels | DBG_CH_BUFFER)
-    ||
-    ((dest_channels | DBG_CH_UART) && (dbg_uart_code))
-    ;
-}
-
-static inline bool dbg_is_string_active(dbg_channel_spec_t dest_channels) {
-  return
-    (dest_channels | DBG_CH_KEYS)
-    ||
-    ((dest_channels | DBG_CH_UART) && (!dbg_uart_code))
-    ;
-}
-
-static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, const va_list start_argptr) {
+static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, const va_list start_argptr) {
 
   const uint8_t errcode = msgspec->errcode;
   const size_t *arg_sizes = msgspec->arg_sizes;
@@ -143,7 +130,7 @@ static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, 
 
       switch (arg_sizes[i]) {
       case 1:
-	*((uint8_t *)&(bin_buf[bin_buf_size])) = va_arg(argptr, uint8_t);
+	*((uint8_t *)&(bin_buf[bin_buf_size])) = va_arg(argptr, uint16_t);
 	break;
       case 2:
 	*((uint16_t*)&(bin_buf[bin_buf_size])) = va_arg(argptr, uint16_t);
@@ -177,6 +164,22 @@ static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, 
   
 }
 
+static inline bool dbg_is_binary_active(dbg_channel_spec_t dest_channels) {
+  return
+    (dest_channels | DBG_CH_BUFFER)
+    ||
+    ((dest_channels | DBG_CH_UART) && (dbg_uart_code))
+    ;
+}
+
+static inline bool dbg_is_string_active(dbg_channel_spec_t dest_channels) {
+  return
+    (dest_channels | DBG_CH_KEYS)
+    ||
+    ((dest_channels | DBG_CH_UART) && (!dbg_uart_code))
+    ;
+}
+
 static void dbg_output_uart_bin(uint8_t errcode, char *bin_buf, uint8_t bin_buf_size) {
   if (dbg_uart_add_prefix) {
     uc_uart_send_char(dbg_uart_prefix);
@@ -190,7 +193,7 @@ static void dbg_output_uart_bin(uint8_t errcode, char *bin_buf, uint8_t bin_buf_
   }
 }
 
-static void dbg_output_string(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, ...) {
+static void dbg_output_string(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, ...) {
   va_list argptr;
   va_start(argptr, msgspec);
   dbg_voutput_string(dest_channels, lvl, msgspec, argptr);
@@ -201,7 +204,7 @@ static void dbg_output_string(dbg_channel_spec_t dest_channels, enum dbg_level_e
 // enqueue the key codes that will cause the characters from the given string to appear as input on the host to the queue of keycodes to be sent to the host.
 static inline void hc_enq_syms_from_str(const char *str_buf, uint8_t strlen) { /* TOD */ }
 
-static void dbg_voutput_string(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, struct dbg_msgspec_s *msgspec, va_list argptr) {
+static void dbg_voutput_string(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, va_list argptr) {
   char str_buf[dbg_max_out_string_size];
   int strlen = vsnprintf(str_buf, dbg_max_out_string_size, msgspec->format, argptr);
   
@@ -224,7 +227,7 @@ dbg_define_msg(dbg_buffer_ovfl, 0xFF,
 
 const uint8_t dbg_max_msg_arg_cnt = 8;
 
-void dbg_buf_add(enum dbg_level_e lvl, struct dbg_msgspec_s *msg, char *bin_buf, uint8_t bin_buf_size) {
+void dbg_buf_add(enum dbg_level_e lvl, const struct dbg_msgspec_s *msg, char *bin_buf, uint8_t bin_buf_size) {
   assert(msg->args_total_size, bin_buf_size);
   ind_signal(IND_SIG_DBG_MSG_BUF);
   dbg_buf_push_char(lvl);
@@ -244,7 +247,7 @@ void dbg_flush_buffer(dbg_channel_spec_t dest_channels) {
 
   while (!dbg_buf_empty()) {
     uint8_t lvl = dbg_buf_pop_char();
-    struct dbg_msgspec_s *msg = dbg_buf_pop_ptr();
+    const struct dbg_msgspec_s *msg = dbg_buf_pop_ptr();
 
     char bin_buf[dbg_max_out_binary_size];
     dbg_buf_pop_blob(&bin_buf, msg->args_total_size);
@@ -288,6 +291,6 @@ void dbg_flush_buffer(dbg_channel_spec_t dest_channels) {
 
 #else
 
-void dbg_buf_add(enum dbg_level_e lvl, struct dbg_msgspec_s *msg, char *bin_buf, uint8_t bin_buf_size) {}
+void dbg_buf_add(enum dbg_level_e lvl, const struct dbg_msgspec_s *msg, char *bin_buf, uint8_t bin_buf_size) {}
 
 #endif
