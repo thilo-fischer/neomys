@@ -40,10 +40,10 @@ void uc_uart_send_char(char data) {
   uart_putchar(data);
 }
 
-void uc_uart_send_blob(const char *data, uint8_t size) {
-  const char *end = data + size;
+void uc_uart_send_blob(const uint8_t *data, uint8_t size) {
+  const uint8_t *end = data + size;
   for (; data != end; ++data) {
-    uart_putchar(*data);
+    uart_putchar((char)*data);
   }
   //uc_sleep((msg_size + 4) / 4); // FIXME magic number 4 depends on UART_BAUD_RATE
 }

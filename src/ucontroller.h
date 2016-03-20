@@ -82,6 +82,6 @@ void uc_uart_init();
 void uc_uart_cycle();
 
 void uc_uart_send_char(char data);
-void uc_uart_send_blob(const char *data, uint8_t size);
+void uc_uart_send_blob(const uint8_t *data, uint8_t size);
 
 #endif // _UCONTROLLER_H_

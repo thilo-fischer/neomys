@@ -31,9 +31,9 @@ static void dbg_output(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, c
 /// Output debug message to all channels active in the given bitfield.
 static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, const va_list start_argptr);
 
-static void dbg_buf_add(enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, char *bin_buf, uint8_t bin_buf_size);
+static void dbg_buf_add(enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, uint8_t *bin_buf, uint8_t bin_buf_size);
 
-static void dbg_output_uart_bin(uint8_t errcode, char *bin_buf, uint8_t bin_buf_size);
+static void dbg_output_uart_bin(uint8_t errcode, uint8_t *bin_buf, uint8_t bin_buf_size);
 static void dbg_output_string(dbg_channel_spec_t dest_channel, enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, ...);
 static void dbg_voutput_string(dbg_channel_spec_t dest_channel, enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, va_list argptr);
 
@@ -115,7 +115,7 @@ static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, 
   const uint8_t args_cnt = msgspec->args_cnt;
 
   if (dbg_is_binary_active(dest_channels)) {
-    char bin_buf[dbg_max_out_binary_size];
+    uint8_t bin_buf[dbg_max_out_binary_size];
     uint8_t bin_buf_size = 0;
     
     va_list argptr;
@@ -180,16 +180,16 @@ static inline bool dbg_is_string_active(dbg_channel_spec_t dest_channels) {
     ;
 }
 
-static void dbg_output_uart_bin(uint8_t errcode, char *bin_buf, uint8_t bin_buf_size) {
-  if (dbg_uart_add_prefix) {
-    uc_uart_send_char(dbg_uart_prefix);
+static void dbg_output_uart_bin(uint8_t errcode, uint8_t *bin_buf, uint8_t bin_buf_size) {
+  if (dbg_uart_prefix_size) {
+    uc_uart_send_blob(dbg_uart_prefix, dbg_uart_prefix_size);
   }
   uc_uart_send_char(errcode);
   if (dbg_uart_payload) {
     uc_uart_send_blob(bin_buf, bin_buf_size);
   }
-  if (dbg_uart_add_suffix) {
-    uc_uart_send_char(dbg_uart_suffix);
+  if (dbg_uart_suffix_size) {
+    uc_uart_send_blob(dbg_uart_suffix, dbg_uart_suffix_size);
   }
 }
 
@@ -213,7 +213,7 @@ static void dbg_voutput_string(dbg_channel_spec_t dest_channels, enum dbg_level_
   }
   
   if ((dest_channels | DBG_CH_UART) && (!dbg_uart_code)) {
-    uc_uart_send_blob(str_buf, strlen);      
+    uc_uart_send_blob((uint8_t*) str_buf, strlen);      
   }
 }
 
@@ -227,7 +227,7 @@ dbg_define_msg(dbg_buffer_ovfl, 0xFF,
 
 const uint8_t dbg_max_msg_arg_cnt = 8;
 
-void dbg_buf_add(enum dbg_level_e lvl, const struct dbg_msgspec_s *msg, char *bin_buf, uint8_t bin_buf_size) {
+void dbg_buf_add(enum dbg_level_e lvl, const struct dbg_msgspec_s *msg, uint8_t *bin_buf, uint8_t bin_buf_size) {
   assert(msg->args_total_size, bin_buf_size);
   ind_signal(IND_SIG_DBG_MSG_BUF);
   dbg_buf_push_char(lvl);
@@ -291,6 +291,6 @@ void dbg_flush_buffer(dbg_channel_spec_t dest_channels) {
 
 #else
 
-void dbg_buf_add(enum dbg_level_e lvl, const struct dbg_msgspec_s *msg, char *bin_buf, uint8_t bin_buf_size) {}
+void dbg_buf_add(enum dbg_level_e lvl, const struct dbg_msgspec_s *msg, uint8_t *bin_buf, uint8_t bin_buf_size) {}
 
 #endif
