@@ -67,11 +67,15 @@ bool dbg_uart_code = false;
 /// arguments @todo not yet supported
 bool dbg_uart_payload = true;
 
-bool dbg_uart_add_prefix = false; ///< prepend a certain byte pattern to UART debug output
-char dbg_uart_prefix = '\0'; ///< byte to prepend to UART debug output
+ /// prepend these bytes to each UART debug output
+uint8_t dbg_uart_prefix_default[] = { 0x00 };
+uint8_t *dbg_uart_prefix = dbg_uart_prefix_default;
+uint8_t dbg_uart_prefix_size = sizeof(dbg_uart_prefix_default);
 
-bool dbg_uart_add_suffix = false; ///< append a certain byte pattern to UART debug output
-char dbg_uart_suffix = '\0'; ///< byte to append to UART debug output
+/// append these bytes to each UART debug output
+uint8_t dbg_uart_suffix_default[] = { 0XFF };
+uint8_t *dbg_uart_suffix = dbg_uart_suffix_default;
+uint8_t dbg_uart_suffix_size = sizeof(dbg_uart_suffix_default);
 
 /// maximum size of debug output in binary format
 static const uint16_t dbg_max_out_binary_size =  12;
@@ -213,7 +217,13 @@ static void dbg_voutput_string(dbg_channel_spec_t dest_channels, enum dbg_level_
   }
   
   if ((dest_channels | DBG_CH_UART) && (!dbg_uart_code)) {
+    if (dbg_uart_prefix_size) {
+      uc_uart_send_blob(dbg_uart_prefix, dbg_uart_prefix_size);
+    }
     uc_uart_send_blob((uint8_t*) str_buf, strlen);      
+    if (dbg_uart_suffix_size) {
+      uc_uart_send_blob(dbg_uart_suffix, dbg_uart_suffix_size);
+    }
   }
 }
 
