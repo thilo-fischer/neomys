@@ -110,9 +110,15 @@ static inline void kf_level_modifier(level_t effective_levels[], level_t affecte
         if ()
     }
 #endif
-    effective_levels[LVR_MAIN] = affected_level;
-    effective_levels[LVR_IL2L] = affected_level;
-    effective_levels[LVR_IGNORE_ANY_LOCK] = affected_level;
+    if (event == KS_PRESS) {
+      effective_levels[LVR_MAIN] |= affected_level;
+      effective_levels[LVR_IL2L] |= affected_level;
+      effective_levels[LVR_IGNORE_ANY_LOCK] |= affected_level;
+    } else {
+      effective_levels[LVR_MAIN] &= ~affected_level;
+      effective_levels[LVR_IL2L] &= ~affected_level;
+      effective_levels[LVR_IGNORE_ANY_LOCK] &= ~affected_level;
+    }
     if (sf != NULL) {
         sf(targetlayout, event);
     }
