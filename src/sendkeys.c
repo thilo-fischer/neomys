@@ -18,7 +18,9 @@
 
 #include "teensy_codelib/usb_keyboard/usb_keyboard.h" // FIXME: move all code dependent on this file to usb_keyboard.c
 
-// FIXME
+#include "debug.h"
+
+// FIXME replace with dbg_* commands
 #define inform(a, b)
 #define info_add(x)
 
@@ -58,28 +60,35 @@ static void keyseq_queue_dequeue();
 
 #define CHANGE_MODIFIERS_BEFORE_KEYEVENT
 
+dbg_define_msg(HC_KEV_MOD, 0xE0,
+               "^ kev mod %02hhX %s", sizeof(uint8_t), sizeof(char*));
+
+dbg_define_msg(HC_KEV_SYM, 0xE1,
+               "^ kev key%02hhX ~mod%02hhx %s", sizeof(uint8_t), sizeof(uint8_t), sizeof(char*));
+
 void progress_keyseq_queue() {
     if (!keyseq_queue_empty()) {
         const struct keyseq_step_s* next_step = &keyseq_queue[keyseq_queue_start];
 
         if (next_step->key == KEY_NONE) {
-            
-            inform(IL_DBG, next_step->change == KS_PRESS ? SC_DBG_USB_MOD_PRESS : SC_DBG_USB_MOD_RELEASE);
-            info_add(keyboard_modifier_keys ^ next_step->modifiers);
+
+            dbg_debug(HC_KEV_MOD, keyboard_modifier_keys ^ next_step->modifiers, next_step->change == KS_PRESS ? "DN" : "UP");
             keyboard_modifier_keys = next_step->modifiers;
             
         } else {
-        
-            if (keyboard_modifier_keys != next_step->modifiers) {
-                inform(IL_DBG, next_step->change == KS_PRESS ? SC_DBG_USB_MOD_PRESS : SC_DBG_USB_MOD_RELEASE);
-                info_add(keyboard_modifier_keys ^ next_step->modifiers);
+
+            uint8_t modchange = keyboard_modifier_keys ^ next_step->modifiers;
+            if (modchange > 0) {
                 keyboard_modifier_keys = next_step->modifiers;
 #ifdef CHANGE_MODIFIERS_BEFORE_KEYEVENT
+                dbg_debug(HC_KEV_SYM, 0, modchange, next_step->change == KS_PRESS ? "dn" : "up");
                 send_keys_usb();
                 return;
 #endif
             }
             
+            dbg_debug(HC_KEV_SYM, next_step->key, modchange, next_step->change == KS_PRESS ? "dn" : "up");
+
             if (next_step->change == KS_PRESS) {
                 press_key(next_step->key);
             } else {

@@ -13,6 +13,7 @@
 
 //#include "userlayout_neomys_2015-02.h" // FIXME for level_t
 
+#include "debug.h"
 
 void pnl_init_io(panel_t *panel);
 void pnl_sync_io(panel_t *panel);
@@ -64,6 +65,16 @@ void pnl_process_keystate_changes_all() {
   }
 }
 
+dbg_define_msg(KEYEVENT, 0xA0,
+               "KEV P%02hhXR%dC%d %s > %p",
+               sizeof(uint8_t),
+               sizeof(uint8_t),
+               sizeof(uint8_t),
+               sizeof(const char *),
+               sizeof(void *)
+               );
+
+
 void pnl_process_keystate_changes(panel_t *panel) {
   const uint8_t *const current_ksw_state_buffer  = pnl_get_current_ksw_state_buffer (panel);
   const uint8_t *const previous_ksw_state_buffer = pnl_get_previous_ksw_state_buffer(panel);
@@ -77,10 +88,13 @@ void pnl_process_keystate_changes(panel_t *panel) {
           for (uint8_t bit = 0; bit < 8; ++bit) {
             if (diff & (1<<bit)) {
               keystate_t keystate = *current & (1<<bit) ? KS_PRESS : KS_RELEASE;
-              keyfunc_t keyfunc = pnl_get_keyfunc(row, 8 * byte + bit, panel);
+              const uint8_t col = 8 * byte + bit;
+              keyfunc_t keyfunc = pnl_get_keyfunc(row, col, panel);
               if (keyfunc != NULL) {
                 keyfunc(g_effective_levels, g_current_targetlayout, keystate);
               }
+              dbg_debug(KEYEVENT, panel->numeric_id, row, col,
+                        keystate == KS_PRESS ? "DN" : "UP", keyfunc);
             }
           }
         }

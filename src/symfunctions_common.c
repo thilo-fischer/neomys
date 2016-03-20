@@ -18,6 +18,8 @@
 #include "userlayout.h" // SF macro
 #include "targetlayout.h"
 
+#include "debug.h"
+
 
 // FIXME neomys-specific
 
@@ -50,9 +52,14 @@ enum neo_levels_e locked_level = LEVEL1;
 
 SF(nop) {}
 
+dbg_define_msg(SF_NOT_YET_IMPLEMENTED, 0x1C, "no SF yet");
+
 SF(TODO) {
-    // FIXME inform(IL_WARN, SC_WARN_KEY_NOT_YET_IMPLMTD);
+  dbg_warn(SF_NOT_YET_IMPLEMENTED, 0);
 }
+
+dbg_define_msg(TARGET_LAYOUT, 0xC0,
+               "target layout: %02hhX", sizeof(targetlayout_t));
 
 SF(next_target_layout) {
     if (event == KS_PRESS) {
@@ -60,8 +67,7 @@ SF(next_target_layout) {
         if (g_current_targetlayout == TGL_COUNT) {
             g_current_targetlayout = TGL_NEO;
         }
-        // FIXME inform(IL_INFO, SC_INFO_SWITCH_TARGET_LAYOUT);
-        // FIXME info_add(g_current_targetlayout);
+        dbg_info(TARGET_LAYOUT, g_current_targetlayout);
     }
 }
 
@@ -71,8 +77,7 @@ SF(prev_target_layout) {
             g_current_targetlayout = TGL_COUNT;
         }
         --g_current_targetlayout;
-        // FIXME inform(IL_INFO, SC_INFO_SWITCH_TARGET_LAYOUT);
-        // FIXME info_add(target_layout);
+        dbg_info(TARGET_LAYOUT, g_current_targetlayout);
     }
 }
 
@@ -99,15 +104,19 @@ SF(capslock) {
     }    
 }
 
-// level modifiers
+dbg_define_msg(LEVELMODS, 0xC1, "lvlmods %02hhX", sizeof(level_modifiers));
 
+// level modifiers
 static inline void set_modifier_bit(enum neo_level_modifiers_e mod, keystate_t event) {
-    if (event == KS_PRESS) {
-        level_modifiers |=  mod;
-    } else {
-        level_modifiers &= ~mod;
-    }
+  if (event == KS_PRESS) {
+    level_modifiers |=  mod;
+  } else {
+    level_modifiers &= ~mod;
+  }
+  dbg_info(LEVELMODS, level_modifiers);
 }
+
+dbg_define_msg(LOCKEDLEVEL, 0xC2, "lcklvl %02hhX", sizeof(locked_level));
 
 // Currently no support to lock levels 5 and 6.
 static inline void toggle_levellock(enum neo_levels_e level) {
@@ -122,6 +131,7 @@ static inline void toggle_levellock(enum neo_levels_e level) {
     } else {
         locked_level = level;
     }
+    dbg_info(LOCKEDLEVEL, locked_level);
 }
 
 static inline void affect_levellock(enum neo_level_modifiers_e mod, enum neo_level_modifiers_e also_mod, enum neo_levels_e level, keystate_t event) {
