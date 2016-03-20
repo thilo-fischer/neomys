@@ -17,7 +17,7 @@ dbg_define_msg(KF_ERR_SF_NULL, 0xD3,
                "KF.ERROR: symfunc is NULL");
 
 /// helper functions to implement the common and ordinary key functions
-/// @todo FIXME extract adaption unspecific generic parts of these helper functions and move to userlayout.h or userlayout_common.c
+/// @todo FIXME extract adaption unspecific (i.e. neomys-independent) generic parts of these helper functions and move to userlayout.h or userlayout_common.c
 ///@{
 static inline void kf_generic_levelspecific(targetlayout_t targetlayout, keystate_t event, symfunc_t symfunc) {
     if (symfunc != NULL) {

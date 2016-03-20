@@ -44,10 +44,12 @@ enum neo_level_modifiers_e {
     LM4_R = 0x20,
 };
 
+#if 0 // XXX deprecated
 // FIXME static
 enum neo_level_modifiers_e level_modifiers = 0;
 // FIXME static
 enum neo_levels_e locked_level = LEVEL1;
+#endif
 
 
 dbg_define_msg(SF_DBG_STATUS, 0xB0,
@@ -114,6 +116,8 @@ SF(capslock) {
     }    
 }
 
+
+#if 0 // XXX deprecated
 dbg_define_msg(LEVELMODS, 0xC1, "lvlmods %02hhX", sizeof(level_modifiers));
 
 // level modifiers
@@ -153,7 +157,6 @@ static inline void affect_levellock(enum neo_level_modifiers_e mod, enum neo_lev
     }
 }
 
-
 /**
    @return true if the modifier event may be communicated to the host without causing any trouble (because we have a non-Neo host which would not understand Neo-specific level modifier keys or because it would cause level-locking on a Neo host), false otherwise.
  */
@@ -164,40 +167,43 @@ static inline bool handle_level_mod(targetlayout_t targetlayout, enum neo_level_
     // Inform the host about the modifier event only if this won't affect a levellock. We will take care of level locking in the neomys firmware and hide any level locking events from the Neo driver on the host. We want to assure locking state of neomys and of the host's Neo driver can never go out of sync, also Neo driver does not always allow locking of all levels and does not even know of LEVEL4_MOUSE (which we also want to be able lock).
     return (targetlayout == TGL_NEO) && ((level_modifiers & also_mod) == 0);
 }
+#endif
+
 
 SF(shift_left) {
-    handle_level_mod(targetlayout, LM2_L, LM2_R, LEVEL2, event);
-    // Inform the host about the shift modifier event -- any host will understand the shift modifier and users will want to be able to use e.g. shift+mouseclick shift+return.
-    kev_modifier(KEY_LEFT_SHIFT, event);
+  // Inform the host about the shift modifier event -- any host will understand the shift modifier and users will want to be able to use e.g. shift+mouseclick shift+return.
+  kev_modifier(KEY_LEFT_SHIFT, event);
 }
 
 SF(shift_right) {
-    handle_level_mod(targetlayout, LM2_R, LM2_L, LEVEL2, event);
-    // Inform the host about the shift modifier event -- any host will understand the shift modifier and users will want to be able to use e.g. shift+mouseclick shift+return.
-    kev_modifier(KEY_RIGHT_SHIFT, event);
+  // Inform the host about the shift modifier event -- any host will understand the shift modifier and users will want to be able to use e.g. shift+mouseclick shift+return.
+  kev_modifier(KEY_RIGHT_SHIFT, event);
+}
+
+// FIXME neomys-specific
+
+static bool send_virtual_mod(targetlayout_t targetlayout) {
+  return targetlayout == TGL_NEO;
 }
 
 SF(level3mod_left) {
-    if (handle_level_mod(targetlayout, LM3_L, LM3_R, LEVEL3, event))
-        kev_virtual_modifier(KEY_CAPS_LOCK, event);
+  if (send_virtual_mod(targetlayout))
+    kev_virtual_modifier(KEY_CAPS_LOCK, event);
 }
 
 SF(level3mod_right) {
-    if (handle_level_mod(targetlayout, LM3_R, LM3_L, LEVEL3, event))
-        kev_virtual_modifier(KEY_BACKSLASH, event);
+  if (send_virtual_mod(targetlayout))
+    kev_virtual_modifier(KEY_BACKSLASH, event);
 }
 
 SF(level4mod_left) {
-    // If LM4_L is getting pressed while LM4_R is already pressed, lock LEVEL4_MOUSE.
-    if (handle_level_mod(targetlayout, LM4_L, LM4_R, LEVEL4_MOUSE, event) && locked_level != LEVEL4_MOUSE)
-    // Inform even a Neo host about the modifier event only if we have not a LEVEL4_MOUSE-lock. (Neo host does not know about LEVEL4_MOUSE and would take wrong actions.)
-        kev_virtual_modifier(KEY_ISO_EXTRA, event);
+  if (send_virtual_mod(targetlayout))
+    // FIXME Inform even a Neo host about the modifier event only if we have not a LEVEL4_MOUSE-lock. (Neo host does not know about LEVEL4_MOUSE and would take wrong actions.)
+    kev_virtual_modifier(KEY_ISO_EXTRA, event);
 }
 
 SF(level4mod_right) {
-    // If LM4_R is getting pressed while LM4_L is already pressed, lock LEVEL4.
-    handle_level_mod(targetlayout, LM4_R, LM4_L, LEVEL4, event);
-    // Do not inform any host about this modifier event, also Neo host does not know about LEVEL4_MOUSE.
+  // Do not inform any host about this modifier event, also Neo host does not know about LEVEL4_MOUSE.
 }
 
 // modifiers
