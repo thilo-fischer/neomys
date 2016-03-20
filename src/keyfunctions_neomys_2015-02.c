@@ -11,6 +11,11 @@
 
 #include "userlayout_neomys_2015-02.h"
 
+#include "debug.h"
+
+dbg_define_msg(KF_ERR_SF_NULL, 0xD3,
+               "KF.ERROR: symfunc is NULL");
+
 /// helper functions to implement the common and ordinary key functions
 /// @todo FIXME extract adaption unspecific generic parts of these helper functions and move to userlayout.h or userlayout_common.c
 ///@{
@@ -18,7 +23,7 @@ static inline void kf_generic_levelspecific(targetlayout_t targetlayout, keystat
     if (symfunc != NULL) {
         symfunc(targetlayout, event);
     } else {
-        // TODO signal error state
+        dbg_error(KF_ERR_SF_NULL, 0);
     }
 }
 

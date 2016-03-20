@@ -57,7 +57,7 @@ panel_t neomys_pnl_right = {
   .userlayout = &ulo_neomys_right,
   .ksw_states = &neomys_pnl_right_ksw_states_buffer[0][0][0],
   .ksw_states_previous_first = false,
-  .numeric_id = 0,
+  .numeric_id = 1,
   .out_data = neomys_pnl_right_out_buffer,
 };
 

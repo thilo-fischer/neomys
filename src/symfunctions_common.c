@@ -50,6 +50,16 @@ enum neo_level_modifiers_e level_modifiers = 0;
 enum neo_levels_e locked_level = LEVEL1;
 
 
+dbg_define_msg(SF_DBG_STATUS, 0xB0,
+               "tgtlo:%02hhX", // XXX deprecated => lvlmods:%02hhX lcklvl:%02hhX",
+               sizeof(targetlayout_t) // XXX deprecated =>, sizeof(level_modifiers), sizeof(locked_level)
+               );
+
+void symfunctions_status_dbg() {
+  dbg_debug(SF_DBG_STATUS, g_current_targetlayout); // XXX deprecated => , level_modifiers, locked_level);
+}
+
+
 SF(nop) {}
 
 dbg_define_msg(SF_NOT_YET_IMPLEMENTED, 0x1C, "no SF yet");
@@ -115,6 +125,7 @@ static inline void set_modifier_bit(enum neo_level_modifiers_e mod, keystate_t e
   }
   dbg_info(LEVELMODS, level_modifiers);
 }
+
 
 dbg_define_msg(LOCKEDLEVEL, 0xC2, "lcklvl %02hhX", sizeof(locked_level));
 

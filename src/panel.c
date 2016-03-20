@@ -66,7 +66,7 @@ void pnl_process_keystate_changes_all() {
 }
 
 dbg_define_msg(KEYEVENT, 0xA0,
-               "KEV P%02hhXR%dC%d %s > %p",
+               "kev pnl%02hhX row%d col%d %s > %p",
                sizeof(uint8_t),
                sizeof(uint8_t),
                sizeof(uint8_t),
@@ -74,6 +74,7 @@ dbg_define_msg(KEYEVENT, 0xA0,
                sizeof(void *)
                );
 
+void symfunctions_status_dbg(); // XXX include file
 
 void pnl_process_keystate_changes(panel_t *panel) {
   const uint8_t *const current_ksw_state_buffer  = pnl_get_current_ksw_state_buffer (panel);
@@ -90,11 +91,12 @@ void pnl_process_keystate_changes(panel_t *panel) {
               keystate_t keystate = *current & (1<<bit) ? KS_PRESS : KS_RELEASE;
               const uint8_t col = 8 * byte + bit;
               keyfunc_t keyfunc = pnl_get_keyfunc(row, col, panel);
+              dbg_debug(KEYEVENT, panel->numeric_id, row, col,
+                        keystate == KS_PRESS ? "DN" : "UP", keyfunc);
+              symfunctions_status_dbg();
               if (keyfunc != NULL) {
                 keyfunc(g_effective_levels, g_current_targetlayout, keystate);
               }
-              dbg_debug(KEYEVENT, panel->numeric_id, row, col,
-                        keystate == KS_PRESS ? "DN" : "UP", keyfunc);
             }
           }
         }
