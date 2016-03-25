@@ -34,8 +34,7 @@ static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, 
 static void dbg_buf_add(enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, uint8_t *bin_buf, uint8_t bin_buf_size);
 
 static void dbg_output_uart_bin(uint8_t errcode, uint8_t *bin_buf, uint8_t bin_buf_size);
-static void dbg_output_string(dbg_channel_spec_t dest_channel, enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, ...);
-static void dbg_voutput_string(dbg_channel_spec_t dest_channel, enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, va_list argptr);
+static void dbg_voutput_string(dbg_channel_spec_t dest_channel, enum dbg_level_e lvl, const char *fmtstr, va_list argptr);
 
 static inline bool dbg_is_binary_active(dbg_channel_spec_t dest_channels);
 static inline bool dbg_is_string_active(dbg_channel_spec_t dest_channels);
@@ -163,7 +162,7 @@ static void dbg_voutput(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, 
   } // dbg_is_binary_active(dest_channels)
 
   if (dbg_is_string_active(dest_channels)) {
-    dbg_voutput_string(dest_channels, lvl, msgspec, start_argptr);
+    dbg_voutput_string(dest_channels, lvl, msgspec->format, start_argptr);
   }
   
 }
@@ -197,10 +196,10 @@ static void dbg_output_uart_bin(uint8_t errcode, uint8_t *bin_buf, uint8_t bin_b
   }
 }
 
-static void dbg_output_string(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, ...) {
+void dbg_output_string(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, const char *fmtstr, ...) {
   va_list argptr;
-  va_start(argptr, msgspec);
-  dbg_voutput_string(dest_channels, lvl, msgspec, argptr);
+  va_start(argptr, fmtstr);
+  dbg_voutput_string(dest_channels, lvl, fmtstr, argptr);
   va_end(argptr);
 }
 
@@ -208,9 +207,9 @@ static void dbg_output_string(dbg_channel_spec_t dest_channels, enum dbg_level_e
 // enqueue the key codes that will cause the characters from the given string to appear as input on the host to the queue of keycodes to be sent to the host.
 static inline void hc_enq_syms_from_str(const char *str_buf, uint8_t strlen) { /* TOD */ }
 
-static void dbg_voutput_string(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, va_list argptr) {
+static void dbg_voutput_string(dbg_channel_spec_t dest_channels, enum dbg_level_e lvl, const char *fmtstr, va_list argptr) {
   char str_buf[dbg_max_out_string_size];
-  int strlen = vsnprintf(str_buf, dbg_max_out_string_size, msgspec->format, argptr);
+  int strlen = vsnprintf(str_buf, dbg_max_out_string_size, fmtstr, argptr);
   
   if (dest_channels | DBG_CH_KEYS) {
     hc_enq_syms_from_str(str_buf, strlen);
@@ -290,7 +289,7 @@ void dbg_flush_buffer(dbg_channel_spec_t dest_channels) {
 	}	
 #endif
       }
-      dbg_output_string(dest_channels, lvl, msg,
+      dbg_output_string(dest_channels, lvl, msg->format,
 		 // number of arguments in next line must match dbg_max_msg_arg_cnt !!
 		 args[0], args[1], args[2], args[3], args[4], args[5], args[6], args[7]
 		 );

@@ -185,8 +185,11 @@ struct dbg_msgspec_s {
     dbg_add(DBG_LVL_DEBUG, __VA_ARGS__);			\
   }
 
-/// Shorthand for dbg_debug
-#define dbg(...) dbg_debug(__VA_ARGS__)
+/// Write formatted string to all active non-binary channels
+/// (independent of active debug levels). To be used for
+/// "printf-debugging", but should not be used in regular
+/// code.
+#define dbg(...) dbg_output_string(dbg_active_channels, 0, __VA_ARGS__)
 
 /// checkpoint
 #define dbg_chkpnt(...)                         \
@@ -223,7 +226,7 @@ static inline bool dbg_has_active_channels() {
   return dbg_active_channels > 0;
 }
 
-/// For internal use, shuold not be called directly.
+/// For internal use, should not be called directly.
 /// Call dbg_error, dbg_warn or dbg_info instead.
 ///
 /// Output debug message to all currently active channels.
@@ -233,6 +236,9 @@ void dbg_process(enum dbg_level_e lvl, const struct dbg_msgspec_s *msgspec, ...)
 /// channel will be ignored. Clear buffer afterwards.
 void dbg_flush_buffer(dbg_channel_spec_t dest_channels);
 
+/// For internal use, should not be called directly.
+/// Call dbg_error, dbg_warn or dbg_info instead.
+void dbg_output_string(dbg_channel_spec_t dest_channel, enum dbg_level_e lvl, const char *fmtstr, ...);
 
 #endif // def NDEBUG
 
