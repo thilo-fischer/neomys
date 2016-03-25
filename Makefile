@@ -1,6 +1,6 @@
 # Hey Emacs, this is a -*- makefile -*-
 #----------------------------------------------------------------------------
-# WinAVR Makefile Template written by Eric B. Weddington, Jörg Wunsch, et al.
+# WinAVR Makefile Template written by Eric B. Weddington, JÃ¶rg Wunsch, et al.
 #
 # Released to the Public Domain
 #
@@ -76,6 +76,7 @@ src/usb_keyboard.c \
 src/adaptation_neomys_2015-02.c \
 src/panel_neomys_2015-02.c \
 src/userlayout_neomys_2015-02.c \
+src/indication_neomys_2015-02.c \
 teensy_codelib/usb_keyboard/usb_keyboard.c \
 teensy_codelib/uart/uart.c
 

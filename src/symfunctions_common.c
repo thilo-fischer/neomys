@@ -73,6 +73,8 @@ SF(TODO) {
 dbg_define_msg(TARGET_LAYOUT, 0xC0,
                "target layout: %02hhX", sizeof(targetlayout_t));
 
+void adp_ind_targetlayout(); // FIXME
+
 SF(next_target_layout) {
     if (event == KS_PRESS) {
         ++g_current_targetlayout;
@@ -80,6 +82,7 @@ SF(next_target_layout) {
             g_current_targetlayout = TGL_NEO;
         }
         dbg_info(TARGET_LAYOUT, g_current_targetlayout);
+        adp_ind_targetlayout();
     }
 }
 
@@ -90,6 +93,7 @@ SF(prev_target_layout) {
         }
         --g_current_targetlayout;
         dbg_info(TARGET_LAYOUT, g_current_targetlayout);
+        adp_ind_targetlayout();
     }
 }
 

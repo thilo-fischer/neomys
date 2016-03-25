@@ -45,7 +45,7 @@ static inline bool dbg_is_string_active(dbg_channel_spec_t dest_channels);
 // definitions //
 /////////////////
 
-#if 0
+#if 1
 enum dbg_level_e dbg_threshold = DBG_LVL_WARN;
 #else
 enum dbg_level_e dbg_threshold = DBG_LVL_DEBUG;

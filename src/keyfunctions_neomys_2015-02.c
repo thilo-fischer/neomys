@@ -228,3 +228,6 @@ KF_ALL_LEVELS(app, app)
 KF_ALL_LEVELS(gui_right, gui_right)
 KF_ALL_LEVELS(ctrl_right, ctrl_right)
 
+// ROW_EXTRA1 right
+KF_ALL_LEVELS(target_layout_prev, prev_target_layout)
+KF_ALL_LEVELS(target_layout_next, next_target_layout)

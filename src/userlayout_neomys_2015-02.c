@@ -49,6 +49,7 @@ const keyfunc_t keyfuncs_neomys_right[neomys_pnl_height][neomys_pnl_width] = {
     { kf_S, kf_N, kf_R, kf_T, kf_D, kf_Y, kf_level3mod_right },
     { kf_B, kf_M, kf_comma, kf_period, kf_J, kf_level2mod_right },
     { kf_space_right, kf_level4mod_right, kf_alt_right, kf_app, kf_gui_right, kf_ctrl_right, },
+    { kf_target_layout_prev, kf_target_layout_next, },
 };
 
 const userlayout_t ulo_neomys_left  = &keyfuncs_neomys_left[0][0] ;
