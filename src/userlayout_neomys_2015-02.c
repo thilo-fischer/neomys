@@ -29,6 +29,9 @@ level_t g_effective_levels[LVR_COUNT] = { LVL_DEFAULT, LVL_DEFAULT, LVL_DEFAULT 
 #include "keyfunctions_common.c"
 #include "keyfunctions_neomys_2015-02.c"
 
+// use for unused key positions in below key functions array
+#define kf_NONE NULL
+
 // definitions of user layouts
 
 // Array elemets not given an initialization value will be initialzed
@@ -37,19 +40,32 @@ level_t g_effective_levels[LVR_COUNT] = { LVL_DEFAULT, LVL_DEFAULT, LVL_DEFAULT 
 // == NULL. (0 == NULL is guaranteed by the C standard.)
 
 const keyfunc_t keyfuncs_neomys_left [neomys_pnl_height][neomys_pnl_width] = {
-    { kf_dead_circumfex, kf_1, kf_2, kf_3, kf_4, kf_5 },
-    { kf_level4mod_left, kf_X, kf_V, kf_L, kf_C, kf_W },
-    { kf_level3mod_left, kf_U, kf_I, kf_A, kf_E, kf_O },
-    { kf_level2mod_left, kf_uuml, kf_ouml, kf_auml, kf_P, kf_Z },
-    { kf_ctrl_left, kf_gui_left, kf_target_layout, kf_alt_left, kf_space_left, kf_enter },
+  // number row
+  { kf_dead_circumfex, kf_1, kf_2, kf_3, kf_4, kf_5 },
+  // top row
+  { kf_level4mod_left, kf_X, kf_V, kf_L, kf_C, kf_W },
+  // home row
+  { kf_level3mod_left, kf_U, kf_I, kf_A, kf_E, kf_O },
+  // bottom row
+  { kf_level2mod_left, kf_uuml, kf_ouml, kf_auml, kf_P, kf_Z },
+  // space row
+  { kf_ctrl_left, kf_gui_left, kf_NONE, kf_alt_left, kf_space_left, kf_NONE },
  };
 const keyfunc_t keyfuncs_neomys_right[neomys_pnl_height][neomys_pnl_width] = {
+  // number row
     { kf_6, kf_7, kf_8, kf_9, kf_0, kf_dash_neo_lvl1, kf_dead_grave },
+  // top row
     { kf_K, kf_H, kf_G, kf_F, kf_Q, kf_eszett, kf_dead_acute },
-    { kf_S, kf_N, kf_R, kf_T, kf_D, kf_Y, kf_level3mod_right },
-    { kf_B, kf_M, kf_comma, kf_period, kf_J, kf_level2mod_right },
+   // home row
+   { kf_S, kf_N, kf_R, kf_T, kf_D, kf_Y, kf_level3mod_right },
+   // bottom row
+   { kf_B, kf_M, kf_comma, kf_period, kf_J, kf_level2mod_right },
+  // space row
     { kf_space_right, kf_level4mod_right, kf_alt_right, kf_app, kf_gui_right, kf_ctrl_right, },
-    { kf_target_layout_prev, kf_target_layout_next, },
+    // extra row 1
+    { kf_sleep, kf_copy, kf_cut, kf_paste, kf_undo, kf_redo, kf_pause, kf_printscreen },
+    // extra row 2
+    { kf_target_layout_prev, kf_target_layout_next, kf_numlock, kf_capslock, kf_scrolllock, kf_mute, kf_volumedown, kf_volumeup }
 };
 
 const userlayout_t ulo_neomys_left  = &keyfuncs_neomys_left[0][0] ;

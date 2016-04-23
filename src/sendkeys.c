@@ -38,7 +38,7 @@ enum virtual_modifiers_e {
 uint8_t virtual_modifiers_current_in  = 0x00;
 
 struct keyseq_step_s {
-    uint8_t key;
+    keycode_t key;
     uint8_t modifiers;
     keystate_t change;
 };
@@ -53,7 +53,7 @@ size_t keyseq_queue_end   = 0;
 
 static bool keyseq_queue_empty();
 static bool keyseq_queue_full();
-static inline void keyseq_queue_enqueue(uint8_t key, keystate_t event, uint8_t modifiers);
+static inline void keyseq_queue_enqueue(keycode_t key, keystate_t event, uint8_t modifiers);
 static void keyseq_queue_dequeue();
 
 // implementation of public functions
@@ -64,7 +64,7 @@ dbg_define_msg(HC_KEV_MOD, 0xE0,
                "^ kev mod %02hhX %s", sizeof(uint8_t), sizeof(char*));
 
 dbg_define_msg(HC_KEV_SYM, 0xE1,
-               "^ kev key%02hhX ~mod%02hhx %s", sizeof(uint8_t), sizeof(uint8_t), sizeof(char*));
+               "^ kev key%04hX ~mod%02hhx %s", sizeof(keycode_t), sizeof(uint8_t), sizeof(char*));
 
 void progress_keyseq_queue() {
     if (!keyseq_queue_empty()) {
@@ -142,11 +142,11 @@ static inline uint8_t modifiers_with_level(uint8_t modifs, enum targetlevel_e lv
     }
 }
 
-void kev_plain(uint8_t key, keystate_t event) {
+void kev_plain(keycode_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_PLAIN_L1));
 }
 
-void kev_w_shift(uint8_t key, keystate_t event) {
+void kev_w_shift(keycode_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_SHIFT_L2));
     if (event == KS_RELEASE) {
         // make sure to send notification that modifier key was released
@@ -155,7 +155,7 @@ void kev_w_shift(uint8_t key, keystate_t event) {
 }
 
 // for TL_DE and similar
-void kev_w_altgr(uint8_t key, keystate_t event) {
+void kev_w_altgr(keycode_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_ALTGR_L3));
     if (event == KS_RELEASE) {
         // make sure to send notification that modifier key was released
@@ -164,7 +164,7 @@ void kev_w_altgr(uint8_t key, keystate_t event) {
 }
 
 // for TL_APPLE and similar
-void kev_w_alt(uint8_t key, keystate_t event) {
+void kev_w_alt(keycode_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_ALT_L3));
     if (event == KS_RELEASE) {
         // make sure to send notification that modifier key was released
@@ -173,7 +173,7 @@ void kev_w_alt(uint8_t key, keystate_t event) {
 }
 
 // for TL_APPLE and similar
-void kev_w_shift_alt(uint8_t key, keystate_t event) {
+void kev_w_shift_alt(keycode_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_SHIFT_ALT_L4));
     if (event == KS_RELEASE) {
         // make sure to send notification that modifier key was released
@@ -182,7 +182,7 @@ void kev_w_shift_alt(uint8_t key, keystate_t event) {
 }
 
 // for TL_NEO
-void kev_level2(uint8_t key, keystate_t event) {
+void kev_level2(keycode_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, modifiers_with_level(modifiers_current_in, TLVL_SHIFT_L2));
     if (event == KS_RELEASE) {
         // make sure to send notification that modifier key was released
@@ -191,7 +191,7 @@ void kev_level2(uint8_t key, keystate_t event) {
 }
 
 // for TL_NEO
-void kev_level3(uint8_t key, keystate_t event) {
+void kev_level3(keycode_t key, keystate_t event) {
     uint8_t modifiers = modifiers_with_level(modifiers_current_in, TLVL_PLAIN_L1);
     if (event == KS_PRESS) {
         kev_virtual_modifier(KEY_CAPS_LOCK, KS_PRESS);
@@ -203,7 +203,7 @@ void kev_level3(uint8_t key, keystate_t event) {
 }
 
 // for TL_NEO
-void kev_level4(uint8_t key, keystate_t event) {
+void kev_level4(keycode_t key, keystate_t event) {
     uint8_t modifiers = modifiers_with_level(modifiers_current_in, TLVL_PLAIN_L1);
     if (event == KS_PRESS) {
         kev_virtual_modifier(KEY_ISO_EXTRA, KS_PRESS);
@@ -214,11 +214,11 @@ void kev_level4(uint8_t key, keystate_t event) {
     }
 }
 
-void kev_allow_modifiers(uint8_t key, keystate_t event) {
+void kev_allow_modifiers(keycode_t key, keystate_t event) {
     keyseq_queue_enqueue(key, event, modifiers_current_in);
 }
 
-void kev_modifier(uint8_t key, keystate_t event) {
+void kev_modifier(keycode_t key, keystate_t event) {
     if (event == KS_PRESS) {
         modifiers_current_in |=  key;
     } else {
@@ -227,7 +227,7 @@ void kev_modifier(uint8_t key, keystate_t event) {
     keyseq_queue_enqueue(KEY_NONE, event, modifiers_current_in);
 }
 
-enum virtual_modifiers_e get_virtmod_of_vmkey(uint8_t key) {
+enum virtual_modifiers_e get_virtmod_of_vmkey(keycode_t key) {
     switch (key) {
     case KEY_CAPS_LOCK:
         return VMOD_CAPS_LOCK;
@@ -254,12 +254,12 @@ enum targetlevel_e get_level_of_virtmod(enum virtual_modifiers_e vmod) {
     }
 }
 
-void press_vmkey(uint8_t key, enum virtual_modifiers_e vmod) {
+void press_vmkey(keycode_t key, enum virtual_modifiers_e vmod) {
     keyseq_queue_enqueue(key, KS_PRESS, modifiers_current_in);
     virtual_modifiers_current_in |=  vmod;
 }
 
-void release_vmkey(uint8_t key, enum virtual_modifiers_e vmod) {
+void release_vmkey(keycode_t key, enum virtual_modifiers_e vmod) {
     keyseq_queue_enqueue(key, KS_RELEASE, modifiers_current_in);
     virtual_modifiers_current_in &= ~vmod;
 }
@@ -288,7 +288,7 @@ bool is_vmodlevel_active(enum targetlevel_e tlvl) {
 }
 
 // neo level modifier events that are not located on regular modifier keys (KEY_CAPS_LOCK, KEY_BACKSLASH, KEY_ISO_EXTRA)
-void kev_virtual_modifier(uint8_t key, keystate_t event) {
+void kev_virtual_modifier(keycode_t key, keystate_t event) {
     enum virtual_modifiers_e vmod = get_virtmod_of_vmkey(key);
     enum targetlevel_e vmlvl = get_level_of_virtmod(vmod);
     if (event == KS_PRESS) {
@@ -331,14 +331,14 @@ bool keyseq_queue_full() {
     }
 }
 
-static inline void inform_enqueue(uint8_t key, keystate_t event, uint8_t modifiers) {
+static inline void inform_enqueue(keycode_t key, keystate_t event, uint8_t modifiers) {
     inform(IL_DBG, SC_DBG_KEYSEQ_ENQUEUE);
     info_add(key);
     info_add(event);
     info_add(modifiers);
 }
 
-static inline void keyseq_queue_enqueue(uint8_t key, keystate_t event, uint8_t modifiers) {
+static inline void keyseq_queue_enqueue(keycode_t key, keystate_t event, uint8_t modifiers) {
     if (keyseq_queue_full()) {
         inform(IL_WARN, SC_WARN_TOO_MANY_KEYS);
         return;

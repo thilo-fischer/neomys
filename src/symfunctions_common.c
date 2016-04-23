@@ -44,14 +44,6 @@ enum neo_level_modifiers_e {
     LM4_R = 0x20,
 };
 
-#if 0 // XXX deprecated
-// FIXME static
-enum neo_level_modifiers_e level_modifiers = 0;
-// FIXME static
-enum neo_levels_e locked_level = LEVEL1;
-#endif
-
-
 dbg_define_msg(SF_DBG_STATUS, 0xB0,
                "tgtlo:%02hhX", // XXX deprecated => lvlmods:%02hhX lcklvl:%02hhX",
                sizeof(targetlayout_t) // XXX deprecated =>, sizeof(level_modifiers), sizeof(locked_level)
@@ -73,7 +65,7 @@ SF(TODO) {
 dbg_define_msg(TARGET_LAYOUT, 0xC0,
                "target layout: %02hhX", sizeof(targetlayout_t));
 
-void adp_ind_targetlayout(); // FIXME
+void adp_ind_targetlayout(); // FIXME include appropriate header file
 
 SF(next_target_layout) {
     if (event == KS_PRESS) {
@@ -120,60 +112,6 @@ SF(capslock) {
     }    
 }
 
-
-#if 0 // XXX deprecated
-dbg_define_msg(LEVELMODS, 0xC1, "lvlmods %02hhX", sizeof(level_modifiers));
-
-// level modifiers
-static inline void set_modifier_bit(enum neo_level_modifiers_e mod, keystate_t event) {
-  if (event == KS_PRESS) {
-    level_modifiers |=  mod;
-  } else {
-    level_modifiers &= ~mod;
-  }
-  dbg_info(LEVELMODS, level_modifiers);
-}
-
-
-dbg_define_msg(LOCKEDLEVEL, 0xC2, "lcklvl %02hhX", sizeof(locked_level));
-
-// Currently no support to lock levels 5 and 6.
-static inline void toggle_levellock(enum neo_levels_e level) {
-    if (
-        locked_level == level
-        ||
-        (locked_level == LEVEL4       && level == LEVEL4_MOUSE)
-        ||
-        (locked_level == LEVEL4_MOUSE && level == LEVEL4      )
-        ) {
-        locked_level = LEVEL1;
-    } else {
-        locked_level = level;
-    }
-    dbg_info(LOCKEDLEVEL, locked_level);
-}
-
-static inline void affect_levellock(enum neo_level_modifiers_e mod, enum neo_level_modifiers_e also_mod, enum neo_levels_e level, keystate_t event) {
-    if (event == KS_PRESS) {
-        if (level_modifiers & also_mod) {
-            toggle_levellock(level);
-        }
-    }
-}
-
-/**
-   @return true if the modifier event may be communicated to the host without causing any trouble (because we have a non-Neo host which would not understand Neo-specific level modifier keys or because it would cause level-locking on a Neo host), false otherwise.
- */
-static inline bool handle_level_mod(targetlayout_t targetlayout, enum neo_level_modifiers_e mod, enum neo_level_modifiers_e also_mod, enum neo_levels_e lock_candidate, keystate_t event) {
-    set_modifier_bit(mod, event);
-    affect_levellock(mod, also_mod, lock_candidate, event);
-    // Inform the host about the modifier event only if it uses the NEO layout and thus knows how to handle the modifier correctly. It is very unlikely the user wants to use modifier+mouseclick or modifier+return, esp. if the host uses another layout than the NEO layout.
-    // Inform the host about the modifier event only if this won't affect a levellock. We will take care of level locking in the neomys firmware and hide any level locking events from the Neo driver on the host. We want to assure locking state of neomys and of the host's Neo driver can never go out of sync, also Neo driver does not always allow locking of all levels and does not even know of LEVEL4_MOUSE (which we also want to be able lock).
-    return (targetlayout == TGL_NEO) && ((level_modifiers & also_mod) == 0);
-}
-#endif
-
-
 SF(shift_left) {
   // Inform the host about the shift modifier event -- any host will understand the shift modifier and users will want to be able to use e.g. shift+mouseclick shift+return.
   kev_modifier(KEY_LEFT_SHIFT, event);
@@ -184,7 +122,7 @@ SF(shift_right) {
   kev_modifier(KEY_RIGHT_SHIFT, event);
 }
 
-// FIXME neomys-specific
+// FIXME neomys-specific => move to symfunctions_neomys*.c
 
 static bool send_virtual_mod(targetlayout_t targetlayout) {
   return targetlayout == TGL_NEO;
@@ -2344,14 +2282,32 @@ SF(find) {
 }
 
 SF(forward) {
-// TODO: scancode values > 255
+// TODO: scancode values > 255 (see usb_keyboard.h:press_key)
     //kev_allow_modifiers(KEY_FORWARD, event);
     kev_TODO();
 }
 
 SF(back) {
-// TODO: scancode values > 255
+// TODO: scancode values > 255 (see usb_keyboard.h:press_key)
     //kev_allow_modifiers(KEY_BACK, event);
     kev_TODO();
+}
+
+SF(sleep) {
+// TODO: scancode values > 255 (see usb_keyboard.h:press_key)
+  //kev_allow_modifiers(KEY_SLEEP, event);
+    kev_TODO();
+}
+
+SF(mute) {
+    kev_allow_modifiers(KEY_MUTE, event);
+}
+
+SF(volumeup) {
+    kev_allow_modifiers(KEY_VOLUMEUP, event);
+}
+
+SF(volumedown) {
+    kev_allow_modifiers(KEY_VOLUMEDOWN, event);
 }
 

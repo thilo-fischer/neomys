@@ -140,6 +140,8 @@ static inline void kf_level_modifier(level_t effective_levels[], level_t affecte
 
 #define KF_ALL_LEVELS(name, sym) KF(name) { kf_all_levels(targetlayout, event, sf_##sym); }
 
+#define KF_ALL_LEVELS_SAME_NAME(name) KF_ALL_LEVELS(name, name)
+
 #define KF_LEVEL_MODIFIER(name, lvl, id, sym) KF(name) { kf_level_modifier(effective_levels, LVL_##lvl, id, targetlayout, event, sf_##sym); }
 
 
@@ -213,21 +215,38 @@ KF_REGULAR_1TO4M(J, j, J, semicolon, semicolon, redo)
 KF_LEVEL_MODIFIER(level2mod_right, SHIFT, 1, shift_right)
 
 // ROW_SPACE left (0x40-0x47)
-KF_ALL_LEVELS(ctrl_left, ctrl_left)
-KF_ALL_LEVELS(gui_left, gui_left)
-KF_IGNORE_ANY_LOCK(target_layout, next_target_layout, prev_target_layout, numlock, scrolllock, capslock, nop, nop)
-KF_ALL_LEVELS(alt_left, alt_left)
+KF_ALL_LEVELS_SAME_NAME(ctrl_left)
+KF_ALL_LEVELS_SAME_NAME(gui_left)
+//KF_ALL_LEVELS(unused, nop)
+KF_ALL_LEVELS_SAME_NAME(alt_left)
 KF_ALL_LEVELS(space_left, space)
-KF_ALL_LEVELS(enter, enter)
+//KF_ALL_LEVELS(unused, nop)
 
 // ROW_SPACE right (0x48-0x4F)
 KF_REGULAR_1TO4(space_right, space, space, space, numpad_0)
 KF_LEVEL_MODIFIER(level4mod_right, 4, 1, nop)
-KF_ALL_LEVELS(alt_right, alt_right)
-KF_ALL_LEVELS(app, app)
-KF_ALL_LEVELS(gui_right, gui_right)
-KF_ALL_LEVELS(ctrl_right, ctrl_right)
+KF_ALL_LEVELS_SAME_NAME(alt_right)
+KF_ALL_LEVELS_SAME_NAME(app)
+KF_ALL_LEVELS_SAME_NAME(gui_right)
+KF_ALL_LEVELS_SAME_NAME(ctrl_right)
 
-// ROW_EXTRA1 right
+// ROW_EXTRA1 right (0x58-0x5F)
+KF_ALL_LEVELS_SAME_NAME(sleep)
+KF_ALL_LEVELS_SAME_NAME(copy)
+KF_ALL_LEVELS_SAME_NAME(cut)
+KF_ALL_LEVELS_SAME_NAME(paste)
+KF_ALL_LEVELS_SAME_NAME(undo)
+KF_ALL_LEVELS_SAME_NAME(redo)
+KF_ALL_LEVELS_SAME_NAME(pause)
+KF_ALL_LEVELS_SAME_NAME(printscreen)
+
+// ROW_EXTRA2 right (0x68-0x6F)
 KF_ALL_LEVELS(target_layout_prev, prev_target_layout)
 KF_ALL_LEVELS(target_layout_next, next_target_layout)
+KF_ALL_LEVELS_SAME_NAME(numlock)
+KF_ALL_LEVELS_SAME_NAME(capslock)
+KF_ALL_LEVELS_SAME_NAME(scrolllock)
+KF_ALL_LEVELS_SAME_NAME(mute)
+KF_ALL_LEVELS_SAME_NAME(volumedown)
+KF_ALL_LEVELS_SAME_NAME(volumeup)
+
