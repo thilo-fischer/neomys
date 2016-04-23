@@ -66,7 +66,7 @@ bool dbg_uart_code = false;
 /// arguments @todo not yet supported
 bool dbg_uart_payload = true;
 
- /// prepend these bytes to each UART debug output
+/// prepend these bytes to each UART debug output
 uint8_t dbg_uart_prefix_default[] = { 0x00 };
 uint8_t *dbg_uart_prefix = dbg_uart_prefix_default;
 uint8_t dbg_uart_prefix_size = sizeof(dbg_uart_prefix_default);

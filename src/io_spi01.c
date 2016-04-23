@@ -12,6 +12,8 @@
 #include "util.h"
 #include "panel.h"
 
+#include "debug.h"
+
 void io_spi01_rst(io_spi01_cfg_t *config, bool state);
 
 
@@ -75,7 +77,11 @@ void io_spi01_sync(panel_t *panel) {
       uint8_t mosi_byte = 0;
       uint8_t miso_byte = 0;
       if (bytes_left <= panel->out_size) {
- 	mosi_byte = panel->out_data[panel->out_size - bytes_left];
+#if 1
+        mosi_byte = panel->out_data[panel->out_size - bytes_left];
+#else
+ 	mosi_byte = panel->out_data[bytes_left - 1];
+#endif
       }
 
       // start transmission by writing a byte to be sent (MOSI) to the appropriate register

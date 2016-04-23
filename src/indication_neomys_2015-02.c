@@ -16,6 +16,8 @@
 #include "targetlayout.h"
 #include "panel.h"
 
+#include "debug.h"
+
 
 void adp_ind_init() {
 }
