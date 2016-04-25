@@ -27,6 +27,46 @@ static inline void kf_generic_levelspecific(targetlayout_t targetlayout, keystat
     }
 }
 
+#define MAX_ACTIVE_KEYS 8
+keyfunc_t current_active_keys[MAX_ACTIVE_KEYS] = { NULL };
+
+void activate_key(keyfunc_t keyfunc) {
+  keyfunc(g_effective_levels, g_current_targetlayout, KS_PRESS);
+
+  keyfunc_t *iter = current_active_keys;
+  while (*iter != NULL && *iter != keyfunc && iter < current_active_keys + MAX_ACTIVE_KEYS) {
+    ++iter;
+  }
+  if (iter == current_active_keys + MAX_ACTIVE_KEYS) {
+    // TODO error message: too many keys pressed
+    return;
+  }
+  *iter = keyfunc;
+}
+
+void deactivate_key(keyfunc_t keyfunc) {
+  keyfunc_t *iter = current_active_keys;
+  while (*iter != keyfunc && iter < current_active_keys + MAX_ACTIVE_KEYS) {
+    ++iter;
+  }
+  if (iter == current_active_keys + MAX_ACTIVE_KEYS) {
+    // TODO error message
+    return;
+  }
+  *iter = NULL;
+
+  keyfunc(g_effective_levels, g_current_targetlayout, KS_RELEASE);
+}
+
+void notify_all_active_keys(keystate_t keystate) {
+  for (keyfunc_t *iter = current_active_keys; iter < current_active_keys + MAX_ACTIVE_KEYS; ++iter) {
+    if (*iter != NULL) {
+      (*iter)(g_effective_levels, g_current_targetlayout, keystate);      
+    }
+  }
+}
+
+
 static inline void kf_generic_levelvarspecific(level_t level, targetlayout_t targetlayout, keystate_t event, symfunc_t sf1, symfunc_t sf2, symfunc_t sf3, symfunc_t sf4, symfunc_t sf4m, symfunc_t sf5, symfunc_t sf6) {
     switch (level) {
     case LVL_DEFAULT:
@@ -57,7 +97,11 @@ static inline void kf_generic_levelvarspecific(level_t level, targetlayout_t tar
 }
 
 static inline void kf_generic(level_variants_t level_variant, level_t effective_levels[], targetlayout_t targetlayout, keystate_t event, symfunc_t sf1, symfunc_t sf2, symfunc_t sf3, symfunc_t sf4, symfunc_t sf4m, symfunc_t sf5, symfunc_t sf6) {
+  if (event == KS_MODCHANGE) {
+    kf_generic_levelvarspecific(effective_levels[level_variant], targetlayout, KS_RELEASE, sf1, sf2, sf3, sf4, sf4m, sf5, sf6);
+  } else {
     kf_generic_levelvarspecific(effective_levels[level_variant], targetlayout, event, sf1, sf2, sf3, sf4, sf4m, sf5, sf6);
+  }
 }
 
 ///@}
@@ -96,7 +140,10 @@ static inline void kf_1to6_4m(level_variants_t level_variant, level_t effective_
 /// associated symbol does not change depending on level
 /// (e.g. modifier keys CTRL, ALT, GUI)
 static inline void kf_all_levels(targetlayout_t targetlayout, keystate_t event, symfunc_t sf) {
-    sf(targetlayout, event);
+  if (event == KS_MODCHANGE) {
+    return;
+  }
+  sf(targetlayout, event);
 }
 
 /// implements the key function to be called for a key that acts as a
@@ -110,14 +157,42 @@ static inline void kf_level_modifier(level_t effective_levels[], level_t affecte
         if ()
     }
 #endif
-    if (event == KS_PRESS) {
+    switch (event) {
+    case KS_PRESS:
+      // FIXME Quickfix to work around "key jamming" bug.
+      //
+      // Without this bugfix, a key release event of key whose symbol was
+      // altered by a level modifier key would not be detected correctly if
+      // the "modified" key and the modifier key get released in the wrong
+      // order causing the key to "jam". (The same applies accordingly
+      // to key presses.)
+      //
+      // Currently, a quick fix is implemented that releases all
+      // modifier-sensitive keys whenever a modifier is being pressed or
+      // released.
+      //
+      // A clean solution would release only those keys affected by the
+      // level change from the modifier being pressed and trigger a delayed
+      // activation of the symbol associated with the key in the new level
+      // if the key is not being released within the delay.
+      notify_all_active_keys(KS_MODCHANGE);
+      // TODO_R introduce *one* method that propagates the level to *all* effective_level variants instead of setting the bit manually in each effective_level variant
       effective_levels[LVR_MAIN] |= affected_level;
       effective_levels[LVR_IL2L] |= affected_level;
       effective_levels[LVR_IGNORE_ANY_LOCK] |= affected_level;
-    } else {
+      break;
+    case KS_RELEASE:
+      // FIXME Quickfix to work around "key jamming" bug. (see above)
+      notify_all_active_keys(KS_MODCHANGE);
+      // TODO_R introduce *one* method that propagates the level to *all* effective_level variants instead of setting the bit manually in each effective_level variant (see above)
       effective_levels[LVR_MAIN] &= ~affected_level;
       effective_levels[LVR_IL2L] &= ~affected_level;
       effective_levels[LVR_IGNORE_ANY_LOCK] &= ~affected_level;
+      break;
+    case KS_MODCHANGE:
+      return; // ignore
+    default:
+      ; // XXX error message: programming error
     }
     if (sf != NULL) {
         sf(targetlayout, event);
@@ -147,7 +222,7 @@ static inline void kf_level_modifier(level_t effective_levels[], level_t affecte
 
 // definitions of key functions
 
-// ROW_NUM left (0x00-0x07)
+// number row left (0x00-0x07)
 KF_IL2LOCK_1TO4(dead_circumfex, dead_circumfex, dead_caron, TODO, dead_dot)
 KF_IL2LOCK_1TO4M(1, 1, degree, superscript1, TODO, F1)
 KF_IL2LOCK_1TO4M(2, 2, sectionsign, superscript2, TODO, F2)
@@ -155,7 +230,7 @@ KF_IL2LOCK_1TO4M(3, 3, script_small_l, superscript3, numero_sign, F3)
 KF_IL2LOCK_1TO4M(4, 4, guillemet_dbl_gt, guillemet_sgl_gt, nop, F4)
 KF_IL2LOCK_1TO4M(5, 5, guillemet_dbl_lt, guillemet_sgl_lt, TODO, F5)
 
-// ROW_NUM right (0x08-0x0F)
+// number row right (0x08-0x0F)
 KF_IL2LOCK_1TO4M(6, 6, dollar, cent_currency, pound_currency, F6)
 KF_IL2LOCK_1TO4M(7, 7, euro_currency, yen_currency, currency_sign, F7)
 KF_IL2LOCK_1TO4M(8, 8, low9quote_dbl, low9quote_sgl, tab, F8)
@@ -164,7 +239,7 @@ KF_IL2LOCK_1TO4M(0, 0, 9quote_dbl, 9quote_sgl, numpad_multiply, F10)
 KF_IL2LOCK_1TO4M(dash_neo_lvl1, dash_neo_lvl1, mdash, nop, numpad_minus, F11)
 KF_IL2LOCK_1TO4M(dead_grave, dead_grave, dead_cedilla, dead_ring, dead_umlaut, F12)
 
-// ROW_TOP left (0x10-0x17)
+// top row left (0x10-0x17)
 KF_LEVEL_MODIFIER(level4mod_left, 4, 0, level4mod_left)
 KF_REGULAR_1TO4(X, x, X, ellipsis, page_up)
 KF_REGULAR_1TO4(V, v, V, underscore, backspace)
@@ -172,7 +247,7 @@ KF_REGULAR_1TO4(L, l, L, bracket_left, up)
 KF_REGULAR_1TO4(C, c, C, bracket_right, delete)
 KF_REGULAR_1TO4(W, w, W, caret, page_down)
 
-// ROW_TOP right (0x18-0x1F)
+// top row right (0x18-0x1F)
 KF_REGULAR_1TO4M(K, k, K, exclamation_mark, inverted_exclamation_mark, back)
 KF_REGULAR_1TO4M(H, h, H, chevron_left, numpad_7, TODO /*left dblclick*/)
 KF_REGULAR_1TO4M(G, g, G, chevron_right, numpad_8, TODO /*mid dblclick*/)
@@ -181,7 +256,7 @@ KF_REGULAR_1TO4M(Q, q, Q, ampersand, numpad_plus, forward)
 KF_REGULAR_1TO4M(eszett, eszett, ESZETT, long_s, minus, pause)
 KF_IL2LOCK_1TO4M(dead_acute, dead_acute, dead_perispomene, dead_bar, dead_double_acute, printscreen)
 
-// ROW_HOME left (0x20-0x27)
+// home row left (0x20-0x27)
 KF_LEVEL_MODIFIER(level3mod_left, 3, 0, level3mod_left)
 KF_REGULAR_1TO4(U, u, U, backslash, home)
 KF_REGULAR_1TO4(I, i, I, slash, left)
@@ -189,7 +264,7 @@ KF_REGULAR_1TO4(A, a, A, brace_left, down)
 KF_REGULAR_1TO4(E, e, E, brace_right, right)
 KF_REGULAR_1TO4(O, o, O, asterisk, end)
 
-// ROW_HOME right (0x28-0x2F)
+// home row right (0x28-0x2F)
 KF_REGULAR_1TO4M(S, s, S, question_mark, inverted_question_mark, TODO /*click 8*/)
 KF_REGULAR_1TO4M(N, n, N, parentheses_left, numpad_4, TODO /*left click*/)
 KF_REGULAR_1TO4M(R, r, R, parentheses_right, numpad_5, TODO /*mid click*/)
@@ -198,7 +273,7 @@ KF_REGULAR_1TO4M(D, d, D, colon, numpad_comma, TODO /*click 9*/)
 KF_REGULAR_1TO4M(Y, y, Y, at, numpad_period, find)
 KF_LEVEL_MODIFIER(level3mod_right, 3, 1, level3mod_right)
 
-// ROW_BTM left (0x30-0x37)
+// bottom row left (0x30-0x37)
 KF_LEVEL_MODIFIER(level2mod_left, SHIFT, 0, shift_left)
 KF_REGULAR_1TO4(uuml, uuml, UUML, hash, escape)
 KF_REGULAR_1TO4(ouml, ouml, OUML, dollar, tab)
@@ -206,7 +281,7 @@ KF_REGULAR_1TO4(auml, auml, AUML, pipe, insert)
 KF_REGULAR_1TO4(P, p, P, tilde, return)
 KF_REGULAR_1TO4(Z, z, Z, backtick, undo)
 
-// ROW_BTM right (0x38-0x3F)
+// bottom row right (0x38-0x3F)
 KF_REGULAR_1TO4M(B, b, B, plus, colon, undo)
 KF_REGULAR_1TO4M(M, m, M, percent, numpad_1, copy)
 KF_IL2LOCK_1TO4M(comma, comma, ndash, straight_dbl_quote, numpad_2, paste)
@@ -214,7 +289,7 @@ KF_IL2LOCK_1TO4M(period, period, bullet, apostrophe, numpad_3, cut)
 KF_REGULAR_1TO4M(J, j, J, semicolon, semicolon, redo)
 KF_LEVEL_MODIFIER(level2mod_right, SHIFT, 1, shift_right)
 
-// ROW_SPACE left (0x40-0x47)
+// space row left (0x40-0x47)
 KF_ALL_LEVELS_SAME_NAME(ctrl_left)
 KF_ALL_LEVELS_SAME_NAME(gui_left)
 //KF_ALL_LEVELS(unused, nop)
@@ -222,7 +297,7 @@ KF_ALL_LEVELS_SAME_NAME(alt_left)
 KF_ALL_LEVELS(space_left, space)
 //KF_ALL_LEVELS(unused, nop)
 
-// ROW_SPACE right (0x48-0x4F)
+// space row right (0x48-0x4F)
 KF_REGULAR_1TO4(space_right, space, space, space, numpad_0)
 KF_LEVEL_MODIFIER(level4mod_right, 4, 1, nop)
 KF_ALL_LEVELS_SAME_NAME(alt_right)
@@ -230,7 +305,7 @@ KF_ALL_LEVELS_SAME_NAME(app)
 KF_ALL_LEVELS_SAME_NAME(gui_right)
 KF_ALL_LEVELS_SAME_NAME(ctrl_right)
 
-// ROW_EXTRA1 right (0x58-0x5F)
+// extra row 1 right (0x58-0x5F)
 KF_ALL_LEVELS_SAME_NAME(sleep)
 KF_ALL_LEVELS_SAME_NAME(copy)
 KF_ALL_LEVELS_SAME_NAME(cut)
@@ -240,7 +315,7 @@ KF_ALL_LEVELS_SAME_NAME(redo)
 KF_ALL_LEVELS_SAME_NAME(pause)
 KF_ALL_LEVELS_SAME_NAME(printscreen)
 
-// ROW_EXTRA2 right (0x68-0x6F)
+// extra row 2 right (0x68-0x6F)
 KF_ALL_LEVELS(target_layout_prev, prev_target_layout)
 KF_ALL_LEVELS(target_layout_next, next_target_layout)
 KF_ALL_LEVELS_SAME_NAME(numlock)

@@ -76,6 +76,9 @@ dbg_define_msg(KEYEVENT, 0xA0,
 
 void symfunctions_status_dbg(); // XXX include file
 
+void activate_key(keyfunc_t keyfunc); // XXX include file
+void deactivate_key(keyfunc_t keyfunc); // XXX include file
+
 void pnl_process_keystate_changes(panel_t *panel) {
   const uint8_t *const current_ksw_state_buffer  = pnl_get_current_ksw_state_buffer (panel);
   const uint8_t *const previous_ksw_state_buffer = pnl_get_previous_ksw_state_buffer(panel);
@@ -95,7 +98,11 @@ void pnl_process_keystate_changes(panel_t *panel) {
                         keystate == KS_PRESS ? "DN" : "UP", keyfunc);
               symfunctions_status_dbg();
               if (keyfunc != NULL) {
-                keyfunc(g_effective_levels, g_current_targetlayout, keystate);
+                if (keystate == KS_PRESS) {
+                  activate_key(keyfunc);
+                } else {
+                  deactivate_key(keyfunc);
+                }
               }
             }
           }

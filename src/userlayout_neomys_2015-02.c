@@ -53,19 +53,19 @@ const keyfunc_t keyfuncs_neomys_left [neomys_pnl_height][neomys_pnl_width] = {
  };
 const keyfunc_t keyfuncs_neomys_right[neomys_pnl_height][neomys_pnl_width] = {
   // number row
-    { kf_6, kf_7, kf_8, kf_9, kf_0, kf_dash_neo_lvl1, kf_dead_grave },
+  { kf_6, kf_7, kf_8, kf_9, kf_0, kf_dash_neo_lvl1, kf_dead_grave },
   // top row
-    { kf_K, kf_H, kf_G, kf_F, kf_Q, kf_eszett, kf_dead_acute },
-   // home row
-   { kf_S, kf_N, kf_R, kf_T, kf_D, kf_Y, kf_level3mod_right },
-   // bottom row
-   { kf_B, kf_M, kf_comma, kf_period, kf_J, kf_level2mod_right },
+  { kf_K, kf_H, kf_G, kf_F, kf_Q, kf_eszett, kf_dead_acute },
+  // home row
+  { kf_S, kf_N, kf_R, kf_T, kf_D, kf_Y, kf_level3mod_right },
+  // bottom row
+  { kf_B, kf_M, kf_comma, kf_period, kf_J, kf_level2mod_right },
   // space row
-    { kf_space_right, kf_level4mod_right, kf_alt_right, kf_app, kf_gui_right, kf_ctrl_right, },
-    // extra row 1
-    { kf_sleep, kf_copy, kf_cut, kf_paste, kf_undo, kf_redo, kf_pause, kf_printscreen },
-    // extra row 2
-    { kf_target_layout_prev, kf_target_layout_next, kf_numlock, kf_capslock, kf_scrolllock, kf_mute, kf_volumedown, kf_volumeup }
+  { kf_space_right, kf_level4mod_right, kf_alt_right, kf_app, kf_gui_right, kf_ctrl_right, },
+  // extra row 1
+  { kf_sleep, kf_copy, kf_cut, kf_paste, kf_undo, kf_redo, kf_pause, kf_printscreen },
+  // extra row 2
+  { kf_target_layout_prev, kf_target_layout_next, kf_numlock, kf_capslock, kf_scrolllock, kf_mute, kf_volumedown, kf_volumeup }
 };
 
 const userlayout_t ulo_neomys_left  = &keyfuncs_neomys_left[0][0] ;

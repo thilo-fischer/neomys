@@ -12,6 +12,7 @@
 typedef enum {
     KS_PRESS   = 0x01,
     KS_RELEASE = 0x00,
+    KS_MODCHANGE = 0x04,
 } keystate_t;
 
 #endif // _KEYHANDLING_H_
