@@ -287,13 +287,19 @@ bool is_vmodlevel_active(enum targetlevel_e tlvl) {
     return (virtual_modifiers_current_in & (modL | modR)) > 0;
 }
 
+dbg_define_msg(KEV_DBG_IGNORE, 0xD7,
+               "kevIgnr:%s:%d",
+               sizeof(char *),
+               sizeof(keycode_t)
+               );
+
 // neo level modifier events that are not located on regular modifier keys (KEY_CAPS_LOCK, KEY_BACKSLASH, KEY_ISO_EXTRA)
 void kev_virtual_modifier(keycode_t key, keystate_t event) {
     enum virtual_modifiers_e vmod = get_virtmod_of_vmkey(key);
     enum targetlevel_e vmlvl = get_level_of_virtmod(vmod);
     if (event == KS_PRESS) {
         if (is_vmodlevel_active(vmlvl)) {
-            // TODO inform(INFO, "ignore keypress");
+          dbg_warn(KEV_DBG_IGNORE, "P", key);
         } else {
             press_vmkey(key, vmod);
         }
@@ -301,7 +307,7 @@ void kev_virtual_modifier(keycode_t key, keystate_t event) {
         if (vmkey_state(vmod) == KS_PRESS) {
             release_vmkey(key, vmod);
         } else {
-            // TODO inform(INFO, "ignore keyrelease");
+          dbg_warn(KEV_DBG_IGNORE, "R", key);
         }        
     }
 }

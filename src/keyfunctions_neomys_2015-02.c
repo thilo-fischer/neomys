@@ -30,7 +30,15 @@ static inline void kf_generic_levelspecific(targetlayout_t targetlayout, keystat
 #define MAX_ACTIVE_KEYS 8
 keyfunc_t current_active_keys[MAX_ACTIVE_KEYS] = { NULL };
 
+dbg_define_msg(KF_DBG_ACTIVATION, 0xC0,
+               "kf:%s:%p",
+               sizeof(char *),
+               sizeof(keyfunc_t)
+               );
+
 void activate_key(keyfunc_t keyfunc) {
+  dbg_debug(KF_DBG_ACTIVATION, "A", keyfunc);
+  
   keyfunc(g_effective_levels, g_current_targetlayout, KS_PRESS);
 
   keyfunc_t *iter = current_active_keys;
@@ -45,6 +53,8 @@ void activate_key(keyfunc_t keyfunc) {
 }
 
 void deactivate_key(keyfunc_t keyfunc) {
+  dbg_debug(KF_DBG_ACTIVATION, "D", keyfunc);
+  
   keyfunc_t *iter = current_active_keys;
   while (*iter != keyfunc && iter < current_active_keys + MAX_ACTIVE_KEYS) {
     ++iter;
@@ -58,7 +68,13 @@ void deactivate_key(keyfunc_t keyfunc) {
   keyfunc(g_effective_levels, g_current_targetlayout, KS_RELEASE);
 }
 
+dbg_define_msg(KF_DBG_NOTIFY_ALL, 0xC6,
+               "notif:%d",
+               sizeof(keystate_t)
+               );
+
 void notify_all_active_keys(keystate_t keystate) {
+  dbg_debug(KF_DBG_NOTIFY_ALL, keystate);
   for (keyfunc_t *iter = current_active_keys; iter < current_active_keys + MAX_ACTIVE_KEYS; ++iter) {
     if (*iter != NULL) {
       (*iter)(g_effective_levels, g_current_targetlayout, keystate);      
