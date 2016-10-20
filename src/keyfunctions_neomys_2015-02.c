@@ -84,32 +84,38 @@ void notify_all_active_keys(keystate_t keystate) {
 
 
 static inline void kf_generic_levelvarspecific(level_t level, targetlayout_t targetlayout, keystate_t event, symfunc_t sf1, symfunc_t sf2, symfunc_t sf3, symfunc_t sf4, symfunc_t sf4m, symfunc_t sf5, symfunc_t sf6) {
-    switch (level) {
-    case LVL_DEFAULT:
-        kf_generic_levelspecific(targetlayout, event, sf1);
-        break;
-    case LVL_SHIFT  :
-        kf_generic_levelspecific(targetlayout, event, sf2);
-        break;
-    case LVL_3      :
-        kf_generic_levelspecific(targetlayout, event, sf3);
-        break;
-    case LVL_4      :
-        kf_generic_levelspecific(targetlayout, event, sf4);
-        break;
-    case LVL_4M     :
-        kf_generic_levelspecific(targetlayout, event, sf4m);
-        break;
-    case LVL_5      :
-        kf_generic_levelspecific(targetlayout, event, sf5);
-        break;
-    case LVL_6      :
-        kf_generic_levelspecific(targetlayout, event, sf6);
-        break;
-    default:
-        // TODO signal error state
-        ;
-    }   
+  // If LVL_4M is active, ignore any other levels.
+  if (level & LVL_4M) {
+    kf_generic_levelspecific(targetlayout, event, sf4m);
+    return;
+  }
+  // If none of the previous levels was is active, and LVL_4 is active, ignore any other levels.
+  if (level & LVL_4) {
+    kf_generic_levelspecific(targetlayout, event, sf4);
+    return;
+  }
+  // If none of the previous levels was is active, and LVL_3 is active, ignore any other levels.
+  if (level & LVL_3) {
+    kf_generic_levelspecific(targetlayout, event, sf3);
+    return;
+  }
+  // If none of the previous levels was is active, and LVL_2 is active, ignore any other levels.
+  if (level & LVL_SHIFT) {
+    kf_generic_levelspecific(targetlayout, event, sf2);
+    return;
+  }
+  // If none of the previous levels was is active, and LVL_5 is active, ignore any other levels.
+  if (level & LVL_5) {
+    kf_generic_levelspecific(targetlayout, event, sf5);
+    return;
+  }
+  // If none of the previous levels was is active, and LVL_6 is active, ignore any other levels.
+  if (level & LVL_6) {
+    kf_generic_levelspecific(targetlayout, event, sf6);
+    return;
+  }
+  //assert(level == 0);
+  kf_generic_levelspecific(targetlayout, event, sf1);
 }
 
 static inline void kf_generic(level_variants_t level_variant, level_t effective_levels[], targetlayout_t targetlayout, keystate_t event, symfunc_t sf1, symfunc_t sf2, symfunc_t sf3, symfunc_t sf4, symfunc_t sf4m, symfunc_t sf5, symfunc_t sf6) {
