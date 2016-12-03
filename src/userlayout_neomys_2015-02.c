@@ -65,7 +65,7 @@ const keyfunc_t keyfuncs_neomys_right[neomys_pnl_height][neomys_pnl_width] = {
   // extra row 1
   { kf_sleep, kf_copy, kf_cut, kf_paste, kf_undo, kf_redo, kf_pause, kf_printscreen },
   // extra row 2
-  { kf_target_layout_prev, kf_target_layout_next, kf_numlock, kf_capslock, kf_scrolllock, kf_mute, kf_volumedown, kf_volumeup }
+  { kf_target_layout_prev, kf_target_layout_next, kf_capslock, kf_numlock, kf_scrolllock, kf_mute, kf_volumedown, kf_volumeup }
 };
 
 const userlayout_t ulo_neomys_left  = &keyfuncs_neomys_left[0][0] ;
