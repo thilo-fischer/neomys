@@ -19,3 +19,7 @@ Todo-List
 
 - Constoller board: Change BCE Transistors to more common CBE Transistors
 - Extra buttons board: Adapt button footprint to match 2.54 mm raster *and* 4.50/6.50 mm (6 mm) buttons (e.g. JTP-1130)
+
+Notes
+
+Grid used to place Cherry MX switches and route tracks: 18.5mm x 18.5mm, 1.85mm x 1.85mm
