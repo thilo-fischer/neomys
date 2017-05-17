@@ -22,4 +22,9 @@ Todo-List
 
 Notes
 
-Grid used to place Cherry MX switches and route tracks: 18.5mm x 18.5mm, 1.85mm x 1.85mm
+#Grid used to place Cherry MX switches and route tracks: 18.5mm x 18.5mm, 1.85mm x 1.85mm
+
+Grid used to place Cherry MX switches: 18.415mm x 18.415mm, 2.301875mm x 0.3175mm
+  2.54 * 7.25 = 18.415
+  18.415 / 8 = 2.301875
+  2.54 / 8 = 0.3175

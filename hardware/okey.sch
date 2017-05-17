@@ -37,7 +37,7 @@ EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 1 7
+Sheet 1 9
 Title ""
 Date ""
 Rev ""
@@ -110,4 +110,16 @@ Wire Bus Line
 	7100 3200 7100 4100
 Wire Bus Line
 	7100 4100 7300 4100
+$Sheet
+S 2800 3850 500  2500
+U 58E03C59
+F0 "Cherry-MX switches 3+2xCol Rows 1-5" 60
+F1 "cherry-mx_3+2_vertical_row1to5.sch" 60
+$EndSheet
+$Sheet
+S 700  3850 500  2500
+U 58E03FE3
+F0 "Cherry-MX switches 5xCol Rows 1-5" 60
+F1 "cherry-mx_5_vertical_row1to5.sch" 60
+$EndSheet
 $EndSCHEMATC

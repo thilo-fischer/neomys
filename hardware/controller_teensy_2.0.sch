@@ -37,7 +37,7 @@ EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 5 7
+Sheet 5 9
 Title ""
 Date ""
 Rev ""
@@ -64,7 +64,7 @@ U 1 1 568E5F94
 P 2050 1750
 F 0 "P7" H 2050 1950 50  0000 C CNN
 F 1 "CONN_02X03" H 2050 1550 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x03" H 2050 550 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x03_Pitch2.54mm" H 2050 550 50  0001 C CNN
 F 3 "" H 2050 550 50  0000 C CNN
 	1    2050 1750
 	1    0    0    -1  
@@ -75,7 +75,7 @@ U 1 1 568E619F
 P 2550 2550
 F 0 "P8" H 2550 2650 50  0000 C CNN
 F 1 "CONN_01X01" V 2650 2550 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_1x01" H 2550 2550 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_1x01_Pitch2.54mm" H 2550 2550 50  0001 C CNN
 F 3 "" H 2550 2550 50  0000 C CNN
 	1    2550 2550
 	-1   0    0    1   
@@ -255,7 +255,7 @@ U 1 1 56956886
 P 6150 3250
 F 0 "P31" H 6150 3450 50  0000 C CNN
 F 1 "CONN_02X03" H 6150 3050 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x03" H 6150 2050 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x03_Pitch2.54mm" H 6150 2050 50  0001 C CNN
 F 3 "" H 6150 2050 50  0000 C CNN
 	1    6150 3250
 	1    0    0    -1  

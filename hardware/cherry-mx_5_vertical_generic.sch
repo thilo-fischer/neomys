@@ -37,7 +37,7 @@ EELAYER 25 0
 EELAYER END
 $Descr A4 8268 11693 portrait
 encoding utf-8
-Sheet 2 7
+Sheet 2 9
 Title ""
 Date ""
 Rev ""
@@ -64,7 +64,7 @@ U 1 1 568E9FDB
 P 1800 1250
 F 0 "P9" H 1800 1700 50  0000 C CNN
 F 1 "CONN_02X08" V 1800 1250 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x08" H 1800 50  50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x08_Pitch2.54mm" H 1800 50  50  0001 C CNN
 F 3 "" H 1800 50  50  0000 C CNN
 	1    1800 1250
 	-1   0    0    1   
@@ -75,7 +75,7 @@ U 1 1 56927EE6
 P 1800 2200
 F 0 "P10" H 1800 2550 50  0000 C CNN
 F 1 "CONN_02X06" H 1800 1850 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x06" H 1800 1000 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x06_Pitch2.54mm" H 1800 1000 50  0001 C CNN
 F 3 "" H 1800 1000 50  0000 C CNN
 	1    1800 2200
 	0    1    1    0   
@@ -86,7 +86,7 @@ U 1 1 569280E6
 P 2400 1250
 F 0 "COL_SELECT2" H 2400 1700 50  0000 C CNN
 F 1 "CONN_02X08" V 2400 1250 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x08" H 2400 50  50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x08_Pitch2.54mm" H 2400 50  50  0001 C CNN
 F 3 "" H 2400 50  50  0000 C CNN
 	1    2400 1250
 	-1   0    0    1   
@@ -99,7 +99,7 @@ U 1 1 56928AC9
 P 1800 3600
 F 0 "P11" H 1800 3950 50  0000 C CNN
 F 1 "CONN_02X06" H 1800 3250 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x06" H 1800 2400 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x06_Pitch2.54mm" H 1800 2400 50  0001 C CNN
 F 3 "" H 1800 2400 50  0000 C CNN
 	1    1800 3600
 	0    1    1    0   
@@ -121,7 +121,7 @@ U 1 1 56929C8B
 P 1800 5000
 F 0 "P12" H 1800 5350 50  0000 C CNN
 F 1 "CONN_02X06" H 1800 4650 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x06" H 1800 3800 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x06_Pitch2.54mm" H 1800 3800 50  0001 C CNN
 F 3 "" H 1800 3800 50  0000 C CNN
 	1    1800 5000
 	0    1    1    0   
@@ -143,7 +143,7 @@ U 1 1 5692A041
 P 1800 9200
 F 0 "P15" H 1800 9550 50  0000 C CNN
 F 1 "CONN_02X06" H 1800 8850 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x06" H 1800 8000 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x06_Pitch2.54mm" H 1800 8000 50  0001 C CNN
 F 3 "" H 1800 8000 50  0000 C CNN
 	1    1800 9200
 	0    1    1    0   
@@ -165,7 +165,7 @@ U 1 1 5692A0D6
 P 1800 6400
 F 0 "P13" H 1800 6750 50  0000 C CNN
 F 1 "CONN_02X06" H 1800 6050 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x06" H 1800 5200 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x06_Pitch2.54mm" H 1800 5200 50  0001 C CNN
 F 3 "" H 1800 5200 50  0000 C CNN
 	1    1800 6400
 	0    1    1    0   
@@ -187,7 +187,7 @@ U 1 1 5692A1DD
 P 1800 7800
 F 0 "P14" H 1800 8150 50  0000 C CNN
 F 1 "CONN_02X06" H 1800 7450 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x06" H 1800 6600 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x06_Pitch2.54mm" H 1800 6600 50  0001 C CNN
 F 3 "" H 1800 6600 50  0000 C CNN
 	1    1800 7800
 	0    1    1    0   
@@ -198,7 +198,7 @@ U 1 1 5692C7D3
 P 1800 10200
 F 0 "P16" H 1800 10650 50  0000 C CNN
 F 1 "CONN_02X08" V 1800 10200 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x08" H 1800 9000 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x08_Pitch2.54mm" H 1800 9000 50  0001 C CNN
 F 3 "" H 1800 9000 50  0000 C CNN
 	1    1800 10200
 	1    0    0    -1  
@@ -209,7 +209,7 @@ U 1 1 5692C7DF
 P 1200 10200
 F 0 "COL_SELECT1" H 1200 10650 50  0000 C CNN
 F 1 "CONN_02X08" V 1200 10200 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x08" H 1200 9000 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x08_Pitch2.54mm" H 1200 9000 50  0001 C CNN
 F 3 "" H 1200 9000 50  0000 C CNN
 	1    1200 10200
 	1    0    0    -1  

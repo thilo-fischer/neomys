@@ -37,7 +37,7 @@ EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 4 7
+Sheet 4 9
 Title ""
 Date ""
 Rev ""
@@ -133,7 +133,7 @@ AR Path="/56894D4D/5689688B" Ref="P4"  Part="1"
 AR Path="/568E4808/5689688B" Ref="P4"  Part="1" 
 F 0 "P4" H 5950 3050 50  0000 C CNN
 F 1 "CONN_02X08" V 5950 2600 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x08" H 5950 1400 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x08_Pitch2.54mm" H 5950 1400 50  0001 C CNN
 F 3 "" H 5950 1400 50  0000 C CNN
 	1    5950 2600
 	1    0    0    1   
@@ -250,7 +250,7 @@ AR Path="/56894D4D/56897052" Ref="PNL_ID1"  Part="1"
 AR Path="/568E4808/56897052" Ref="PNL_ID1"  Part="1" 
 F 0 "PNL_ID1" H 5550 2050 50  0000 C CNN
 F 1 "CONN_02X07" V 5550 1650 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x07" H 5550 450 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x07_Pitch2.54mm" H 5550 450 50  0001 C CNN
 F 3 "" H 5550 450 50  0000 C CNN
 	1    5550 1650
 	1    0    0    -1  
@@ -263,7 +263,7 @@ AR Path="/56894D4D/56897986" Ref="P5"  Part="1"
 AR Path="/568E4808/56897986" Ref="P5"  Part="1" 
 F 0 "P5" H 8100 1650 50  0000 C CNN
 F 1 "CONN_02X03" H 8100 1250 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x03" H 8100 250 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x03_Pitch2.54mm" H 8100 250 50  0001 C CNN
 F 3 "" H 8100 250 50  0000 C CNN
 	1    8100 1450
 	1    0    0    -1  
@@ -302,7 +302,7 @@ AR Path="/56894D4D/56897D13" Ref="P3"  Part="1"
 AR Path="/568E4808/56897D13" Ref="P3"  Part="1" 
 F 0 "P3" H 3850 1600 50  0000 C CNN
 F 1 "CONN_02X03" H 3850 1200 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x03" H 3850 200 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x03_Pitch2.54mm" H 3850 200 50  0001 C CNN
 F 3 "" H 3850 200 50  0000 C CNN
 	1    3850 1400
 	1    0    0    -1  
@@ -412,7 +412,7 @@ AR Path="/56894D4D/568AE13A" Ref="P6"  Part="1"
 AR Path="/568E4808/568AE13A" Ref="P6"  Part="1" 
 F 0 "P6" H 900 4150 50  0000 C CNN
 F 1 "CONN_02X10" V 900 3600 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x10" H 900 2400 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x10_Pitch2.54mm" H 900 2400 50  0001 C CNN
 F 3 "" H 900 2400 50  0000 C CNN
 	1    900  3600
 	1    0    0    -1  

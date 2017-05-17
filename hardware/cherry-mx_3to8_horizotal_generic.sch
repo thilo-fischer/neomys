@@ -37,7 +37,7 @@ EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 3 7
+Sheet 3 9
 Title ""
 Date ""
 Rev ""
@@ -75,7 +75,7 @@ U 1 1 5689744E
 P 5350 4100
 F 0 "P2" H 5350 4800 50  0000 C CNN
 F 1 "CONN_02X13" V 5350 4100 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x13" H 5350 2950 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x13_Pitch2.54mm" H 5350 2950 50  0001 C CNN
 F 3 "" H 5350 2950 50  0000 C CNN
 	1    5350 4100
 	0    -1   -1   0   
@@ -97,7 +97,7 @@ U 1 1 56897D0C
 P 5350 3550
 F 0 "P1" H 5350 4250 50  0000 C CNN
 F 1 "ROW_JMP" V 5350 3550 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x13" H 5350 2400 50  0001 C CNN
+F 2 "Pin_Headers:Pin_Header_Straight_2x13_Pitch2.54mm" H 5350 2400 50  0001 C CNN
 F 3 "" H 5350 2400 50  0000 C CNN
 	1    5350 3550
 	0    -1   -1   0   
