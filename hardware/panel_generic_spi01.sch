@@ -609,7 +609,7 @@ U 1 1 592AED5A
 P 4350 650
 F 0 "J1" H 4550 1150 50  0000 C CNN
 F 1 "RJ45" H 4200 1150 50  0000 C CNN
-F 2 "Connect:RJ45_8" H 4350 650 50  0001 C CNN
+F 2 "custom_footprints:RJ45_8G" H 4350 650 50  0001 C CNN
 F 3 "" H 4350 650 50  0000 C CNN
 	1    4350 650 
 	1    0    0    -1  
@@ -620,7 +620,7 @@ U 1 1 592AEE2D
 P 8150 750
 F 0 "J2" H 8350 1250 50  0000 C CNN
 F 1 "RJ45" H 8000 1250 50  0000 C CNN
-F 2 "Connect:RJ45_8" H 8150 750 50  0001 C CNN
+F 2 "custom_footprints:RJ45_8G" H 8150 750 50  0001 C CNN
 F 3 "" H 8150 750 50  0000 C CNN
 	1    8150 750 
 	1    0    0    -1  
@@ -1156,7 +1156,7 @@ Connection ~ 4700 1200
 Wire Wire Line
 	4200 1500 4100 1500
 Wire Wire Line
-	4500 1200 4800 1200
+	4500 1200 4900 1200
 Wire Wire Line
 	4500 1200 4500 1100
 Wire Wire Line
@@ -1233,4 +1233,9 @@ Text Notes 2400 1650 0    60   ~ 0
 Connect Master here
 Text Notes 9000 1700 0    60   ~ 0
 Connect Slave here
+Wire Wire Line
+	8700 1300 8700 400 
+Wire Wire Line
+	4900 1200 4900 300 
+Connection ~ 4800 1200
 $EndSCHEMATC
