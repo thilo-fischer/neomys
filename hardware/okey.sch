@@ -37,7 +37,7 @@ EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 1 9
+Sheet 1 10
 Title ""
 Date ""
 Rev ""
@@ -92,7 +92,7 @@ Wire Bus Line
 Wire Bus Line
 	5100 4100 5400 4100
 $Sheet
-S 8200 2950 2900 950 
+S 8200 2950 2800 500 
 U 5694930E
 F0 "Extra Buttons" 60
 F1 "extrabtns.sch" 60
@@ -122,4 +122,12 @@ U 58E03FE3
 F0 "Cherry-MX switches 5xCol Rows 1-5" 60
 F1 "cherry-mx_5_vertical_row1to5.sch" 60
 $EndSheet
+$Sheet
+S 8200 2050 2800 500 
+U 593D29A0
+F0 "Extra Buttons Row 6 and 7 small" 60
+F1 "extrabtns_row6+7_small.sch" 60
+$EndSheet
+Wire Bus Line
+	7900 2300 8200 2300
 $EndSCHEMATC
