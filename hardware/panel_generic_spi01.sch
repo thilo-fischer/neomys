@@ -593,17 +593,6 @@ F 3 "" H 5700 3150 50  0000 C CNN
 	1    0    0    -1  
 $EndComp
 $Comp
-L CONN_02X03 P48
-U 1 1 592973B3
-P 5350 3050
-F 0 "P48" H 5350 3250 50  0000 C CNN
-F 1 "CONN_02X03" H 5350 2850 50  0000 C CNN
-F 2 "Pin_Headers:Pin_Header_Straight_2x03_Pitch2.54mm" H 5350 1850 50  0001 C CNN
-F 3 "" H 5350 1850 50  0000 C CNN
-	1    5350 3050
-	1    0    0    -1  
-$EndComp
-$Comp
 L RJ45 J1
 U 1 1 592AED5A
 P 4350 650
@@ -1155,30 +1144,6 @@ Wire Wire Line
 	4750 1900 4750 1900
 Wire Wire Line
 	5700 2950 5700 3150
-Wire Wire Line
-	5700 3150 5600 3150
-Connection ~ 5700 3150
-Wire Wire Line
-	5100 2950 5100 2250
-Connection ~ 5100 2250
-Wire Wire Line
-	5600 2950 5600 2350
-Connection ~ 5600 2350
-Wire Wire Line
-	5100 3050 5050 3050
-Wire Wire Line
-	5050 3050 5050 2450
-Connection ~ 5050 2450
-Wire Wire Line
-	5600 3050 5650 3050
-Wire Wire Line
-	5650 3050 5650 2550
-Connection ~ 5650 2550
-Wire Wire Line
-	5100 3150 5000 3150
-Wire Wire Line
-	5000 3150 5000 2650
-Connection ~ 5000 2650
 Wire Wire Line
 	4200 1150 4200 1100
 Wire Wire Line
