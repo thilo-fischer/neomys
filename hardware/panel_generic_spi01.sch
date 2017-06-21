@@ -37,7 +37,7 @@ EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 4 10
+Sheet 4 11
 Title ""
 Date ""
 Rev ""
@@ -146,7 +146,7 @@ AR Path="/56894D4D/56896B3A" Ref="D8"  Part="1"
 AR Path="/568E4808/56896B3A" Ref="D8"  Part="1" 
 F 0 "D8" H 6050 2150 50  0000 C CNN
 F 1 "D" H 6050 1950 50  0000 C CNN
-F 2 "Discret:D3" H 6050 2050 50  0001 C CNN
+F 2 "Discret:D5" H 6050 2050 50  0001 C CNN
 F 3 "" H 6050 2050 50  0000 C CNN
 	1    6050 2050
 	1    0    0    -1  
@@ -510,7 +510,7 @@ U 1 1 5929143B
 P 10100 1300
 F 0 "C5" H 10125 1400 50  0000 L CNN
 F 1 "100nF" H 10125 1200 50  0000 L CNN
-F 2 "Capacitors_ThroughHole:CP_Radial_Tantal_D5.0mm_P2.50mm" H 10138 1150 50  0001 C CNN
+F 2 "Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P2.50mm" H 10138 1150 50  0001 C CNN
 F 3 "" H 10100 1300 50  0000 C CNN
 	1    10100 1300
 	1    0    0    -1  
@@ -521,7 +521,7 @@ U 1 1 5929150F
 P 9900 1300
 F 0 "C4" H 9925 1400 50  0000 L CNN
 F 1 "100nF" H 9925 1200 50  0000 L CNN
-F 2 "Capacitors_ThroughHole:CP_Radial_Tantal_D5.0mm_P2.50mm" H 9938 1150 50  0001 C CNN
+F 2 "Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P2.50mm" H 9938 1150 50  0001 C CNN
 F 3 "" H 9900 1300 50  0000 C CNN
 	1    9900 1300
 	1    0    0    -1  
@@ -532,7 +532,7 @@ U 1 1 592915DD
 P 10500 1300
 F 0 "C7" H 10525 1400 50  0000 L CNN
 F 1 "100nF" H 10525 1200 50  0000 L CNN
-F 2 "Capacitors_ThroughHole:CP_Radial_Tantal_D5.0mm_P2.50mm" H 10538 1150 50  0001 C CNN
+F 2 "Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P2.50mm" H 10538 1150 50  0001 C CNN
 F 3 "" H 10500 1300 50  0000 C CNN
 	1    10500 1300
 	1    0    0    -1  
@@ -543,7 +543,7 @@ U 1 1 592915E3
 P 10300 1300
 F 0 "C6" H 10325 1400 50  0000 L CNN
 F 1 "100nF" H 10325 1200 50  0000 L CNN
-F 2 "Capacitors_ThroughHole:CP_Radial_Tantal_D5.0mm_P2.50mm" H 10338 1150 50  0001 C CNN
+F 2 "Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P2.50mm" H 10338 1150 50  0001 C CNN
 F 3 "" H 10300 1300 50  0000 C CNN
 	1    10300 1300
 	1    0    0    -1  
@@ -554,7 +554,7 @@ U 1 1 5929169D
 P 9700 1300
 F 0 "C3" H 9725 1400 50  0000 L CNN
 F 1 "100nF" H 9725 1200 50  0000 L CNN
-F 2 "Capacitors_ThroughHole:CP_Radial_Tantal_D5.0mm_P2.50mm" H 9738 1150 50  0001 C CNN
+F 2 "Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P2.50mm" H 9738 1150 50  0001 C CNN
 F 3 "" H 9700 1300 50  0000 C CNN
 	1    9700 1300
 	1    0    0    -1  
@@ -565,7 +565,7 @@ U 1 1 592916A3
 P 9500 1300
 F 0 "C2" H 9525 1400 50  0000 L CNN
 F 1 "100nF" H 9525 1200 50  0000 L CNN
-F 2 "Capacitors_ThroughHole:CP_Radial_Tantal_D5.0mm_P2.50mm" H 9538 1150 50  0001 C CNN
+F 2 "Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 9538 1150 50  0001 C CNN
 F 3 "" H 9500 1300 50  0000 C CNN
 	1    9500 1300
 	1    0    0    -1  
@@ -576,7 +576,7 @@ U 1 1 59291E0A
 P 4750 1750
 F 0 "C1" H 4775 1850 50  0000 L CNN
 F 1 "1uF" H 4775 1650 50  0000 L CNN
-F 2 "Capacitors_ThroughHole:CP_Radial_Tantal_D5.0mm_P2.50mm" H 4788 1600 50  0001 C CNN
+F 2 "Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P2.50mm" H 4788 1600 50  0001 C CNN
 F 3 "" H 4750 1750 50  0000 C CNN
 	1    4750 1750
 	1    0    0    -1  

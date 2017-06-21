@@ -37,7 +37,7 @@ EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 1 10
+Sheet 1 11
 Title ""
 Date ""
 Rev ""
@@ -130,4 +130,10 @@ F1 "extrabtns_row6+7_small.sch" 60
 $EndSheet
 Wire Bus Line
 	7900 2300 8200 2300
+$Sheet
+S 2400 2450 1700 550 
+U 594A2FFC
+F0 "KSW_BUS adapter" 60
+F1 "ksw_bus_adapter.sch" 60
+$EndSheet
 $EndSCHEMATC
