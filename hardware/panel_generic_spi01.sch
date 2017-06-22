@@ -37,7 +37,7 @@ EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 4 11
+Sheet 4 13
 Title ""
 Date ""
 Rev ""
@@ -565,7 +565,7 @@ U 1 1 592916A3
 P 9500 1300
 F 0 "C2" H 9525 1400 50  0000 L CNN
 F 1 "100nF" H 9525 1200 50  0000 L CNN
-F 2 "Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 9538 1150 50  0001 C CNN
+F 2 "Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P2.50mm" H 9538 1150 50  0001 C CNN
 F 3 "" H 9500 1300 50  0000 C CNN
 	1    9500 1300
 	1    0    0    -1  
@@ -1220,4 +1220,6 @@ Wire Wire Line
 	8200 1450 8200 1200
 Wire Wire Line
 	8100 1250 8100 1200
+Text HLabel 1200 3000 0    60   Input ~ 0
+DISP_BUS
 $EndSCHEMATC

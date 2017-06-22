@@ -37,7 +37,7 @@ EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 1 11
+Sheet 1 13
 Title ""
 Date ""
 Rev ""
@@ -135,5 +135,17 @@ S 2400 2450 1700 550
 U 594A2FFC
 F0 "KSW_BUS adapter" 60
 F1 "ksw_bus_adapter.sch" 60
+$EndSheet
+$Sheet
+S 850  2450 1400 550 
+U 594BCD72
+F0 "DISP_BUS adapter" 60
+F1 "disp_bus_adapter.sch" 60
+$EndSheet
+$Sheet
+S 900  1650 1200 500 
+U 594BE794
+F0 "Disp Bargraph" 60
+F1 "disp_bargraph.sch" 60
 $EndSheet
 $EndSCHEMATC
