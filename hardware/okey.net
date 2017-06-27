@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/thilo/devel/neomys/hardware/okey.sch)
-    (date "Tue 27 Jun 2017 05:03:40 PM CEST")
+    (date "Tue 27 Jun 2017 05:50:26 PM CEST")
     (tool "Eeschema 4.0.4-stable")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
@@ -461,7 +461,7 @@
       (tstamp 592915DD))
     (comp (ref C6)
       (value 100nF)
-      (footprint Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P2.50mm)
+      (footprint Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P5.00mm)
       (libsource (lib device) (part C))
       (sheetpath (names "/Panel Generic SPI01/") (tstamps /568E4808/))
       (tstamp 592915E3))
@@ -473,7 +473,7 @@
       (tstamp 5929169D))
     (comp (ref C2)
       (value 100nF)
-      (footprint Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P2.50mm)
+      (footprint Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P5.00mm)
       (libsource (lib device) (part C))
       (sheetpath (names "/Panel Generic SPI01/") (tstamps /568E4808/))
       (tstamp 592916A3))
