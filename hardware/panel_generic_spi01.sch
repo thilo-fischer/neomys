@@ -146,7 +146,7 @@ AR Path="/56894D4D/56896B3A" Ref="D8"  Part="1"
 AR Path="/568E4808/56896B3A" Ref="D8"  Part="1" 
 F 0 "D8" H 6050 2150 50  0000 C CNN
 F 1 "D" H 6050 1950 50  0000 C CNN
-F 2 "Discret:D5" H 6050 2050 50  0001 C CNN
+F 2 "Diodes_ThroughHole:D_DO-35_SOD27_P12.70mm_Horizontal" H 6050 2050 50  0001 C CNN
 F 3 "" H 6050 2050 50  0000 C CNN
 	1    6050 2050
 	1    0    0    -1  
@@ -159,7 +159,7 @@ AR Path="/56894D4D/56896BA9" Ref="D1"  Part="1"
 AR Path="/568E4808/56896BA9" Ref="D1"  Part="1" 
 F 0 "D1" H 6050 1450 50  0000 C CNN
 F 1 "D" H 6050 1250 50  0000 C CNN
-F 2 "Discret:D3" H 6050 1350 50  0001 C CNN
+F 2 "Diodes_ThroughHole:D_DO-35_SOD27_P7.62mm_Horizontal" H 6050 1350 50  0001 C CNN
 F 3 "" H 6050 1350 50  0000 C CNN
 	1    6050 1350
 	1    0    0    -1  
@@ -172,7 +172,7 @@ AR Path="/56894D4D/56896C1C" Ref="D2"  Part="1"
 AR Path="/568E4808/56896C1C" Ref="D2"  Part="1" 
 F 0 "D2" H 6050 1550 50  0000 C CNN
 F 1 "D" H 6050 1350 50  0000 C CNN
-F 2 "Discret:D3" H 6050 1450 50  0001 C CNN
+F 2 "Diodes_ThroughHole:D_DO-35_SOD27_P7.62mm_Horizontal" H 6050 1450 50  0001 C CNN
 F 3 "" H 6050 1450 50  0000 C CNN
 	1    6050 1450
 	1    0    0    -1  
@@ -185,7 +185,7 @@ AR Path="/56894D4D/56896C22" Ref="D3"  Part="1"
 AR Path="/568E4808/56896C22" Ref="D3"  Part="1" 
 F 0 "D3" H 6050 1650 50  0000 C CNN
 F 1 "D" H 6050 1450 50  0000 C CNN
-F 2 "Discret:D3" H 6050 1550 50  0001 C CNN
+F 2 "Diodes_ThroughHole:D_DO-35_SOD27_P7.62mm_Horizontal" H 6050 1550 50  0001 C CNN
 F 3 "" H 6050 1550 50  0000 C CNN
 	1    6050 1550
 	1    0    0    -1  
@@ -198,7 +198,7 @@ AR Path="/56894D4D/56896D5A" Ref="D4"  Part="1"
 AR Path="/568E4808/56896D5A" Ref="D4"  Part="1" 
 F 0 "D4" H 6050 1750 50  0000 C CNN
 F 1 "D" H 6050 1550 50  0000 C CNN
-F 2 "Discret:D3" H 6050 1650 50  0001 C CNN
+F 2 "Diodes_ThroughHole:D_DO-35_SOD27_P7.62mm_Horizontal" H 6050 1650 50  0001 C CNN
 F 3 "" H 6050 1650 50  0000 C CNN
 	1    6050 1650
 	1    0    0    -1  
@@ -211,7 +211,7 @@ AR Path="/56894D4D/56896D60" Ref="D5"  Part="1"
 AR Path="/568E4808/56896D60" Ref="D5"  Part="1" 
 F 0 "D5" H 6050 1850 50  0000 C CNN
 F 1 "D" H 6050 1650 50  0000 C CNN
-F 2 "Discret:D3" H 6050 1750 50  0001 C CNN
+F 2 "Diodes_ThroughHole:D_DO-35_SOD27_P7.62mm_Horizontal" H 6050 1750 50  0001 C CNN
 F 3 "" H 6050 1750 50  0000 C CNN
 	1    6050 1750
 	1    0    0    -1  
@@ -224,7 +224,7 @@ AR Path="/56894D4D/56896D66" Ref="D6"  Part="1"
 AR Path="/568E4808/56896D66" Ref="D6"  Part="1" 
 F 0 "D6" H 6050 1950 50  0000 C CNN
 F 1 "D" H 6050 1750 50  0000 C CNN
-F 2 "Discret:D3" H 6050 1850 50  0001 C CNN
+F 2 "Diodes_ThroughHole:D_DO-35_SOD27_P7.62mm_Horizontal" H 6050 1850 50  0001 C CNN
 F 3 "" H 6050 1850 50  0000 C CNN
 	1    6050 1850
 	1    0    0    -1  
@@ -237,7 +237,7 @@ AR Path="/56894D4D/56896D6C" Ref="D7"  Part="1"
 AR Path="/568E4808/56896D6C" Ref="D7"  Part="1" 
 F 0 "D7" H 6050 2050 50  0000 C CNN
 F 1 "D" H 6050 1850 50  0000 C CNN
-F 2 "Discret:D3" H 6050 1950 50  0001 C CNN
+F 2 "Diodes_ThroughHole:D_DO-35_SOD27_P7.62mm_Horizontal" H 6050 1950 50  0001 C CNN
 F 3 "" H 6050 1950 50  0000 C CNN
 	1    6050 1950
 	1    0    0    -1  
@@ -543,7 +543,7 @@ U 1 1 592915E3
 P 10300 1300
 F 0 "C6" H 10325 1400 50  0000 L CNN
 F 1 "100nF" H 10325 1200 50  0000 L CNN
-F 2 "Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P2.50mm" H 10338 1150 50  0001 C CNN
+F 2 "Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 10338 1150 50  0001 C CNN
 F 3 "" H 10300 1300 50  0000 C CNN
 	1    10300 1300
 	1    0    0    -1  
@@ -565,7 +565,7 @@ U 1 1 592916A3
 P 9500 1300
 F 0 "C2" H 9525 1400 50  0000 L CNN
 F 1 "100nF" H 9525 1200 50  0000 L CNN
-F 2 "Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P2.50mm" H 9538 1150 50  0001 C CNN
+F 2 "Capacitors_ThroughHole:C_Disc_D5.0mm_W2.5mm_P5.00mm" H 9538 1150 50  0001 C CNN
 F 3 "" H 9500 1300 50  0000 C CNN
 	1    9500 1300
 	1    0    0    -1  
